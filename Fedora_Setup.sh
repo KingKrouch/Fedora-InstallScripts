@@ -231,3 +231,6 @@ git clone https://github.com/teejee2008/timeshift.git
 cd timeshift
 make all
 sudo make install
+
+# Install alien (for package conversions)
+sudo dnf install alien -y
