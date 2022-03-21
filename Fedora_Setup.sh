@@ -181,6 +181,7 @@ cd .. && rm mf-install
 wget -O CSP_Setup.exe https://www.clipstudio.net/gd?id=csp-install-win
 wine CSP_Setup.exe
 rm CSP_Setup.exe
+echo "Make sure to set concrt140 as a WineDLLOverride to prevent CSP from crashing."
 
 # Install Ableton Live 11 (Via Wine)
 mkdir ~/Ableton && cd ~/Ableton
