@@ -27,6 +27,9 @@ echo "alias dir='ls -lsh'" >> ~/.bashrc
 # Install neofetch.
 sudo dnf install neofetch -y
 
+# Set up neofetch with my preferred configuration.
+wget -O ~/.config/neofetch/config.conf https://github.com/KingKrouch/Fedora-KDE-InstallScripts/raw/main/.config/neofetch/config.conf
+
 # Install exa and lsd, which should replace lsd and dir.
 sudo dnf install exa lsd -y
 
