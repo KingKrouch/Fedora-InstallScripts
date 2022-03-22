@@ -96,11 +96,12 @@ sudo dnf install renderdoc -y && sudo dnf install vulkan-tools -y
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 # Install some Flatpaks that I personally use.
-flatpak install flathub com.discordapp.Discord
-flatpak install flathub org.libreoffice.LibreOffice
-flatpak install flathub org.gimp.GIMP
-flatpak install flathub org.blender.Blender
+flatpak install flathub com.discordapp.Discord -y
+flatpak install flathub org.libreoffice.LibreOffice -y
+flatpak install flathub org.gimp.GIMP -y
+flatpak install flathub org.blender.Blender -y
 flatpak install flathub ch.protonmail.protonmail-bridge -y && flatpak install flathub org.mozilla.Thunderbird -y
+flatpak install flathub org.qbittorrent.qBittorrent -y
 
 # Install some game launcher and emulator Flatpaks.
 flatpak install flathub com.heroicgameslauncher.hgl -y
@@ -115,13 +116,13 @@ flatpak install flathub com.mojang.Minecraft -y
 flatpak install flathub org.ghidra_sre.Ghidra -y && sudo flatpak override org.ghidra_sre.Ghidra --filesystem=/mnt
 
 # Install OBS Studio.
-flatpak install flathub com.obsproject.Studio
+flatpak install flathub com.obsproject.Studio -y
 
 # Install nvFBC patch (So OBS won't kill itself trying to record at high framerates).
 git clone https://github.com/keylase/nvidia-patch.git && cd nvidia-patch && sudo ./patch-fbc.sh && cd .. && rm -rf nvidia-patch
 
 # Install nvFBC OBS Plugin.
-flatpak install flathub com.obsproject.Studio.Plugin.NVFBC
+flatpak install flathub com.obsproject.Studio.Plugin.NVFBC -y
 
 # Install a basic video editor for now. No, I'm not going to use DaVinci Resolve after trying it. Don't ask me about it.
 sudo dnf install kdenlive -y
