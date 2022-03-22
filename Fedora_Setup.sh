@@ -236,3 +236,6 @@ sudo make install
 
 # Install alien (for package conversions)
 sudo dnf install alien -y
+
+# Install nvFBC patch (So OBS won't kill itself trying to record at high framerates).
+git clone https://github.com/keylase/nvidia-patch.git && cd nvidia-patch && sudo ./patch-fbc.sh
