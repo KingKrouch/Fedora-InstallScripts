@@ -155,6 +155,9 @@ sudo dnf install docker -y
 # Install MangoHud with GOverlay
 sudo dnf install goverlay -y
 
+# Install gamemode alongside enabling the gamemode service.
+sudo dnf install gamemode -y && systemctl --user enable gamemoded && systemctl --user start gamemoded
+
 # Install SteamTinkerLaunch and uninstall some stuff that comes bundled with it that I personally don't need.
 sudo dnf copr enable capucho/steamtinkerlaunch -y && sudo dnf install steamtinkerlaunch -y && sudo dnf remove gameconqueror scummvm -y
 
