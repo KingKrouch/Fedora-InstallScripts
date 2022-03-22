@@ -115,7 +115,13 @@ flatpak install flathub com.mojang.Minecraft -y
 flatpak install flathub org.ghidra_sre.Ghidra -y && sudo flatpak override org.ghidra_sre.Ghidra --filesystem=/mnt
 
 # Install OBS Studio.
-sudo dnf install obs-studio -y
+flatpak install flathub com.obsproject.Studio
+
+# Install nvFBC patch (So OBS won't kill itself trying to record at high framerates).
+git clone https://github.com/keylase/nvidia-patch.git && cd nvidia-patch && sudo ./patch-fbc.sh && cd .. && rm -rf nvidia-patch
+
+# Install nvFBC OBS Plugin.
+flatpak install flathub com.obsproject.Studio.Plugin.NVFBC
 
 # Install a basic video editor for now. No, I'm not going to use DaVinci Resolve after trying it. Don't ask me about it.
 sudo dnf install kdenlive -y
@@ -236,6 +242,3 @@ sudo make install
 
 # Install alien (for package conversions)
 sudo dnf install alien -y
-
-# Install nvFBC patch (So OBS won't kill itself trying to record at high framerates).
-git clone https://github.com/keylase/nvidia-patch.git && cd nvidia-patch && sudo ./patch-fbc.sh
