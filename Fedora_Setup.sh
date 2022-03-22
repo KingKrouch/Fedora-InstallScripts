@@ -246,5 +246,6 @@ sudo dnf install alien -y
 
 # Install OpenRGB and set up Razer periphreals with OpenRazer and RazerGenie.
 sudo modprobe i2c-dev && sudo modprobe i2c-piix4 && sudo dnf install https://openrgb.org/releases/release_0.7/openrgb_0.7_x86_64_6128731.rpm -y
+wget -O 60-openrgb.rules https://github.com/CalcProgrammer1/OpenRGB/raw/master/60-openrgb.rules && sudo mv 60-openrgb.rules /etc/udev/rules.d/
 sudo dnf install kernel-devel -y
 sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/hardware:razer/Fedora_35/hardware:razer.repo && sudo dnf install openrazer-meta -y && sudo dnf install razergenie -y
