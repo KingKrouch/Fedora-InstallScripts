@@ -14,7 +14,7 @@ sudo dnf group update core -y
 # Install NVIDIA Drivers (Will require making sure the system is up to date).
 sudo dnf upgrade --refresh -y
 sudo dnf install dnf-plugins-core -y
-sudo dnf install akmod-nvidia xorg-x11-drv-nvidia-cuda -y
+sudo dnf install akmod-nvidia xorg-x11-drv-nvidia-cuda nvidia-xconfig -y
 
 # Install Media Codecs and Plugins.
 sudo dnf install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel -y && sudo dnf install lame\* --exclude=lame-devel -y && sudo dnf group upgrade --with-optional Multimedia -y
