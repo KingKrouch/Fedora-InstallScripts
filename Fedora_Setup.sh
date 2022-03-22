@@ -234,8 +234,3 @@ sudo make install
 
 # Install alien (for package conversions)
 sudo dnf install alien -y
-
-# Set up Powershell on Wine
-wget https://github.com/PietJankbal/powershell-wrapper-for-wine/raw/master/install_pwshwrapper.exe
-wine install_pwshwrapper.exe && rm install_pwshwrapper.exe
-wine powershell
