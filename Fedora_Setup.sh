@@ -79,6 +79,8 @@ sudo dnf install breeze-gtk -y
 
 # Install GNOME Disks, because that's the only thing that can be salvaged from GNOME's increasigly user unfriendly arsenal.
 sudo dnf install gnome-disk-utility -y
+# Install Filelight as an alternative to WinDirStat
+sudo dnf install filelight -y
 
 # Audio Related Software. A soundboard application and a VST Plugin manager specifically.
 sudo dnf copr enable patrickl/yabridge -y && sudo dnf install yabridge -y
