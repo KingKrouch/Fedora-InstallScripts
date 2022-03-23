@@ -253,5 +253,5 @@ wget -O 60-openrgb.rules https://github.com/CalcProgrammer1/OpenRGB/raw/master/6
 sudo dnf install kernel-devel -y
 sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/hardware:razer/Fedora_35/hardware:razer.repo && sudo dnf install openrazer-meta -y && sudo dnf install razergenie -y && sudo gpasswd -a $USER plugdev
 
-# Install cpupower-gui for CPU power management purposes.
-sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:erigas:cpupower-gui/Fedora_35/home:erigas:cpupower-gui.repo && sudo dnf install cpupower-gui -y
+# Install CoreCtrl for CPU power management purposes.
+sudo dnf install corectrl -y
