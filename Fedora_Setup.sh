@@ -252,3 +252,6 @@ sudo modprobe i2c-dev && sudo modprobe i2c-piix4 && sudo dnf install https://ope
 wget -O 60-openrgb.rules https://github.com/CalcProgrammer1/OpenRGB/raw/master/60-openrgb.rules && sudo mv 60-openrgb.rules /etc/udev/rules.d/
 sudo dnf install kernel-devel -y
 sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/hardware:razer/Fedora_35/hardware:razer.repo && sudo dnf install openrazer-meta -y && sudo dnf install razergenie -y && sudo gpasswd -a $USER plugdev
+
+# Install cpupower-gui for CPU power management purposes.
+sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:erigas:cpupower-gui/Fedora_35/home:erigas:cpupower-gui.repo && sudo dnf install cpupower-gui -y
