@@ -45,7 +45,7 @@ echo "if [ -x /usr/bin/lsd ]; then
   alias lah=ls -lah
   alias lt=ls --tree
 fi" >> tee -a ~/.bashrc ~/.zshrc
-echo 'neofetch --ascii "~/.config/neofetch/rog.ascii"' >> tee -a ~/.bashrc ~/.zshrc
+echo 'neofetch --ascii ~/.config/neofetch/rog.ascii' >> tee -a ~/.bashrc ~/.zshrc
 
 # Set up agnoster as the default zsh theme.
 sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/g' ~/.zshrc
