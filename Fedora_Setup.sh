@@ -29,6 +29,7 @@ sudo dnf install neofetch -y
 
 # Set up neofetch with my preferred configuration.
 wget -O ~/.config/neofetch/config.conf https://github.com/KingKrouch/Fedora-KDE-InstallScripts/raw/main/.config/neofetch/config.conf
+wget -O ~/.config/neofetch/rog.ascii https://github.com/KingKrouch/Fedora-KDE-InstallScripts/raw/main/.config/neofetch/rog.ascii
 
 # Install exa and lsd, which should replace lsd and dir.
 sudo dnf install exa lsd -y
@@ -44,7 +45,7 @@ echo "if [ -x /usr/bin/lsd ]; then
   alias lah=ls -lah
   alias lt=ls --tree
 fi" >> tee -a ~/.bashrc ~/.zshrc
-echo 'neofetch' >> tee -a ~/.bashrc ~/.zshrc
+echo 'neofetch --ascii "~/.config/neofetch/rog.ascii"' >> tee -a ~/.bashrc ~/.zshrc
 
 # Set up agnoster as the default zsh theme.
 sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/g' ~/.zshrc
