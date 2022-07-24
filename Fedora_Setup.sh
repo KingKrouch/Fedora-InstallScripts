@@ -242,6 +242,11 @@ flatpak install flathub org.blender.Blender -y
 flatpak install flathub org.mozilla.Thunderbird -y
 flatpak install flathub org.qbittorrent.qBittorrent -y
 
+# Enable support for flatpak Discord to use Discord Rich Presence for non-sandboxed applications.
+mkdir -p ~/.config/user-tmpfiles.d
+echo 'L %t/discord-ipc-0 - - - - app/com.discordapp.Discord/discord-ipc-0' > ~/.config/user-tmpfiles.d/discord-rpc.conf
+systemctl --user enable --now systemd-tmpfiles-setup.service
+
 # Install a basic video editor for now. No, I'm not going to use DaVinci Resolve after trying it. Don't ask me about it.
 sudo dnf install kdenlive -y
 
