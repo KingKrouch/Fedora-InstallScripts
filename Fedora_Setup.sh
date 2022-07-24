@@ -231,8 +231,9 @@ sudo dnf install corectrl -y
 # Install OBS Studio.
 flatpak install flathub com.obsproject.Studio -y
 
-# Install GStreamer Plugin for OBS Studio.
+# Install GStreamer Plugin for OBS Studio, alongside some plugins.
 flatpak install com.obsproject.Studio.Plugin.Gstreamer org.freedesktop.Platform.GStreamer.gstreamer-vaapi -y
+flatpak install org.freedesktop.Platform.VulkanLayer.OBSVkCapture com.obsproject.Studio.Plugin.OBSVkCapture -y
 
 # Install some Flatpaks that I personally use.
 flatpak install flathub com.discordapp.Discord -y
