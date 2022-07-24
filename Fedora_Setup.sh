@@ -16,17 +16,7 @@ sudo dnf group update core -y
 # Enable Flatpaks.
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-# Install NVIDIA Drivers (Will require making sure the system is up to date).
-sudo dnf upgrade --refresh -y
-sudo dnf install dnf-plugins-core -y
-sudo dnf install akmod-nvidia kmod-nvidia xorg-x11-drv-nvidia-cuda nvidia-xconfig -y
-
-
 ## ///// TERMINAL STUFF /////
-
-# alias "dir" to "ls -lsh" for my sanity.
-echo "alias dir='ls -lsh'" >> ~/.zshrc
-echo "alias dir='ls -lsh'" >> ~/.bashrc
 
 # Install neofetch.
 sudo dnf install neofetch -y
@@ -40,16 +30,20 @@ sudo dnf install exa lsd -y
 
 # Install zsh, alongside setting up oh-my-zsh.
 sudo dnf install zsh -y && chsh -s $(which zsh) && sudo chsh -s $(which zsh)
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
+sudo dnf install git -y && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
+
+# alias "dir" to "ls -lsh" for my sanity.
+echo "alias dir='ls -lsh'" >> ~/.zshrc
+echo "alias dir='ls -lsh'" >> ~/.bashrc
 
 # Append exa and lsd aliases, and neofetch alias to both the bashrc and zshrc.
 echo "if [ -x /usr/bin/lsd ]; then
-  alias ls=lsd
-  alias dir=ls -l
-  alias lah=ls -lah
-  alias lt=ls --tree
+  alias ls='lsd'
+  alias dir='ls -l'
+  alias lah='ls -lah'
+  alias lt='ls --tree'
 fi" >> tee -a ~/.bashrc ~/.zshrc
-echo "alias neofetch='neofetch --ascii ~/.config/neofetch/rog.ascii
+echo "alias neofetch='neofetch --ascii ~/.config/neofetch/rog.ascii'
 neofetch" >> tee -a ~/.bashrc ~/.zshrc
 
 # Set up agnoster as the default zsh theme.
@@ -83,17 +77,16 @@ flatpak install flathub org.yuzu_emu.yuzu -y
 flatpak install flathub org.ryujinx.Ryujinx -y
 flatpak install flathub org.DolphinEmu.dolphin-emu -y
 flatpak install flathub net.pcsx2.PCSX2 -y
-flatpak install flathub com.mojang.Minecraft -y
+flatpak install flathub org.polymc.PolyMC -y
 
 # Install a Soundboard Application, for micspamming in Team Fortress 2 servers, of course! ;-)
 sudo dnf copr enable rivenirvana/soundux -y && sudo dnf install soundux -y
 
-# Install MangoHud with GOverlay
-sudo dnf install goverlay -y
+# Install MangoHud with GOverlay, alongside Gamescope.
+sudo dnf install goverlay -y && sudo dnf install gamescope -y
 
 # Install gamemode alongside enabling the gamemode service.
 sudo dnf install gamemode -y && systemctl --user enable gamemoded && systemctl --user start gamemoded
-
 
 ## ///// WINE AND WINDOWS SOFTWARE /////
 
@@ -128,6 +121,8 @@ git clone https://github.com/z0z0z/mf-install && cd mf-install
 WINEPREFIX="/home/$USER/.wine" ./mf-install.sh
 cd .. && rm -rf mf-install
 
+# Remove DOSBox Staging, which WINE installs for some dumb reason.
+sudo dnf remove dosbox-staging -y
 
 ## //// VIRTUAL MACHINE AND NETWORKING STUFF /////
 
@@ -196,8 +191,18 @@ echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2023/lib"" >> $HOME/.profile
 
 ## ///// GENERAL DESKTOP USAGE /////
 
-# Set up Pop Shell for Tiled Window Management, Dash to Dock, and Gnome Tweaks
-sudo dnf install pop-shell -y && sudo dnf install gnome-tweaks -y && sudo dnf install gnome-shell-extension-dash-to-dock -y
+# Remove some KDE Plasma bloatware that comes installed for some reason.
+sudo dnf remove akregator dnfdragora kgpg kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kwalletmanager kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer gwenview kamoso kolourpaint krdc krfb -y
+
+# Install notifications daemon.
+sudo dnf install notification-daemon -y
+
+# Install Breeze-GTK theme, which isn't included in the KDE installation process.
+sudo dnf install breeze-gtk -y
+
+# Install some KDE extensions.
+sudo dnf install latte-dock -y
+sudo dnf copr enable capucho/bismuth -y  && sudo dnf install bismuth -y
 
 # Install Input-Remapper (For Razer Tartarus Pro)
 sudo dnf install python3-evdev python3-devel gtksourceview4 python3-pydantic python-pydbus xmodmap -y
@@ -224,11 +229,8 @@ sudo dnf install corectrl -y
 # Install OBS Studio.
 flatpak install flathub com.obsproject.Studio -y
 
-# Install nvFBC patch (So OBS won't kill itself trying to record at high framerates).
-git clone https://github.com/keylase/nvidia-patch.git && cd nvidia-patch && sudo ./patch.sh -f && sudo ./patch-fbc.sh && sudo ./patch.sh -f && sudo ./patch-fbc.sh -f && cd .. && rm -rf nvidia-patch
-
-# Install nvFBC OBS Plugin.
-flatpak install flathub com.obsproject.Studio.Plugin.NVFBC -y
+# Install GStreamer Plugin for OBS Studio.
+flatpak install com.obsproject.Studio.Plugin.Gstreamer org.freedesktop.Platform.GStreamer.gstreamer-vaapi -y
 
 # Install some Flatpaks that I personally use.
 flatpak install flathub com.discordapp.Discord -y
