@@ -82,8 +82,8 @@ flatpak install flathub org.polymc.PolyMC -y
 # Install a Soundboard Application, for micspamming in Team Fortress 2 servers, of course! ;-)
 sudo dnf copr enable rivenirvana/soundux -y && sudo dnf install soundux -y
 
-# Install MangoHud with GOverlay, alongside Gamescope.
-sudo dnf install goverlay -y && sudo dnf install gamescope -y
+# Install MangoHud with GOverlay, alongside Gamescope and vkBasalt.
+sudo dnf install goverlay -y && sudo dnf install vkBasalt -y && sudo dnf install gamescope -y
 
 # Install gamemode alongside enabling the gamemode service.
 sudo dnf install gamemode -y && systemctl --user enable gamemoded && systemctl --user start gamemoded
