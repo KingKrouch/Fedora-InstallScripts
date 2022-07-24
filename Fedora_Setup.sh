@@ -162,6 +162,8 @@ sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc && sudo sh -
 # Install RenderDoc and Vulkan Tools.
 sudo dnf install renderdoc -y && sudo dnf install vulkan-tools -y
 
+# Install several dependencies for CheatEngine-Proton-Helper
+sudo dnf install python3-vdf yad xdotool -y
 
 ## ///// DIGITAL CONTENT CREATION TOOLS /////
 
