@@ -124,12 +124,7 @@ cd .. && rm -rf mf-install
 # Remove DOSBox Staging, which WINE installs for some dumb reason.
 sudo dnf remove dosbox-staging -y
 
-## //// VIRTUAL MACHINE AND NETWORKING STUFF /////
-
-# Install VirtManager alongside OVMF UEFI and some requirements for WinApps (Will need to uncomment unix_sock_group and unix_sock_rw_perms from /etc/libvirt/libvirtd.conf)
-sudo dnf install libvirt virt-install edk2-ovmf virt-manager freerdp -y
-sudo systemctl enable libvirtd.service && sudo systemctl start libvirtd.service
-sudo usermod -a -G libvirt $(whoami) && sudo usermod -a -G kvm $(whoami)
+## //// NETWORKING STUFF /////
 
 # Set up Samba
 sudo dnf install samba -y
@@ -197,7 +192,7 @@ echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2023/lib"" >> $HOME/.profile
 ## ///// GENERAL DESKTOP USAGE /////
 
 # Remove some KDE Plasma bloatware that comes installed for some reason.
-sudo dnf remove akregator dnfdragora kgpg kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kwalletmanager kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer gwenview kamoso kolourpaint krdc krfb -y
+sudo dnf remove akregator dnfdragora kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kwalletmanager kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer gwenview kamoso kolourpaint krdc krfb -y
 
 # Install notifications daemon.
 sudo dnf install notification-daemon -y
