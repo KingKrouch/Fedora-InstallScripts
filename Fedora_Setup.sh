@@ -95,7 +95,7 @@ sudo dnf install gamemode -y && systemctl --user enable gamemoded && systemctl -
 ## ///// WINE AND WINDOWS SOFTWARE /////
 
 # Install Wine
-sudo dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/36/winehq.repo -y && sudo dnf install wine -y
+sudo dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/36/winehq.repo -y && sudo dnf install wine -y && sudo dnf install winetricks -y
 
 # Set up some prerequisites for Wine.
 sudo dnf install cabextract samba-winbind*.x86_64 samba-winbind*.i686 -y && sudo dnf install cabextract -y
@@ -110,6 +110,9 @@ wine NDP462-KB3151800-x86-x64-AllOS-ENU.exe
 wine vc_redist.x86.exe /quiet /norestart
 wine vc_redist.x64.exe /quiet /norestart
 rm vc_redist.x86.exe vc_redist.x64.exe NDP462-KB3151800-x86-x64-AllOS-ENU.exe
+winetricks -q dotnet35
+winetricks -q dotnet45
+winetricks -q dotnet472
 
 # Set up DXVK, VKD3D, and Media Foundation codecs to Wine.
 wget https://github.com/doitsujin/dxvk/releases/download/v1.10/dxvk-1.10.tar.gz
