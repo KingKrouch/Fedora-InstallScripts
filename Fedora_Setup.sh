@@ -110,9 +110,8 @@ wine NDP462-KB3151800-x86-x64-AllOS-ENU.exe
 wine vc_redist.x86.exe /quiet /norestart
 wine vc_redist.x64.exe /quiet /norestart
 rm vc_redist.x86.exe vc_redist.x64.exe NDP462-KB3151800-x86-x64-AllOS-ENU.exe
-winetricks -q dotnet35
-winetricks -q dotnet45
-winetricks -q dotnet472
+wget https://download.visualstudio.microsoft.com/download/pr/2d6bb6b2-226a-4baa-bdec-798822606ff1/8494001c276a4b96804cde7829c04d7f/ndp48-x86-x64-allos-enu.exe
+wine ndp48-x86-x64-allos-enu.exe /quiet /norestart
 
 # Set up DXVK, VKD3D, and Media Foundation codecs to Wine.
 wget https://github.com/doitsujin/dxvk/releases/download/v1.10/dxvk-1.10.tar.gz
