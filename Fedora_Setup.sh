@@ -163,6 +163,9 @@ sudo dnf install renderdoc -y && sudo dnf install vulkan-tools -y
 # Install several dependencies for CheatEngine-Proton-Helper
 sudo dnf install python3-vdf yad xdotool -y
 
+# Install a hex editor
+sudo dnf install okteta -y
+
 ## ///// DIGITAL CONTENT CREATION TOOLS /////
 
 # Install Clip Studio Paint (Via Wine)
