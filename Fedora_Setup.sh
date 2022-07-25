@@ -237,7 +237,7 @@ flatpak install com.obsproject.Studio.Plugin.Gstreamer org.freedesktop.Platform.
 flatpak install org.freedesktop.Platform.VulkanLayer.OBSVkCapture com.obsproject.Studio.Plugin.OBSVkCapture -y
 
 # Install some Flatpaks that I personally use.
-flatpak install flathub com.discordapp.Discord -y
+flatpak install flathub io.github.spacingbat3.webcord -y # Using Webcord instead of Discord because it barely fucking works in Wayland.
 flatpak install flathub org.libreoffice.LibreOffice -y
 flatpak install flathub org.gimp.GIMP -y
 flatpak install flathub org.blender.Blender -y
