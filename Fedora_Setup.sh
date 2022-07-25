@@ -64,6 +64,10 @@ fc-cache -fv
 wget https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/bin/scripts/lib/i_linux.sh -P ~/.local/share/fonts/
 source ~/.local/share/fonts/i_linux.sh
 
+# Finally, Set up Konsole with my custom profiles
+wget -O ~/.local/share/konsole/Breeze.colorscheme https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.local/share/konsole/Breeze.colorscheme
+wget -O ~/.local/share/konsole/Konsole.profile https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.local/share/konsole/Konsole.profile
+wget -O ~/.config/konsolerc https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/konsolerc
 
 ## ///// GAMING AND GAMING TWEAKS /////
 
