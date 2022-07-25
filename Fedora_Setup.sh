@@ -14,7 +14,7 @@ sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-releas
 sudo dnf group update core -y
 
 # Enable Flatpaks.
-flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo && flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
 
 ## ///// TERMINAL STUFF /////
 
@@ -71,7 +71,7 @@ source ~/.local/share/fonts/i_linux.sh
 sudo dnf install steam steam-devices -y
 
 # Install some game launcher and emulator Flatpaks.
-flatpak install flathub com.heroicgameslauncher.hgl -y
+flatpak install flathub-beta com.heroicgameslauncher.hgl -y
 flatpak install flathub net.rpcs3.RPCS3 -y
 flatpak install flathub org.yuzu_emu.yuzu -y
 flatpak install flathub org.ryujinx.Ryujinx -y
