@@ -214,9 +214,10 @@ sudo dnf install notification-daemon -y
 # Install Breeze-GTK theme, which isn't included in the KDE installation process.
 sudo dnf install breeze-gtk -y
 
-# Install some KDE extensions.
-sudo dnf install latte-dock -y
+# Install some KDE extensions, alongside setting up Latte Dock's Application Menu to open with the Super/Win key.
+sudo dnf install latte-dock qt -y
 sudo dnf copr enable capucho/bismuth -y  && sudo dnf install bismuth -y
+kwriteconfig5 --file ~/.config/kwinrc --group ModifierOnlyShortcuts --key Meta "org.kde.lattedock,/Latte,org.kde.LatteDock,activateLauncherMenu" && qdbus org.kde.KWin /KWin reconfigure
 
 # Install Input-Remapper (For Razer Tartarus Pro)
 sudo dnf install python3-evdev python3-devel gtksourceview4 python3-pydantic python-pydbus xmodmap -y
