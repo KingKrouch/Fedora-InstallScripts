@@ -215,7 +215,11 @@ sudo dnf install notification-daemon -y
 sudo dnf install breeze-gtk -y
 
 # Install some KDE extensions, alongside setting up Latte Dock's Application Menu to open with the Super/Win key.
-sudo dnf install latte-dock qt -y
+sudo dnf install qt -y
+## Set up Latte Dock through the Git repository, as that's kept more up to date than in the Fedora software repositories.
+sudo dnf install cmake extra-cmake-modules qt5-qtdeclarative-devel plasma-wayland-protocols-devel qt5-qtx11extras-devel qt5-qtwayland-devel kf5-kiconthemes-devel kf5-plasma-devel kf5-kwindowsystem-devel kf5-kdeclarative-devel kf5-kxmlgui-devel kf5-kactivities-devel gcc-c++ gcc xcb-util-devel kf5-kwayland-devel git gettext kf5-karchive-devel kf5-knotifications-devel libSM-devel kf5-kcrash-devel kf5-knewstuff-devel kf5-kdbusaddons-devel kf5-kxmlgui-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-kguiaddons-devel kf5-kirigami2-devel kf5-kirigami-devel kf5-ki18n kf5-ki18n-devel -y
+git clone https://github.com/KDE/latte-dock && cd latte-dock && sudo ./install.sh && cd .. && sudo rm -rf latte-dock
+## Install the tiled window management KWin plugin, Bismuth.
 sudo dnf copr enable capucho/bismuth -y  && sudo dnf install bismuth -y
 kwriteconfig5 --file ~/.config/kwinrc --group ModifierOnlyShortcuts --key Meta "org.kde.lattedock,/Latte,org.kde.LatteDock,activateLauncherMenu" && qdbus org.kde.KWin /KWin reconfigure
 
