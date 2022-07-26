@@ -83,6 +83,10 @@ flatpak install flathub org.DolphinEmu.dolphin-emu -y
 flatpak install flathub net.pcsx2.PCSX2 -y
 flatpak install flathub org.polymc.PolyMC -y
 
+# Install some Proton related stuff (for game compatibility)
+flatpak install flathub com.github.Matoking.protontricks -y
+flatpak install flathub net.davidotek.pupgui2 -y
+
 # Install a Soundboard Application, for micspamming in Team Fortress 2 servers, of course! ;-)
 sudo dnf copr enable rivenirvana/soundux -y && sudo dnf install soundux -y
 
