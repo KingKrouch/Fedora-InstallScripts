@@ -219,6 +219,10 @@ sudo dnf install latte-dock qt -y
 sudo dnf copr enable capucho/bismuth -y  && sudo dnf install bismuth -y
 kwriteconfig5 --file ~/.config/kwinrc --group ModifierOnlyShortcuts --key Meta "org.kde.lattedock,/Latte,org.kde.LatteDock,activateLauncherMenu" && qdbus org.kde.KWin /KWin reconfigure
 
+# Installs the widgets needed for latte-dock and the desktop environment.
+wget https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/Plasmoids.zip
+unzip ./Plasmoids.zip -d ~/.local/share/plasma/plasmoids/ && rm -rf ./Plasmoids.zip
+
 # Install Input-Remapper (For Razer Tartarus Pro)
 sudo dnf install python3-evdev python3-devel gtksourceview4 python3-pydantic python-pydbus xmodmap -y
 sudo pip install evdev -U && sudo pip uninstall key-mapper  && sudo pip install --no-binary :all: git+https://github.com/sezanzeb/input-remapper.git
