@@ -174,6 +174,9 @@ sudo dnf install python3-vdf yad xdotool -y
 # Install a hex editor
 sudo dnf install okteta -y
 
+# Install GitHub Desktop
+flatpak install flathub io.github.shiftey.Desktop -y
+
 ## ///// DIGITAL CONTENT CREATION TOOLS /////
 
 # Install Clip Studio Paint (Via Wine)
