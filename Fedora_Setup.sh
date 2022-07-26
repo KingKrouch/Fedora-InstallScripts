@@ -16,6 +16,9 @@ sudo dnf group update core -y
 # Enable Flatpaks.
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo && flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
 
+# Enable GloriousEggroll's Fedora patches used in Nobara (for games like Halo Infinite)
+sudo dnf copr enable gloriouseggroll/mesa-aco -y && dnf copr enable sentry/kernel-fsync -y && sudo dnf update --refresh -y
+
 ## ///// TERMINAL STUFF /////
 
 # Install neofetch.
