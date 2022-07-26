@@ -200,7 +200,7 @@ echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2023/lib"" >> $HOME/.profile
 ## ///// GENERAL DESKTOP USAGE /////
 
 # Remove some KDE Plasma bloatware that comes installed for some reason.
-sudo dnf remove akregator dnfdragora kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kwalletmanager kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer gwenview kamoso kolourpaint krdc krfb -y
+sudo dnf remove akregator dnfdragora kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kwalletmanager kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer kamoso kolourpaint krdc krfb -y
 
 # Install notifications daemon.
 sudo dnf install notification-daemon -y
