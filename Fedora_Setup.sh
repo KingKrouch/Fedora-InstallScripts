@@ -35,16 +35,12 @@ sudo dnf install exa lsd -y
 sudo dnf install zsh -y && chsh -s $(which zsh) && sudo chsh -s $(which zsh)
 sudo dnf install git -y && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
 
-# alias "dir" to "ls -lsh" for my sanity.
-echo "alias dir='ls -lsh'" >> ~/.zshrc
-echo "alias dir='ls -lsh'" >> ~/.bashrc
-
 # Append exa and lsd aliases, and neofetch alias to both the bashrc and zshrc.
 echo "if [ -x /usr/bin/lsd ]; then
   alias ls='lsd'
-  alias dir='ls -l'
-  alias lah='ls -lah'
-  alias lt='ls --tree'
+  alias dir='lsd -l'
+  alias lah='lsd -lah'
+  alias lt='lsd --tree'
 fi" >> tee -a ~/.bashrc ~/.zshrc
 echo "alias neofetch='neofetch --ascii ~/.config/neofetch/rog.ascii'
 neofetch" >> tee -a ~/.bashrc ~/.zshrc
