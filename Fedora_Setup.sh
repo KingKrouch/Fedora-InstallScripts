@@ -289,6 +289,8 @@ sudo dnf install filelight -y
 # Install Mullvad VPN.
 sudo dnf install https://mullvad.net/media/app/MullvadVPN-2022.1_x86_64.rpm -y
 
+# Install Java
+sudo dnf install java -y
 
 ## ///// MEDIA CODECS AND SUCH /////
 
