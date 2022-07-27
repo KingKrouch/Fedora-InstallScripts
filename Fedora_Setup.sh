@@ -3,7 +3,7 @@
 ## ///// THE ABSOLUTE BASICS /////
 
 # Automatically Configure DNF to be a bit faster, and gives the changes a test drive.
-sudo bash -c 'echo 'fastestmirror=True' >> /etc/dnf/dnf.conf && echo 'max_parallel_downloads=10' >> /etc/dnf/dnf.conf && echo 'defaultyes=True' >> /etc/dnf/dnf.conf'
+sudo bash -c 'echo 'max_parallel_downloads=10' >> /etc/dnf/dnf.conf && echo 'defaultyes=True' >> /etc/dnf/dnf.conf'
 sudo dnf update -y
 
 # Disable NetworkManager Wait Service (due to long boot times).
