@@ -183,8 +183,8 @@ sudo dnf install okteta -y
 # Install GitHub Desktop
 flatpak install flathub io.github.shiftey.Desktop -y
 
-# Install .NET Runtime/SDK (for Rider and C# applications)
-sudo dnf install dotnet -y
+# Install .NET Runtime/SDK and Mono (for Rider and C# applications)
+sudo dnf install dotnet mono-devel -y
 
 ## ///// DIGITAL CONTENT CREATION TOOLS /////
 
