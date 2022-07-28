@@ -183,6 +183,9 @@ sudo dnf install okteta -y
 # Install GitHub Desktop
 flatpak install flathub io.github.shiftey.Desktop -y
 
+# Install .NET Runtime/SDK (for Rider and C# applications)
+sudo dnf install dotnet -y
+
 ## ///// DIGITAL CONTENT CREATION TOOLS /////
 
 # Install Clip Studio Paint (Via Wine)
