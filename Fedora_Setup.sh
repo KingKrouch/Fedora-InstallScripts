@@ -211,6 +211,10 @@ echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2023/lib"" >> $HOME/.profile
 
 ## ///// GENERAL DESKTOP USAGE /////
 
+# Remove system version of Firefox and replace with the more recently updated Flatpak variant.
+sudo dnf remove firefox -y
+flatpak install flathub org.mozilla.firefox -y
+
 # Remove some KDE Plasma bloatware that comes installed for some reason.
 sudo dnf remove akregator dnfdragora kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kwalletmanager kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer kamoso kolourpaint krdc krfb -y
 
