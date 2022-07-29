@@ -259,6 +259,15 @@ flatpak install flathub com.obsproject.Studio -y
 flatpak install com.obsproject.Studio.Plugin.Gstreamer org.freedesktop.Platform.GStreamer.gstreamer-vaapi -y
 flatpak install org.freedesktop.Platform.VulkanLayer.OBSVkCapture com.obsproject.Studio.Plugin.OBSVkCapture -y
 
+# Installs the needed hooks to get vkcapture in OBS to work.
+sudo dnf install obs-studio-devel obs-studio-libs -y
+git clone https://github.com/nowrep/obs-vkcapture && cd obs-vkcapture
+mkdir build && cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib ..
+make && make install
+cd .. && cd .. & sudo rm -rf obs-vkcapture
+
+
 # Install some Flatpaks that I personally use.
 flatpak install flathub io.github.spacingbat3.webcord -y # Using Webcord instead of Discord because it barely fucking works in Wayland.
 flatpak install flathub org.libreoffice.LibreOffice -y
