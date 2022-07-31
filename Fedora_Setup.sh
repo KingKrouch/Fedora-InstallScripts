@@ -213,8 +213,8 @@ echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2023/lib"" >> $HOME/.profile
 sudo dnf remove firefox -y
 flatpak install flathub org.mozilla.firefox -y
 
-# Install Pop Shell, GNOME Tweaks, GSConnect
-sudo dnf install pop-shell gnome-tweaks nautilus-python -y
+# Install Pop Shell, GNOME Tweaks, Dash to Dock, and GSConnect
+sudo dnf install pop-shell gnome-tweaks gnome-shell-extension-dash-to-dock nautilus-python -y
 
 # Install Input-Remapper (For Razer Tartarus Pro)
 sudo dnf install python3-evdev python3-devel gtksourceview4 python3-pydantic python-pydbus xmodmap -y
