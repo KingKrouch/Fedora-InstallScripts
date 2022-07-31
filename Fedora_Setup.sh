@@ -66,11 +66,6 @@ fc-cache -fv
 wget https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/bin/scripts/lib/i_linux.sh -P ~/.local/share/fonts/
 source ~/.local/share/fonts/i_linux.sh
 
-# Finally, Set up Konsole with my custom profiles
-wget -O ~/.local/share/konsole/Breeze.colorscheme https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.local/share/konsole/Breeze.colorscheme
-wget -O ~/.local/share/konsole/Konsole.profile https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.local/share/konsole/Konsole.profile
-wget -O ~/.config/konsolerc https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/konsolerc
-
 ## ///// GAMING AND GAMING TWEAKS /////
 
 # Install Steam and Steam-Devices.
@@ -218,17 +213,8 @@ echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2023/lib"" >> $HOME/.profile
 sudo dnf remove firefox -y
 flatpak install flathub org.mozilla.firefox -y
 
-# Remove some KDE Plasma bloatware that comes installed for some reason.
-sudo dnf remove akregator dnfdragora kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kwalletmanager kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer kamoso kolourpaint krdc krfb -y
-
-# Install notifications daemon.
-sudo dnf install notification-daemon -y
-
-# Install Breeze-GTK theme, which isn't included in the KDE installation process.
-sudo dnf install breeze-gtk -y
-
-## Install the tiled window management KWin plugin, Bismuth.
-sudo dnf copr enable capucho/bismuth -y  && sudo dnf install bismuth qt -y
+# Install Pop Shell, GNOME Tweaks, GSConnect
+sudo dnf install pop-shell gnome-tweaks nautilus-python -y
 
 # Install Input-Remapper (For Razer Tartarus Pro)
 sudo dnf install python3-evdev python3-devel gtksourceview4 python3-pydantic python-pydbus xmodmap -y
@@ -287,12 +273,6 @@ sudo dnf install kdenlive -y
 # Install and Setup OneDrive.
 sudo dnf install onedrive -y && sudo systemctl stop onedrive@$USER.service && sudo systemctl disable onedrive@$USER.service && systemctl --user enable onedrive && systemctl --user start onedrive
 echo "Make sure to run onedrive --synchronize when you can."
-
-# Install archive manager.
-sudo dnf install ark -y
-
-# Install Filelight as an alternative to WinDirStat
-sudo dnf install filelight -y
 
 # Install Mullvad VPN.
 sudo dnf install https://mullvad.net/media/app/MullvadVPN-2022.1_x86_64.rpm -y
