@@ -71,6 +71,11 @@ source ~/.local/share/fonts/i_linux.sh
 # Install Steam and Steam-Devices.
 sudo dnf install steam steam-devices -y
 
+# Install some useful scripts for SteamVR.
+sudo dnf install python3-bluepy python3-yaml python3-psutil -y
+git clone https://github.com/DavidRisch/steamvr_utils.git -b iss15_fix_v2_interface
+python3 ./steamvr_utils/scripts/install.py
+
 # Install some game launcher and emulator Flatpaks.
 flatpak install flathub-beta com.heroicgameslauncher.hgl -y
 flatpak install flathub net.rpcs3.RPCS3 -y
@@ -148,7 +153,7 @@ sudo systemctl enable sshd && sudo systemctl start sshd
 sudo dnf install kernel-devel -y
 
 # Set up Unity Hub and Jetbrains
-sudo sh -c 'echo -e "[unityhub]\nname=Unity Hub\nbaseurl=https://hub.unity3d.com/linux/repos/rpm/stable\nenabled=1\ngpgcheck=1\ngpgkey=https://hub.unity3d.com/linux/repos/rpm/stable/repodata/repomd.xml.key\nrepo_gpgcheck=1" > /etc/yum.repos.d/unityhub.repo' && sudo yum check-update && sudo yum install unityhub -y
+sudo sh -c 'echo -e "[unityhub]\nname=Unity Hub\nbaseurl=https://hub.unity3d.com/linux/repos/rpm/stable\nenabled=1\ngpgcheck=1\ngpgkey=https://hub.unity3d.com/linux/repos/rpm/stable/repodata/repomd.xml.key\nrepo_gpgcheck=1" > /etc/yum.repos.d/unityhub.repo' && sudo yum check-update && sudo yum install unityhub -y && sudo dnf install GConf2 -y
 mkdir $HOME/Applications && cd $HOME/Applications && wget -O jetbrains-toolbox.tar.gz https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.24.11947.tar.gz && tar xvzf jetbrains-toolbox.tar.gz && cd .. && echo "Make sure to remove the 'jetbrains-toolbox' executable from the extracted folder before running!"
 
 # Install Epic Asset Manager (For Unreal Engine)
@@ -212,6 +217,9 @@ echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2023/lib"" >> $HOME/.profile
 # Remove system version of Firefox and replace with the more recently updated Flatpak variant.
 sudo dnf remove firefox -y
 flatpak install flathub org.mozilla.firefox -y
+
+# Install Warpinator for file transfers.
+flatpak install flathub org.x.Warpinator -y
 
 # Install Pop Shell, GNOME Tweaks, Dash to Dock, and GSConnect
 sudo dnf install pop-shell gnome-tweaks gnome-shell-extension-dash-to-dock nautilus-python -y
