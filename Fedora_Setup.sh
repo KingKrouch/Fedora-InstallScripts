@@ -36,7 +36,7 @@ sudo dnf install exa lsd -y
 
 # Install zsh, alongside setting up oh-my-zsh.
 sudo dnf install zsh -y && chsh -s $(which zsh) && sudo chsh -s $(which zsh)
-sudo dnf install git -y && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
+sudo dnf install git git-lfs -y && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
 
 # Append exa and lsd aliases, and neofetch alias to both the bashrc and zshrc.
 echo "if [ -x /usr/bin/lsd ]; then
