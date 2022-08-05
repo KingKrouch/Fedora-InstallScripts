@@ -222,7 +222,7 @@ flatpak install flathub org.mozilla.firefox -y
 flatpak install flathub org.x.Warpinator -y
 
 # Install Pop Shell, GNOME Tweaks, Dash to Dock, and GSConnect
-sudo dnf install pop-shell gnome-tweaks gnome-shell-extension-dash-to-dock nautilus-python -y
+sudo dnf install pop-shell gnome-tweaks gnome-shell-extension-dash-to-dock breeze-cursor-theme nautilus-python -y
 
 # Install Input-Remapper (For Razer Tartarus Pro)
 sudo dnf install python3-evdev python3-devel gtksourceview4 python3-pydantic python-pydbus xmodmap -y
