@@ -66,6 +66,10 @@ fc-cache -fv
 wget https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/bin/scripts/lib/i_linux.sh -P ~/.local/share/fonts/
 source ~/.local/share/fonts/i_linux.sh
 
+# Remove GNOME-Terminal and install BlackBox GTK Terminal instead.
+flatpak install flathub com.raggesilver.BlackBox -y
+sudo dnf remove gnome-terminal gnome-terminal-nautilus -y
+
 ## ///// GAMING AND GAMING TWEAKS /////
 
 # Install Steam and Steam-Devices.
