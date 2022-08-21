@@ -206,6 +206,13 @@ echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2023/lib"" >> $HOME/.profile
 
 ## ///// GENERAL DESKTOP USAGE /////
 
+## Install the tiled window management KWin plugin, Bismuth.
+sudo dnf copr enable capucho/bismuth -y  && sudo dnf install bismuth qt -y
+
+## Use Firefox Flatpak (As it's more recent).
+sudo dnf remove firefox -y
+flatpak install flathub org.mozilla.firefox -y
+
 # Install Warpinator for file transfers.
 flatpak install flathub org.x.Warpinator -y
 
