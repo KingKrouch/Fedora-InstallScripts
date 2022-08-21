@@ -40,6 +40,8 @@ sudo dnf copr enable gloriouseggroll/game-utils -y && sudo dnf install gamescope
 git clone https://github.com/GloriousEggroll/amdgpu-pro-vulkan-fedora && cd amdgpu-pro-vulkan-fedora && ./install.sh && cd ..
 git clone https://github.com/GloriousEggroll/amdgpu-pro-amf-fedora && cd amdgpu-pro-amf-fedora && ./install.sh && cd ..
 
+# For AMF encoding you may need to launch OBS using "vk_pro flatpak run com.obsproject.Studio", and for games you may need to use "vk_radv %command%" to use Mesa.
+# May need to figure out the best approach to install StreamFX's latest release into the "~/.var/app/com.obsproject.Studio/config/obs-studio/" directory.
 
 # WIP FreeSync toggle for X11 mode for AMD, needs some fixing.
 #echo "#Section "Device"
