@@ -22,7 +22,7 @@ flatpak install flathub com.github.tchx84.Flatseal -y
 # Change the Swappiness level (for performance reasons) from 60 to 10
 echo "vm.swappiness=1" | sudo tee -a /etc/sysctl.conf
 
-## ///// NOBARA PATCHES /////
+## ///// NOBARA PATCHES (Without the branding) /////
 
 # Enable FSync patched Kernel (Included with Nobara)
 sudo dnf copr enable sentry/kernel-fsync -y && sudo dnf update --refresh -y
@@ -35,6 +35,11 @@ sudo dnf copr enable gloriouseggroll/amdgpu-vulkan-switcher -y && sudo dnf insta
 
 # Set up Game Utils (Included with Nobara)
 sudo dnf copr enable gloriouseggroll/game-utils -y && sudo dnf install gamescope goverlay libliftoff lpf-xone-firmware mangohud vkBasalt winetricks wlroots xone xpadneo -y
+
+# Set up AMDGPU-Pro and AMF.
+git clone https://github.com/GloriousEggroll/amdgpu-pro-vulkan-fedora && cd amdgpu-pro-vulkan-fedora && ./install.sh && cd ..
+git clone https://github.com/GloriousEggroll/amdgpu-pro-amf-fedora && cd amdgpu-pro-amf-fedora && ./install.sh && cd ..
+
 
 # WIP FreeSync toggle for X11 mode for AMD, needs some fixing.
 #echo "#Section "Device"
