@@ -29,6 +29,9 @@ echo "vm.swappiness=1" | sudo tee -a /etc/sysctl.conf
      #Option "VariableRefresh" "true"
 #EndSection" | sudo tee -a /etc/X11/xorg.conf.d/20-amdgpu.conf
 
+# Update using DNF Distro-Sync
+sudo dnf distro-sync -y
+
 ## ///// TERMINAL STUFF /////
 
 # Install neofetch.
