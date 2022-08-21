@@ -19,11 +19,22 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 # Set up Flatseal for Flatpak permissions
 flatpak install flathub com.github.tchx84.Flatseal -y
 
-# Enable GloriousEggroll's Fedora patches used in Nobara
-sudo dnf copr enable sentry/kernel-fsync -y && sudo dnf update --refresh -y
-
 # Change the Swappiness level (for performance reasons) from 60 to 10
 echo "vm.swappiness=1" | sudo tee -a /etc/sysctl.conf
+
+## ///// NOBARA PATCHES /////
+
+# Enable FSync patched Kernel (Included with Nobara)
+sudo dnf copr enable sentry/kernel-fsync -y && sudo dnf update --refresh -y
+
+# Set up Radeon Open Compute Stack/Modules for Blender (Included with Nobara) (May need to add the priority line separately using nano if it fails)
+sudo usermod $USER -aG render && sudo usermod $USER -aG video && sudo dnf copr enable cosmicfusion/ROCm-GFX8P -y && sudo echo 'priority=1' >> /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:cosmicfusion:ROCm-GFX8P.repo && sudo dnf install rocm-core rocm-hip-runtime rocm-hip-runtime-devel -y
+
+# Set up AMDGPU Vulkan Switcher (Included with Nobara)
+sudo dnf copr enable gloriouseggroll/amdgpu-vulkan-switcher -y && sudo dnf install amdgpu-vulkan-switcher -y
+
+# Set up Game Utils (Included with Nobara)
+sudo dnf copr enable gloriouseggroll/game-utils -y && sudo dnf install gamescope goverlay libliftoff lpf-xone-firmware mangohud vkBasalt winetricks wlroots xone xpadneo -y
 
 # WIP FreeSync toggle for X11 mode for AMD, needs some fixing.
 #echo "#Section "Device"
