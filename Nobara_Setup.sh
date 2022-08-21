@@ -22,27 +22,6 @@ flatpak install flathub com.github.tchx84.Flatseal -y
 # Change the Swappiness level (for performance reasons) from 60 to 10
 echo "vm.swappiness=1" | sudo tee -a /etc/sysctl.conf
 
-## ///// NOBARA PATCHES (Without the branding) /////
-
-# Enable FSync patched Kernel (Included with Nobara)
-sudo dnf copr enable sentry/kernel-fsync -y && sudo dnf update --refresh -y
-
-# Set up Radeon Open Compute Stack/Modules for Blender (Included with Nobara) (May need to add the priority line separately using nano if it fails)
-sudo usermod $USER -aG render && sudo usermod $USER -aG video && sudo dnf copr enable cosmicfusion/ROCm-GFX8P -y && sudo echo 'priority=1' >> /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:cosmicfusion:ROCm-GFX8P.repo && sudo dnf install rocm-core rocm-hip-runtime rocm-hip-runtime-devel -y
-
-# Set up AMDGPU Vulkan Switcher (Included with Nobara)
-sudo dnf copr enable gloriouseggroll/amdgpu-vulkan-switcher -y && sudo dnf install amdgpu-vulkan-switcher -y
-
-# Set up Game Utils (Included with Nobara)
-sudo dnf copr enable gloriouseggroll/game-utils -y && sudo dnf install gamescope goverlay libliftoff lpf-xone-firmware mangohud vkBasalt winetricks wlroots xone xpadneo -y
-
-# Set up AMDGPU-Pro and AMF.
-git clone https://github.com/GloriousEggroll/amdgpu-pro-vulkan-fedora && cd amdgpu-pro-vulkan-fedora && ./install.sh && cd ..
-git clone https://github.com/GloriousEggroll/amdgpu-pro-amf-fedora && cd amdgpu-pro-amf-fedora && ./install.sh && cd ..
-
-# For AMF encoding you may need to launch OBS using "vk_pro flatpak run com.obsproject.Studio", and for games you may need to use "vk_radv %command%" to use Mesa.
-# May need to figure out the best approach to install StreamFX's latest release into the "~/.var/app/com.obsproject.Studio/config/obs-studio/" directory.
-
 # WIP FreeSync toggle for X11 mode for AMD, needs some fixing.
 #echo "#Section "Device"
      #Identifier "AMD"
@@ -53,7 +32,7 @@ git clone https://github.com/GloriousEggroll/amdgpu-pro-amf-fedora && cd amdgpu-
 ## ///// TERMINAL STUFF /////
 
 # Install neofetch.
-sudo dnf install neofetch -y
+sudo dnf install neofetch -y && mkdir ~/.config/neofetch
 
 # Set up neofetch with my preferred configuration.
 wget -O ~/.config/neofetch/config.conf https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/neofetch/config.conf
@@ -94,14 +73,7 @@ fc-cache -fv
 wget https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/bin/scripts/lib/i_linux.sh -P ~/.local/share/fonts/
 source ~/.local/share/fonts/i_linux.sh
 
-# Remove GNOME-Terminal and install BlackBox GTK Terminal instead.
-flatpak install flathub com.raggesilver.BlackBox -y
-sudo dnf remove gnome-terminal gnome-terminal-nautilus -y
-
 ## ///// GAMING AND GAMING TWEAKS /////
-
-# Install Steam and Steam-Devices.
-sudo dnf install steam steam-devices -y
 
 # Install some useful scripts for SteamVR.
 sudo dnf install python3-bluepy python3-yaml python3-psutil -y
@@ -127,16 +99,7 @@ flatpak install flathub net.davidotek.pupgui2 -y
 # Install a Soundboard Application, for micspamming in Team Fortress 2 servers, of course! ;-)
 sudo dnf copr enable rivenirvana/soundux -y && sudo dnf install soundux -y
 
-# Install MangoHud with GOverlay, alongside Gamescope and vkBasalt.
-sudo dnf install goverlay -y && sudo dnf install vkBasalt -y && sudo dnf install gamescope -y
-
-# Install gamemode alongside enabling the gamemode service.
-sudo dnf install gamemode -y && systemctl --user enable gamemoded && systemctl --user start gamemoded
-
 ## ///// WINE AND WINDOWS SOFTWARE /////
-
-# Install Wine
-sudo dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/36/winehq.repo -y && sudo dnf install wine -y && sudo dnf install winetricks -y
 
 # Set up some prerequisites for Wine.
 sudo dnf install cabextract samba-winbind*.x86_64 samba-winbind*.i686 -y && sudo dnf install cabextract -y
@@ -167,9 +130,6 @@ git clone https://github.com/z0z0z/mf-install && cd mf-install
 WINEPREFIX="/home/$USER/.wine" ./mf-install.sh
 cd .. && rm -rf mf-install
 
-# Remove DOSBox Staging, which WINE installs for some dumb reason.
-sudo dnf remove dosbox-staging -y
-
 ## //// NETWORKING STUFF /////
 
 # Set up Samba
@@ -195,7 +155,7 @@ flatpak install flathub io.github.achetagames.epic_asset_manager -y
 sudo dnf install docker -y
 
 # Install MinGW64, CMake, Ninja Build
-sudo dnf install mingw64-\* cmake ninja-build -y
+sudo dnf install mingw64-\* cmake ninja-build -y --skip-broken
 
 # Install Ghidra.
 flatpak install flathub org.ghidra_sre.Ghidra -y && sudo flatpak override org.ghidra_sre.Ghidra --filesystem=/mnt
@@ -246,15 +206,11 @@ echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2023/lib"" >> $HOME/.profile
 
 ## ///// GENERAL DESKTOP USAGE /////
 
-# Remove system version of Firefox and replace with the more recently updated Flatpak variant.
-sudo dnf remove firefox -y
-flatpak install flathub org.mozilla.firefox -y
-
 # Install Warpinator for file transfers.
 flatpak install flathub org.x.Warpinator -y
 
-# Install Pop Shell, GNOME Tweaks, Dash to Dock, and GSConnect
-sudo dnf install pop-shell gnome-tweaks gnome-shell-extension-dash-to-dock breeze-cursor-theme nautilus-python -y
+# Remove some KDE Plasma bloatware that comes installed for some reason.
+sudo dnf remove akregator dnfdragora kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer kamoso kolourpaint krdc krfb -y
 
 # Install Input-Remapper (For Razer Tartarus Pro)
 sudo dnf install python3-evdev python3-devel gtksourceview4 python3-pydantic python-pydbus xmodmap -y
@@ -265,12 +221,6 @@ sudo systemctl enable input-remapper && sudo systemctl restart input-remapper
 echo "options hid_apple fnmode=2" | sudo tee /etc/modprobe.d/hid_apple.conf
 sudo dracut --regenerate-all –force
 
-# Set up FireFox PWA support.
-sudo rpm --import https://packagecloud.io/filips/FirefoxPWA/gpgkey
-echo -e "[firefoxpwa]\nname=FirefoxPWA\nmetadata_expire=300\nbaseurl=https://packagecloud.io/filips/FirefoxPWA/rpm_any/rpm_any/\$basearch\ngpgkey=https://packagecloud.io/filips/FirefoxPWA/gpgkey\nrepo_gpgcheck=1\ngpgcheck=0\nenabled=1" | sudo tee /etc/yum.repos.d/firefoxpwa.repo
-sudo dnf -q makecache -y --disablerepo="*" --enablerepo="firefoxpwa"
-sudo dnf install firefoxpwa -y
-
 # Install OpenRGB and set up Razer periphreals with OpenRazer and RazerGenie. (Requires being installed later, due to Kernel-Devel being in the Development Section.)
 sudo modprobe i2c-dev && sudo modprobe i2c-piix4 && sudo dnf install https://openrgb.org/releases/release_0.7/openrgb_0.7_x86_64_6128731.rpm -y
 sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/hardware:razer/Fedora_35/hardware:razer.repo && sudo dnf install openrazer-meta -y && sudo dnf install razergenie -y && sudo gpasswd -a $USER plugdev
@@ -278,27 +228,9 @@ sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/ha
 # Install CoreCtrl for CPU power management purposes.
 sudo dnf install corectrl -y
 
-# Install OBS Studio.
-flatpak install flathub com.obsproject.Studio -y
-
-# Install GStreamer Plugin for OBS Studio, alongside some plugins.
-flatpak install com.obsproject.Studio.Plugin.Gstreamer org.freedesktop.Platform.GStreamer.gstreamer-vaapi -y
-flatpak install org.freedesktop.Platform.VulkanLayer.OBSVkCapture com.obsproject.Studio.Plugin.OBSVkCapture -y
-
-# Installs the needed hooks to get vkcapture in OBS to work.
-sudo dnf install obs-studio-devel obs-studio-libs -y
-git clone https://github.com/nowrep/obs-vkcapture && cd obs-vkcapture
-mkdir build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib ..
-make && make install
-cd .. && cd .. & sudo rm -rf obs-vkcapture
-
-
 # Install some Flatpaks that I personally use.
 flatpak install flathub io.github.spacingbat3.webcord -y # Using Webcord instead of Discord because it barely fucking works in Wayland.
-flatpak install flathub org.libreoffice.LibreOffice -y
 flatpak install flathub org.gimp.GIMP -y
-flatpak install flathub org.blender.Blender -y
 flatpak install flathub org.mozilla.Thunderbird -y
 flatpak install flathub org.qbittorrent.qBittorrent -y
 
@@ -306,9 +238,6 @@ flatpak install flathub org.qbittorrent.qBittorrent -y
 mkdir -p ~/.config/user-tmpfiles.d
 echo 'L %t/discord-ipc-0 - - - - app/com.discordapp.Discord/discord-ipc-0' > ~/.config/user-tmpfiles.d/discord-rpc.conf
 systemctl --user enable --now systemd-tmpfiles-setup.service
-
-# Install a basic video editor for now. No, I'm not going to use DaVinci Resolve after trying it. Don't ask me about it.
-sudo dnf install kdenlive -y
 
 # Install and Setup OneDrive.
 sudo dnf install onedrive -y && sudo systemctl stop onedrive@$USER.service && sudo systemctl disable onedrive@$USER.service && systemctl --user enable onedrive && systemctl --user start onedrive
