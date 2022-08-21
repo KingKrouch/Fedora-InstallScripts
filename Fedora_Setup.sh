@@ -19,8 +19,11 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 # Set up Flatseal for Flatpak permissions
 flatpak install flathub com.github.tchx84.Flatseal -y
 
-# Enable GloriousEggroll's Fedora patches used in Nobara (for games like Halo Infinite)
-sudo dnf copr enable gloriouseggroll/mesa-aco -y && dnf copr enable sentry/kernel-fsync -y && sudo dnf update --refresh -y
+# Enable GloriousEggroll's Fedora patches used in Nobara
+sudo dnf copr enable sentry/kernel-fsync -y && sudo dnf update --refresh -y
+
+# Change the Swappiness level (for performance reasons) from 60 to 10
+echo "vm.swappiness=1" | sudo tee -a /etc/sysctl.conf
 
 ## ///// TERMINAL STUFF /////
 
