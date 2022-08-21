@@ -25,6 +25,13 @@ sudo dnf copr enable sentry/kernel-fsync -y && sudo dnf update --refresh -y
 # Change the Swappiness level (for performance reasons) from 60 to 10
 echo "vm.swappiness=1" | sudo tee -a /etc/sysctl.conf
 
+# WIP FreeSync toggle for X11 mode for AMD, needs some fixing.
+#echo "#Section "Device"
+     #Identifier "AMD"
+     #Driver "amdgpu"
+     #Option "VariableRefresh" "true"
+#EndSection" | sudo tee -a /etc/X11/xorg.conf.d/20-amdgpu.conf
+
 ## ///// TERMINAL STUFF /////
 
 # Install neofetch.
