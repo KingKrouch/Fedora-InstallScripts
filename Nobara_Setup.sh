@@ -200,6 +200,75 @@ sudo mkdir -p /etc/libvirt/hooks
 sudo wget 'https://raw.githubusercontent.com/PassthroughPOST/VFIO-Tools/master/libvirt_hooks/qemu' -O /etc/libvirt/hooks/qemu
 sudo chmod +x /etc/libvirt/hooks/qemu
 
+# Make the directories for our VM Release/Prepare Scripts
+sudo mkdir '/etc/libvirt/hooks/qemu.d'
+sudo mkdir '/etc/libvirt/hooks/qemu.d/Win11' && sudo mkdir '/etc/libvirt/hooks/qemu.d/Win11/prepare' && sudo mkdir '/etc/libvirt/hooks/qemu.d/Win11/prepare/begin' && sudo mkdir '/etc/libvirt/hooks/qemu.d/Win11/release' && sudo mkdir '/etc/libvirt/hooks/qemu.d/Win11/release/end'
+
+sudo echo -e "#!/bin/bash
+set -x
+
+# Stop display manager
+systemctl stop display-manager
+# rc-service xdm stop
+    
+# Unbind VTconsoles: might not be needed
+echo 0 > /sys/class/vtconsole/vtcon0/bind
+echo 0 > /sys/class/vtconsole/vtcon1/bind
+
+# Unbind EFI Framebuffer
+echo efi-framebuffer.0 > /sys/bus/platform/drivers/efi-framebuffer/unbind
+
+# Unload NVIDIA kernel modules
+modprobe -r nvidia_drm nvidia_modeset nvidia_uvm nvidia
+
+# Unload AMD kernel module
+# modprobe -r amdgpu
+
+# Detach GPU devices from host
+# Use your GPU and HDMI Audio PCI host device
+virsh nodedev-detach pci_0000_01_00_0
+virsh nodedev-detach pci_0000_01_00_1
+
+# Load vfio module
+modprobe vfio-pci
+" >> '/etc/libvirt/hooks/qemu.d/Win11/prepare/begin/start.sh'
+sudo chmod +x '/etc/libvirt/hooks/qemu.d/Win11/prepare/begin/start.sh'
+
+
+sudo echo -e "#!/bin/bash
+set -x
+
+# Unload vfio module
+modprobe -r vfio-pci
+
+# Attach GPU devices to host
+# Use your GPU and HDMI Audio PCI host device
+virsh nodedev-reattach pci_0000_01_00_0
+virsh nodedev-reattach pci_0000_01_00_1
+
+# Rebind framebuffer to host
+echo "efi-framebuffer.0" > /sys/bus/platform/drivers/efi-framebuffer/bind
+
+# Load NVIDIA kernel modules
+modprobe nvidia_drm
+modprobe nvidia_modeset
+modprobe nvidia_uvm
+modprobe nvidia
+
+# Load AMD kernel module
+# modprobe amdgpu
+    
+# Bind VTconsoles: might not be needed
+echo 1 > /sys/class/vtconsole/vtcon0/bind
+echo 1 > /sys/class/vtconsole/vtcon1/bind
+
+# Restart Display Manager
+systemctl start display-manager
+# rc-service xdm start
+" >> '/etc/libvirt/hooks/qemu.d/Win11/release/end/stop.sh'
+sudo chmod +x '/etc/libvirt/hooks/qemu.d/Win11/release/end/stop.sh'
+
+
 # Finally restart the Libvirt service.
 sudo systemctl restart libvirtd.service
 
