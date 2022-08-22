@@ -229,7 +229,7 @@ sudo systemctl enable input-remapper && sudo systemctl restart input-remapper
 
 # Fix Mac keyboard layout for Keychron K4.
 echo "options hid_apple fnmode=2" | sudo tee /etc/modprobe.d/hid_apple.conf
-sudo dracut --regenerate-all –force
+sudo dracut --regenerate-all -–force
 
 # Install OpenRGB and set up Razer periphreals with OpenRazer and RazerGenie. (Requires being installed later, due to Kernel-Devel being in the Development Section.)
 sudo modprobe i2c-dev && sudo modprobe i2c-piix4 && sudo dnf install https://openrgb.org/releases/release_0.7/openrgb_0.7_x86_64_6128731.rpm -y
