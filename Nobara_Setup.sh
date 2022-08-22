@@ -181,6 +181,21 @@ flatpak install flathub io.github.shiftey.Desktop -y
 # Install .NET Runtime/SDK and Mono (for Rider and C# applications)
 sudo dnf install dotnet mono-devel -y
 
+## ///// VIRTUALIZATION /////
+
+# Installs Virtual Machine related packages
+sudo dnf -y group install Virtualization -y
+
+# Set up GRUB Bootloader to use AMD IOMMU
+sudo grubby --update-kernel=ALL --args="amd_iommu=on iommu=pt"
+sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
+
+# Set up user permissions with libvirt
+sudo usermod -a -G libvirt $(whoami)
+sudo sed -i 's/#unix_sock_group = "libvirt"/unix_sock_group = "libvirt"/g' /etc/libvirt/libvirtd.conf
+sudo sed -i 's/#unix_sock_rw_perms = "0770"/unix_sock_rw_perms = "0770"/g' /etc/libvirt/libvirtd.conf
+sudo systemctl restart libvirtd.service
+
 ## ///// DIGITAL CONTENT CREATION TOOLS /////
 
 # Install Clip Studio Paint (Via Wine)
