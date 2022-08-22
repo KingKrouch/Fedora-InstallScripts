@@ -216,18 +216,18 @@ echo 0 > /sys/class/vtconsole/vtcon0/bind
 echo 0 > /sys/class/vtconsole/vtcon1/bind
 
 # Unbind EFI Framebuffer
-echo efi-framebuffer.0 > /sys/bus/platform/drivers/efi-framebuffer/unbind
+# echo efi-framebuffer.0 > /sys/bus/platform/drivers/efi-framebuffer/unbind
 
 # Unload NVIDIA kernel modules
 modprobe -r nvidia_drm nvidia_modeset nvidia_uvm nvidia
-
-# Unload AMD kernel module
-# modprobe -r amdgpu
 
 # Detach GPU devices from host
 # Use your GPU and HDMI Audio PCI host device
 virsh nodedev-detach pci_0000_01_00_0
 virsh nodedev-detach pci_0000_01_00_1
+
+# Unload AMD kernel module
+modprobe -r amdgpu
 
 # Load vfio module
 modprobe vfio-pci
@@ -247,7 +247,7 @@ virsh nodedev-reattach pci_0000_01_00_0
 virsh nodedev-reattach pci_0000_01_00_1
 
 # Rebind framebuffer to host
-echo "efi-framebuffer.0" > /sys/bus/platform/drivers/efi-framebuffer/bind
+#echo "efi-framebuffer.0" > /sys/bus/platform/drivers/efi-framebuffer/bind
 
 # Load NVIDIA kernel modules
 modprobe nvidia_drm
@@ -256,7 +256,7 @@ modprobe nvidia_uvm
 modprobe nvidia
 
 # Load AMD kernel module
-# modprobe amdgpu
+modprobe amdgpu
     
 # Bind VTconsoles: might not be needed
 echo 1 > /sys/class/vtconsole/vtcon0/bind
@@ -268,13 +268,8 @@ systemctl start display-manager
 " >> '/etc/libvirt/hooks/qemu.d/Win11/release/end/stop.sh'
 sudo chmod +x '/etc/libvirt/hooks/qemu.d/Win11/release/end/stop.sh'
 
-# Downloads our VBIOS (Keep in mind, I'm using an ASUS ROG STRIX RX 6700XT OC variant)
-sudo mkdir /etc/libvirt/vbios
-sudo wget -O /etc/libvirt/vbios/GPU.rom https://www.techpowerup.com/vgabios/230897/Asus.RX6700XT.12288.210301.rom
-
-# Finally give our VBIOs the needed permissions.
-sudo chmod -R 775 /etc/libvirt/vbios/GPU.rom
-sudo chown $(whoami):$(whoami) /etc/libvirt/vbios/GPU.rom
+# Download the RX 6700XT VBIOS that I use specifically (An ASUS ROG STRIX OC Edition)
+sudo mkdir /etc/libvirt/vbios && sudo wget -O /etc/libvirt/vbios/GPU.rom https://www.techpowerup.com/vgabios/230897/Asus.RX6700XT.12288.210301.rom
 
 # Finally restart the Libvirt service.
 sudo systemctl restart libvirtd.service
