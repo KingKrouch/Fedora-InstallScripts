@@ -268,6 +268,8 @@ systemctl start display-manager
 " >> '/etc/libvirt/hooks/qemu.d/Win11/release/end/stop.sh'
 sudo chmod +x '/etc/libvirt/hooks/qemu.d/Win11/release/end/stop.sh'
 
+# Download the RX 6700XT VBIOS that I use specifically (An ASUS ROG STRIX OC Edition)
+sudo mkdir /etc/libvirt/vbios && sudo wget -O /etc/libvirt/vbios/GPU.rom https://www.techpowerup.com/vgabios/230897/Asus.RX6700XT.12288.210301.rom
 
 # Finally restart the Libvirt service.
 sudo systemctl restart libvirtd.service
