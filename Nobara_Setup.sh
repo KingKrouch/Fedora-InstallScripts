@@ -187,7 +187,7 @@ sudo dnf install dotnet mono-devel -y
 sudo dnf -y group install Virtualization -y
 
 # Set up GRUB Bootloader to use AMD IOMMU
-sudo grubby --update-kernel=ALL --args="amd_iommu=on iommu=pt video=efifb:off"
+sudo grubby --update-kernel=ALL --args="amd_iommu=on iommu=pt video=vesafb:off,efifb:off"
 sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
 
 # Set up user permissions with libvirt
