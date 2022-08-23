@@ -187,7 +187,7 @@ sudo dnf install dotnet mono-devel -y
 sudo dnf -y group install Virtualization -y
 
 # Set up GRUB Bootloader to use AMD IOMMU
-sudo grubby --update-kernel=ALL --args="amd_iommu=on iommu=pt"
+sudo grubby --update-kernel=ALL --args="amd_iommu=on iommu=pt video=efifb:off"
 sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
 
 # Set up user permissions with libvirt
@@ -283,7 +283,8 @@ sudo echo -e "VIRSH_GPU_VIDEO=pci_0000_0a_00_0
 VIRSH_GPU_AUDIO=pci_0000_0a_00_1" >> '/etc/libvirt/hooks/kvm.conf'
 
 # Download the RX 6700XT VBIOS that I use specifically (An ASUS ROG STRIX OC Edition)
-sudo mkdir /etc/libvirt/vbios && sudo wget -O /etc/libvirt/vbios/GPU.rom https://www.techpowerup.com/vgabios/230897/Asus.RX6700XT.12288.210301.rom
+sudo wget -O ~/GPU.rom https://www.techpowerup.com/vgabios/230897/Asus.RX6700XT.12288.210301.rom
+sudo chmod -R 660 ~/GPU.rom && sudo chown $(whoami):$(whoami) ~/GPU.rom
 
 # Finally restart the Libvirt service.
 sudo systemctl restart libvirtd.service
