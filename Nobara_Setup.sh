@@ -205,68 +205,82 @@ sudo mkdir '/etc/libvirt/hooks/qemu.d'
 sudo mkdir '/etc/libvirt/hooks/qemu.d/Win11' && sudo mkdir '/etc/libvirt/hooks/qemu.d/Win11/prepare' && sudo mkdir '/etc/libvirt/hooks/qemu.d/Win11/prepare/begin' && sudo mkdir '/etc/libvirt/hooks/qemu.d/Win11/release' && sudo mkdir '/etc/libvirt/hooks/qemu.d/Win11/release/end'
 
 sudo echo -e "#!/bin/bash
+# Helpful to read output when debugging
 set -x
 
-# Stop display manager
-systemctl stop display-manager
-# rc-service xdm stop
-    
-# Unbind VTconsoles: might not be needed
+# Load the config file with our environmental variables
+source "/etc/libvirt/hooks/kvm.conf"
+
+# Stop your display manager. If youre on kde it ll be sddm.service. Gnome users should use killall gdm-x-session instead
+systemctl stop sddm.service
+pulse_pid=$(pgrep -u YOURUSERNAME pulseaudio)
+pipewire_pid=$(pgrep -u YOURUSERNAME pipewire-media)
+kill $pulse_pid
+kill $pipewire_pid
+
+# Unbind VTconsoles
 echo 0 > /sys/class/vtconsole/vtcon0/bind
 echo 0 > /sys/class/vtconsole/vtcon1/bind
 
-# Unbind EFI Framebuffer
-# echo efi-framebuffer.0 > /sys/bus/platform/drivers/efi-framebuffer/unbind
 
-# Unload NVIDIA kernel modules
-modprobe -r nvidia_drm nvidia_modeset nvidia_uvm nvidia
+# Avoid a race condition by waiting a couple of seconds. This can be calibrated to be shorter or longer if required for your system
+sleep 4
 
-# Detach GPU devices from host
-# Use your GPU and HDMI Audio PCI host device
-virsh nodedev-detach pci_0000_01_00_0
-virsh nodedev-detach pci_0000_01_00_1
+# Unload all Radeon drivers
 
-# Unload AMD kernel module
 modprobe -r amdgpu
+#modprobe -r gpu_sched
+#modprobe -r ttm
+#modprobe -r drm_kms_helper
+#modprobe -r i2c_algo_bit
+#modprobe -r drm
+#modprobe -r snd_hda_intel
 
-# Load vfio module
-modprobe vfio-pci
+# Unbind the GPU from display driver
+virsh nodedev-detach $VIRSH_GPU_VIDEO
+virsh nodedev-detach $VIRSH_GPU_AUDIO
+
+# Load VFIO kernel module
+modprobe vfio
+modprobe vfio_pci
+modprobe vfio_iommu_type1
 " >> '/etc/libvirt/hooks/qemu.d/Win11/prepare/begin/start.sh'
 sudo chmod +x '/etc/libvirt/hooks/qemu.d/Win11/prepare/begin/start.sh'
 
 
 sudo echo -e "#!/bin/bash
+# Helpful to read output when debugging
 set -x
 
-# Unload vfio module
-modprobe -r vfio-pci
+# Load the config file with our environmental variables
+source "/etc/libvirt/hooks/kvm.conf"
 
-# Attach GPU devices to host
-# Use your GPU and HDMI Audio PCI host device
-virsh nodedev-reattach pci_0000_01_00_0
-virsh nodedev-reattach pci_0000_01_00_1
+# Unload all the vfio modules
+modprobe -r vfio_pci
+modprobe -r vfio_iommu_type1
+modprobe -r vfio
 
-# Rebind framebuffer to host
-#echo "efi-framebuffer.0" > /sys/bus/platform/drivers/efi-framebuffer/bind
+# Reattach the gpu
+virsh nodedev-reattach $VIRSH_GPU_VIDEO
+virsh nodedev-reattach $VIRSH_GPU_AUDIO
 
-# Load NVIDIA kernel modules
-modprobe nvidia_drm
-modprobe nvidia_modeset
-modprobe nvidia_uvm
-modprobe nvidia
+# Load all Radeon drivers
 
-# Load AMD kernel module
-modprobe amdgpu
-    
-# Bind VTconsoles: might not be needed
-echo 1 > /sys/class/vtconsole/vtcon0/bind
-echo 1 > /sys/class/vtconsole/vtcon1/bind
+modprobe  amdgpu
+modprobe  gpu_sched
+modprobe  ttm
+modprobe  drm_kms_helper
+modprobe  i2c_algo_bit
+modprobe  drm
+modprobe  snd_hda_intel
 
-# Restart Display Manager
-systemctl start display-manager
-# rc-service xdm start
+#Start you display manager
+systemctl start sddm.service
 " >> '/etc/libvirt/hooks/qemu.d/Win11/release/end/stop.sh'
 sudo chmod +x '/etc/libvirt/hooks/qemu.d/Win11/release/end/stop.sh'
+
+sudo echo -e "VIRSH_GPU_VIDEO=pci_0000_0a_00_0
+VIRSH_GPU_AUDIO=pci_0000_0a_00_1" >> '/etc/libvirt/hooks/kvm.conf'
 
 # Download the RX 6700XT VBIOS that I use specifically (An ASUS ROG STRIX OC Edition)
 sudo mkdir /etc/libvirt/vbios && sudo wget -O /etc/libvirt/vbios/GPU.rom https://www.techpowerup.com/vgabios/230897/Asus.RX6700XT.12288.210301.rom
