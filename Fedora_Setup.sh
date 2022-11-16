@@ -76,6 +76,7 @@ python3 ./steamvr_utils/scripts/install.py
 
 # Install some game launcher and emulator Flatpaks.
 flatpak install flathub-beta com.heroicgameslauncher.hgl -y
+flatpak install flathub net.lutris.Lutris -y
 flatpak install flathub net.rpcs3.RPCS3 -y
 flatpak install flathub org.yuzu_emu.yuzu -y
 flatpak install flathub org.ryujinx.Ryujinx -y
