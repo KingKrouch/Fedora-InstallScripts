@@ -152,7 +152,7 @@ sudo dnf install obs-studio-devel obs-studio-libs -y
 git clone https://github.com/nowrep/obs-vkcapture && cd obs-vkcapture
 mkdir build && cd build
 cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib ..
-make && make install
+make && sudo make install
 cd .. && cd .. & sudo rm -rf obs-vkcapture
 
 ## ///// WINE AND WINDOWS SOFTWARE /////
