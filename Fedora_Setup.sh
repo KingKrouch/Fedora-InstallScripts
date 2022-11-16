@@ -48,16 +48,16 @@ sudo dnf install exa lsd -y
 sudo dnf install zsh -y && chsh -s $(which zsh) && sudo chsh -s $(which zsh)
 sudo dnf install git git-lfs -y && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
 
-# Setup icons-in-terminal (for ls-icons)
-git clone https://github.com/sebastiencs/icons-in-terminal.git && cd icons-in-terminal && ./install.sh && cd .. && sudo rm -rf icons-in-terminal
-
-# Setup ls-icons
-sudo dnf install autoconf automake xz bison gperf patch gettext-devel texinfo -y && git clone https://github.com/sebastiencs/ls-icons.git && cd ls-icons && ./bootstrap && export CC=clang CXX=clang++ && ./configure --prefix=/opt/coreutils && make && make install && cd .. && sudo rm -rf ls-icons
-
 ## Add nerd-fonts for Noto and SourceCodePro font families. This will just install everything together, but I give no fucks at this point, just want things a little easier to set up.
 git clone https://github.com/ryanoasis/nerd-fonts.git && cd nerd-fonts && ./install.sh && cd .. && sudo rm -rf nerd-fonts
 
-# Append neofetch alias to both the bashrc and zshrc.
+# Append exa and lsd aliases, and neofetch alias to both the bashrc and zshrc.
+echo "if [ -x /usr/bin/lsd ]; then
+  alias ls='lsd'
+  alias dir='lsd -l'
+  alias lah='lsd -lah'
+  alias lt='lsd --tree'
+fi" >> tee -a ~/.bashrc ~/.zshrc
 echo "alias neofetch='neofetch --ascii ~/.config/neofetch/rog.ascii'
 neofetch" >> tee -a ~/.bashrc ~/.zshrc
 
