@@ -173,15 +173,15 @@ rm vc_redist.x86.exe vc_redist.x64.exe NDP462-KB3151800-x86-x64-AllOS-ENU.exe
 winetricks dotnet48
 
 # Set up DXVK, VKD3D, and Media Foundation codecs to Wine.
-wget https://github.com/doitsujin/dxvk/releases/download/v1.10/dxvk-1.10.tar.gz
-tar -xzvf dxvk-1.10.tar.gz
-cd dxvk-1.10
+wget https://github.com/doitsujin/dxvk/releases/download/v2.0/dxvk-2.0.tar.gz
+tar -xzvf dxvk-2.0.tar.gz
+cd dxvk-2.0
 WINEPREFIX="/home/$USER/.wine" ./setup_dxvk.sh install
-cd .. && rm -rf dxvk-1.10 && rm dxvk-1.10.tar.gz
-wget https://github.com/HansKristian-Work/vkd3d-proton/releases/download/v2.6/vkd3d-proton-2.6.tar.zst
-tar --use-compress-program=unzstd -xvf vkd3d-proton-2.6.tar.zst && cd vkd3d-proton-2.6
+cd .. && rm -rf dxvk-2.0 && rm dxvk-2.0.tar.gz
+wget https://github.com/HansKristian-Work/vkd3d-proton/releases/download/v2.7/vkd3d-proton-2.7.tar.zst
+tar --use-compress-program=unzstd -xvf vkd3d-proton-2.7.tar.zst && cd vkd3d-proton-2.7
 WINEPREFIX="/home/$USER/.wine" ./setup_vkd3d_proton.sh install
-cd .. && rm -rf vkd3d-proton-2.6 && rm vkd3d-proton-2.6.tar.zst
+cd .. && rm -rf vkd3d-proton-2.7 && rm vkd3d-proton-2.7.tar.zst
 git clone https://github.com/z0z0z/mf-install && cd mf-install
 WINEPREFIX="/home/$USER/.wine" ./mf-install.sh
 cd .. && rm -rf mf-install
