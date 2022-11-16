@@ -66,6 +66,9 @@ sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/g' ~/.zshrc
 
 ## ///// GAMING AND GAMING TWEAKS /////
 
+# Install Steam and Steam-Devices.
+sudo dnf install steam steam-devices -y
+
 # Install some useful scripts for SteamVR.
 sudo dnf install python3-bluepy python3-yaml python3-psutil -y
 git clone https://github.com/DavidRisch/steamvr_utils.git -b iss15_fix_v2_interface
@@ -78,7 +81,7 @@ flatpak install flathub org.yuzu_emu.yuzu -y
 flatpak install flathub org.ryujinx.Ryujinx -y
 flatpak install flathub org.DolphinEmu.dolphin-emu -y
 flatpak install flathub net.pcsx2.PCSX2 -y
-flatpak install flathub org.polymc.PolyMC -y
+flatpak install flathub org.prismlauncher.PrismLauncher -y
 flatpak remote-add --if-not-exists launcher.moe https://gol.launcher.moe/gol.launcher.moe.flatpakrepo
 flatpak install launcher.moe com.gitlab.KRypt0n_.an-anime-game-launcher -y
 flatpak install flathub com.steamgriddb.steam-rom-manager -y
@@ -89,6 +92,46 @@ flatpak install flathub net.davidotek.pupgui2 -y
 
 # Install a Soundboard Application, for micspamming in Team Fortress 2 servers, of course! ;-)
 sudo dnf copr enable rivenirvana/soundux -y && sudo dnf install soundux -y
+
+# Install MangoHud with GOverlay, alongside Gamescope and vkBasalt.
+sudo dnf install goverlay -y && sudo dnf install vkBasalt -y && sudo dnf install gamescope -y
+
+# Update to a more recent version of Gamescope
+git clone https://github.com/Plagman/gamescope.git && cd gamescope
+sudo dnf install -y meson \
+cmake \
+libX11-devel \
+libXdamage-devel \
+libXcomposite-devel \
+libXrender-devel \
+libXext-devel \
+libXxf86vm-devel \
+libXtst-devel \
+libXres-devel \
+libdrm-devel \
+wayland-devel \
+wayland-protocols-devel \
+libxkbcommon-devel \
+libcap-devel \
+SDL2-devel \
+mesa-libgbm-devel \
+systemd-devel \
+pixman-devel \
+libinput-devel \
+libseat-devel \
+libxcb-devel \
+xcb-util-wm-devel \
+glslang \
+pipewire-devel \
+stb-devel -y
+sudo dnf install gcc g++ -y
+git submodule update --init
+meson build/
+ninja -C build/
+sudo meson install -C build/ --skip-subprojectsgames
+
+# Install gamemode alongside enabling the gamemode service.
+sudo dnf install gamemode -y && systemctl --user enable gamemoded && systemctl --user start gamemoded
 
 ## ///// WINE AND WINDOWS SOFTWARE /////
 
