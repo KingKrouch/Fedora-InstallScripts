@@ -91,6 +91,11 @@ flatpak install flathub com.steamgriddb.steam-rom-manager -y
 flatpak install flathub com.github.Matoking.protontricks -y
 flatpak install flathub net.davidotek.pupgui2 -y
 
+# Install and set up OpenRGB.
+sudo modprobe i2c-dev && sudo modprobe i2c-piix4 && sudo dnf install openrgb -y
+sudo grubby --update-kernel=ALL --args="acpi_enforce_resources=lax"
+sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
+
 # Install a Soundboard Application, for micspamming in Team Fortress 2 servers, of course! ;-)
 sudo dnf copr enable rivenirvana/soundux -y && sudo dnf install soundux -y
 
