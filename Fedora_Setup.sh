@@ -140,6 +140,21 @@ sudo meson install -C build/ --skip-subprojectsgames
 # Install gamemode alongside enabling the gamemode service.
 sudo dnf install gamemode -y && systemctl --user enable gamemoded && systemctl --user start gamemoded
 
+# Install OBS Studio.
+flatpak install flathub com.obsproject.Studio -y
+
+# Install GStreamer Plugin for OBS Studio, alongside some plugins.
+flatpak install com.obsproject.Studio.Plugin.Gstreamer org.freedesktop.Platform.GStreamer.gstreamer-vaapi -y
+flatpak install org.freedesktop.Platform.VulkanLayer.OBSVkCapture com.obsproject.Studio.Plugin.OBSVkCapture -y
+
+# Installs the needed hooks to get vkcapture in OBS to work.
+sudo dnf install obs-studio-devel obs-studio-libs -y
+git clone https://github.com/nowrep/obs-vkcapture && cd obs-vkcapture
+mkdir build && cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib ..
+make && make install
+cd .. && cd .. & sudo rm -rf obs-vkcapture
+
 ## ///// WINE AND WINDOWS SOFTWARE /////
 
 # Set up some prerequisites for Wine.
