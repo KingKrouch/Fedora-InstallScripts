@@ -93,6 +93,7 @@ flatpak install flathub net.davidotek.pupgui2 -y
 
 # Install and set up OpenRGB.
 sudo modprobe i2c-dev && sudo modprobe i2c-piix4 && sudo dnf install openrgb -y
+sudo udevadm control --reload-rules && sudo udevadm trigger
 sudo grubby --update-kernel=ALL --args="acpi_enforce_resources=lax"
 sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
 
