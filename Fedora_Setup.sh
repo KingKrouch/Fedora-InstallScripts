@@ -14,7 +14,7 @@ sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-releas
 sudo dnf group update core -y
 
 # Enable Flatpaks.
-flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo && flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
+sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo && sudo flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
 
 # Set up Flatseal for Flatpak permissions
 flatpak install flathub com.github.tchx84.Flatseal -y
@@ -48,33 +48,21 @@ sudo dnf install exa lsd -y
 sudo dnf install zsh -y && chsh -s $(which zsh) && sudo chsh -s $(which zsh)
 sudo dnf install git git-lfs -y && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
 
-# Append exa and lsd aliases, and neofetch alias to both the bashrc and zshrc.
-echo "if [ -x /usr/bin/lsd ]; then
-  alias ls='lsd'
-  alias dir='lsd -l'
-  alias lah='lsd -lah'
-  alias lt='lsd --tree'
-fi" >> tee -a ~/.bashrc ~/.zshrc
+# Setup icons-in-terminal (for ls-icons)
+git clone https://github.com/sebastiencs/icons-in-terminal.git && cd icons-in-terminal && ./install.sh && cd .. && sudo rm -rf icons-in-terminal
+
+# Setup ls-icons
+sudo dnf install autoconf automake xz bison gperf patch gettext-devel texinfo -y && git clone https://github.com/sebastiencs/ls-icons.git && cd ls-icons && ./bootstrap && export CC=clang CXX=clang++ && ./configure --prefix=/opt/coreutils && make && make install && cd .. && sudo rm -rf ls-icons
+
+## Add nerd-fonts for Noto and SourceCodePro font families. This will just install everything together, but I give no fucks at this point, just want things a little easier to set up.
+git clone https://github.com/ryanoasis/nerd-fonts.git && cd nerd-fonts && ./install.sh && cd .. && sudo rm -rf nerd-fonts
+
+# Append neofetch alias to both the bashrc and zshrc.
 echo "alias neofetch='neofetch --ascii ~/.config/neofetch/rog.ascii'
 neofetch" >> tee -a ~/.bashrc ~/.zshrc
 
 # Set up agnoster as the default zsh theme.
 sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/g' ~/.zshrc
-
-## Add nerd-fonts for Noto and SourceCodePro font families.
-wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Noto.zip
-mkdir ~/Noto && cd ~/Noto
-unzip Noto.zip
-mkdir ~/.local/share/fonts/ && cp ~/Noto/Noto*.ttf ~/.local/share/fonts/
-cd .. && rm -rf ~/Noto && rm ~/Noto.zip
-wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/SourceCodePro.zip
-mkdir ~/SourceCodePro && cd ~/SourceCodePro
-unzip SourceCodePro.zip
-mkdir ~/.local/share/fonts/ && cp ~/Noto/Sauce*.ttf ~/.local/share/fonts/
-cd .. && rm -rf ~/SourceCodePro && rm ~/SourceCodePro.zip
-fc-cache -fv
-wget https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/bin/scripts/lib/i_linux.sh -P ~/.local/share/fonts/
-source ~/.local/share/fonts/i_linux.sh
 
 ## ///// GAMING AND GAMING TWEAKS /////
 
@@ -335,16 +323,15 @@ sudo dnf install python3-evdev python3-devel gtksourceview4 python3-pydantic pyt
 sudo pip install evdev -U && sudo pip uninstall key-mapper  && sudo pip install --no-binary :all: git+https://github.com/sezanzeb/input-remapper.git
 sudo systemctl enable input-remapper && sudo systemctl restart input-remapper
 
-# Fix Mac keyboard layout for Keychron K4.
-echo "options hid_apple fnmode=2" | sudo tee /etc/modprobe.d/hid_apple.conf
-sudo dracut --regenerate-all -–force
-
 # Install OpenRGB and set up Razer periphreals with OpenRazer and RazerGenie. (Requires being installed later, due to Kernel-Devel being in the Development Section.)
 sudo modprobe i2c-dev && sudo modprobe i2c-piix4 && sudo dnf install https://openrgb.org/releases/release_0.7/openrgb_0.7_x86_64_6128731.rpm -y
 sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/hardware:razer/Fedora_35/hardware:razer.repo && sudo dnf install openrazer-meta -y && sudo dnf install razergenie -y && sudo gpasswd -a $USER plugdev
 
 # Install CoreCtrl for CPU power management purposes.
 sudo dnf install corectrl -y
+cp /usr/share/applications/org.corectrl.corectrl.desktop ~/.config/autostart/org.corectrl.corectrl.desktop
+sudo grubby --update-kernel=ALL --args="amdgpu.ppfeaturemask=0xffffffff"
+sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
 
 # Install some Flatpaks that I personally use.
 flatpak install flathub io.github.spacingbat3.webcord -y # Using Webcord instead of Discord because it barely fucking works in Wayland.
@@ -369,9 +356,27 @@ sudo dnf install java -y
 
 ## ///// MEDIA CODECS AND SUCH /////
 
+# Install Mesa Freeworld, so we can get FFMPEG back.
+sudo dnf install mesa-vdpau-drivers -y
+sudo dnf swap mesa-va-drivers mesa-va-drivers-freeworld -y
+sudo dnf swap mesa-vdpau-drivers mesa-vdpau-drivers-freeworld -y
+
+# Add some optional codecs
+sudo dnf groupupdate multimedia --setop="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y
+sudo dnf groupupdate sound-and-video -y
+sudo dnf install @multimedia @sound-and-video ffmpeg-libs gstreamer1-plugins-{bad-*,good-*,base} gstreamer1-plugin-openh264 gstreamer1-libav lame* -y
+flatpak install flathub org.freedesktop.Platform.ffmpeg-full 
+
 # Install Media Codecs and Plugins.
 sudo dnf install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel -y && sudo dnf install lame\* --exclude=lame-devel -y && sudo dnf group upgrade --with-optional Multimedia -y
 sudo dnf install vlc -y
 
 # Install Better Fonts
 sudo dnf copr enable dawid/better_fonts -y && sudo dnf install fontconfig-font-replacements -y --skip-broken && sudo dnf install fontconfig-enhanced-defaults -y --skip-broken
+
+# ///// TPM AUTOMATIC DECRYPTION (This is gonna need work before I can automate LUKS encryption on the boot drive to decrypt via TPM) /////
+sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=7+8 /dev/nvme0n1p3
+sudo sed -ie '/^luks-/s/$/,tpm2-device=auto/' /etc/crypttab
+# The following command will no longer be needed, from dracut 056 on
+sudo echo 'install_optional_items+=" /usr/lib64/libtss2* /usr/lib64/libfido2.so.* /usr/lib64/cryptsetup/libcryptsetup-token-systemd-tpm2.so "' > /etc/dracut.conf.d/tss2.conf
+sudo dracut --regenerate-all -force
