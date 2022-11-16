@@ -371,7 +371,7 @@ echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2023/lib"" >> $HOME/.profile
 ## ///// GENERAL DESKTOP USAGE /////
 
 ## Install the tiled window management KWin plugin, Bismuth.
-sudo dnf copr enable capucho/bismuth -y  && sudo dnf install bismuth qt -y
+sudo dnf install bismuth qt -y
 
 ## Use Firefox Flatpak (As it's more recent).
 sudo dnf remove firefox -y
@@ -388,9 +388,9 @@ sudo dnf install python3-evdev python3-devel gtksourceview4 python3-pydantic pyt
 sudo pip install evdev -U && sudo pip uninstall key-mapper  && sudo pip install --no-binary :all: git+https://github.com/sezanzeb/input-remapper.git
 sudo systemctl enable input-remapper && sudo systemctl restart input-remapper
 
-# Install OpenRGB and set up Razer periphreals with OpenRazer and RazerGenie. (Requires being installed later, due to Kernel-Devel being in the Development Section.)
-sudo modprobe i2c-dev && sudo modprobe i2c-piix4 && sudo dnf install https://openrgb.org/releases/release_0.7/openrgb_0.7_x86_64_6128731.rpm -y
-sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/hardware:razer/Fedora_35/hardware:razer.repo && sudo dnf install openrazer-meta -y && sudo dnf install razergenie -y && sudo gpasswd -a $USER plugdev
+# Install OpenRGB.
+sudo modprobe i2c-dev && sudo modprobe i2c-piix4 && sudo dnf install openrgb -y
+
 
 # Install CoreCtrl for CPU power management purposes.
 sudo dnf install corectrl -y
