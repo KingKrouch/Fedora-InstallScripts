@@ -351,7 +351,7 @@ rm CSP_Setup.exe
 echo "Make sure to set concrt140 as a WineDLLOverride to prevent CSP from crashing."
 
 # Install Ableton Live 11 (Via Wine) and Yabridge (for VST plugins)
-sudo dnf copr enable patrickl/yabridge -y && sudo dnf install yabridge -y
+sudo dnf copr enable patrickl/yabridge-stable -y && sudo dnf install yabridge -y
 mkdir ~/Ableton && cd ~/Ableton
 wget https://cdn-downloads.ableton.com/channels/11.1.1/ableton_live_trial_11.1.1_64.zip
 unzip ableton_live_trial_11.1.1_64.zip
