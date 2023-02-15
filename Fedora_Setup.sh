@@ -34,12 +34,13 @@ sudo dnf distro-sync -y
 
 ## ///// TERMINAL STUFF /////
 
-# Install neofetch.
-sudo dnf install neofetch -y && mkdir ~/.config/neofetch
+# Install fastfetch.
+sudo dnf install https://github.com/LinusDierheimer/fastfetch/releases/download/1.9.1/fastfetch-1.9.1-Linux.rpm -y
+mkdir ~/.config/fastfetch
 
-# Set up neofetch with my preferred configuration.
-wget -O ~/.config/neofetch/config.conf https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/neofetch/config.conf
-wget -O ~/.config/neofetch/rog.ascii https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/neofetch/rog.ascii
+# Set up fastfetch with my preferred configuration.
+wget -O ~/.config/fastfetch/config.conf https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/neofetch/config.conf
+wget -O ~/.config/fastfetch/rog.ascii https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/neofetch/rog.ascii
 
 # Install exa and lsd, which should replace lsd and dir.
 sudo dnf install exa lsd -y
@@ -58,7 +59,7 @@ echo "if [ -x /usr/bin/lsd ]; then
   alias lah='lsd -lah'
   alias lt='lsd --tree'
 fi" >> tee -a ~/.bashrc ~/.zshrc
-echo "alias neofetch='neofetch --ascii ~/.config/neofetch/rog.ascii'
+echo "alias neofetch='fastfetch --ascii ~/.config/fastfetch/rog.ascii'
 neofetch" >> tee -a ~/.bashrc ~/.zshrc
 
 # Set up agnoster as the default zsh theme.
