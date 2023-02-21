@@ -48,14 +48,20 @@ mkdir ~/.config/fastfetch
 wget -O ~/.config/fastfetch/config.conf https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/fastfetch/config.conf
 wget -O ~/.config/fastfetch/rog.ascii https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/fastfetch/rog.ascii
 
-# Install exa and lsd, which should replace lsd and dir.
-sudo dnf install exa lsd -y
+# Install exa and lsd, which should replace lsd and dir. Also install thefuck for terminal command corrections.
+sudo dnf install exa lsd thefuck -y
 
 # Install zsh, alongside setting up oh-my-zsh, and powerlevel10k.
 sudo dnf install zsh -y && chsh -s $(which zsh) && sudo chsh -s $(which zsh)
 sudo dnf install git git-lfs -y && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 wget -O ~/.p10k.zsh https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/p10k.zsh
+
+# Set up Powerlevel10k as the default zsh theme, alongside enabling some tweaks.
+sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k/powerlevel10k"/g' ~/.zshrc
+echo "# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> tee -a ~/.zshrc
+echo "typeset -g POWERLEVEL9K_INSTANT_PROMPT=off" >> tee -a ~/.zshrc
 
 # Set up some ZSH plugins
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
@@ -72,11 +78,10 @@ echo "if [ -x /usr/bin/lsd ]; then
   alias lah='lsd -lah'
   alias lt='lsd --tree'
 fi" >> tee -a ~/.bashrc ~/.zshrc
+echo "eval $(thefuck --alias)
+eval $(thefuck --alias fix) # Allows triggering thefuck using the keyword 'fix'." >> tee -a ~/.bashrc ~/.zshrc
 echo "alias neofetch='fastfetch'
 neofetch" >> tee -a ~/.bashrc ~/.zshrc
-
-# Set up agnoster as the default zsh theme.
-sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k/powerlevel10k"/g' ~/.zshrc
 
 ## ///// GAMING AND GAMING TWEAKS /////
 
