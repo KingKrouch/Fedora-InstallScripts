@@ -35,12 +35,12 @@ sudo dnf distro-sync -y
 ## ///// TERMINAL STUFF /////
 
 # Install fastfetch.
-sudo dnf install https://github.com/LinusDierheimer/fastfetch/releases/download/1.9.1/fastfetch-1.9.1-Linux.rpm -y
+sudo dnf install fastfetch -y
 mkdir ~/.config/fastfetch
 
 # Set up fastfetch with my preferred configuration.
-wget -O ~/.config/fastfetch/config.conf https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/neofetch/config.conf
-wget -O ~/.config/fastfetch/rog.ascii https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/neofetch/rog.ascii
+wget -O ~/.config/fastfetch/config.conf https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/fastfetch/config.conf
+wget -O ~/.config/fastfetch/rog.ascii https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/fastfetch/rog.ascii
 
 # Install exa and lsd, which should replace lsd and dir.
 sudo dnf install exa lsd -y
