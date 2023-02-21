@@ -19,6 +19,9 @@ sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub
 # Set up Flatseal for Flatpak permissions
 flatpak install flathub com.github.tchx84.Flatseal -y
 
+# Set up Homebrew Package Manager
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
 # Change the Swappiness level (for performance reasons) from 60 to 10
 echo "vm.swappiness=1" | sudo tee -a /etc/sysctl.conf
 
