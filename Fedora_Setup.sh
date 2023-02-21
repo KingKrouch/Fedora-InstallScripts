@@ -59,7 +59,7 @@ echo "if [ -x /usr/bin/lsd ]; then
   alias lah='lsd -lah'
   alias lt='lsd --tree'
 fi" >> tee -a ~/.bashrc ~/.zshrc
-echo "alias neofetch='fastfetch --ascii ~/.config/fastfetch/rog.ascii'
+echo "alias neofetch='fastfetch'
 neofetch" >> tee -a ~/.bashrc ~/.zshrc
 
 # Set up agnoster as the default zsh theme.
