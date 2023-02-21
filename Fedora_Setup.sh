@@ -45,9 +45,10 @@ wget -O ~/.config/fastfetch/rog.ascii https://github.com/KingKrouch/Fedora-Insta
 # Install exa and lsd, which should replace lsd and dir.
 sudo dnf install exa lsd -y
 
-# Install zsh, alongside setting up oh-my-zsh.
+# Install zsh, alongside setting up oh-my-zsh, and powerlevel10k.
 sudo dnf install zsh -y && chsh -s $(which zsh) && sudo chsh -s $(which zsh)
 sudo dnf install git git-lfs -y && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 
 ## Add nerd-fonts for Noto and SourceCodePro font families. This will just install everything together, but I give no fucks at this point, just want things a little easier to set up.
 git clone https://github.com/ryanoasis/nerd-fonts.git && cd nerd-fonts && ./install.sh && cd .. && sudo rm -rf nerd-fonts
@@ -63,7 +64,7 @@ echo "alias neofetch='fastfetch'
 neofetch" >> tee -a ~/.bashrc ~/.zshrc
 
 # Set up agnoster as the default zsh theme.
-sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/g' ~/.zshrc
+sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k/powerlevel10k"/g' ~/.zshrc
 
 ## ///// GAMING AND GAMING TWEAKS /////
 
