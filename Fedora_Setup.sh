@@ -49,7 +49,7 @@ wget -O ~/.config/fastfetch/config.conf https://github.com/KingKrouch/Fedora-Ins
 wget -O ~/.config/fastfetch/rog.ascii https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/fastfetch/rog.ascii
 
 # Install exa and lsd, which should replace lsd and dir. Also install thefuck for terminal command corrections, and fzf.
-sudo dnf install exa lsd thefuck fzf -y
+sudo dnf install exa lsd thefuck fzf htop cmatrix -y
 
 # Install zsh, alongside setting up oh-my-zsh, and powerlevel10k.
 sudo dnf install zsh -y && chsh -s $(which zsh) && sudo chsh -s $(which zsh)
