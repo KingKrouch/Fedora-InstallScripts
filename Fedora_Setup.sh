@@ -20,7 +20,10 @@ sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub
 flatpak install flathub com.github.tchx84.Flatseal -y
 
 # Set up Homebrew Package Manager
+sudo yum groupinstall 'Development Tools' -y
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/bryce/.bash_profile
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # Change the Swappiness level (for performance reasons) from 60 to 10
 echo "vm.swappiness=1" | sudo tee -a /etc/sysctl.conf
