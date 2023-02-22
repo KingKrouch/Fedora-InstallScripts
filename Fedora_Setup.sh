@@ -43,7 +43,6 @@ echo "vm.swappiness=1" | sudo tee -a /etc/sysctl.conf
 #sudo cryptsetup --debug convert /dev/nvme0n1p3 --type=luks2
 ## Now do this in the desktop environment (after installing).
 #sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=7+8 /dev/nvme0n1p3
-
 ## Adds the TPM to the crypttab file
 #sudo sed -ie '/^luks-/s/$/,tpm2-device=auto,discard/' /etc/crypttab
 ## Worst case, use "sudo nano /etc/dracut.conf.d/tss2.conf" and manually add the line.
