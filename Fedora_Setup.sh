@@ -16,6 +16,9 @@ sudo dnf group update core -y
 # Enable Flatpaks.
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo && sudo flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
 
+# Enable System Theming with Flatpak (That way, theming is more consistent between native apps and flatpaks).
+sudo flatpak override --filesystem=xdg-config/gtk-3.0
+
 # Set up Flatseal for Flatpak permissions
 flatpak install flathub com.github.tchx84.Flatseal -y
 
