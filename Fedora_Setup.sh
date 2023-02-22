@@ -38,6 +38,19 @@ echo "vm.swappiness=1" | sudo tee -a /etc/sysctl.conf
      #Option "VariableRefresh" "true"
 #EndSection" | sudo tee -a /etc/X11/xorg.conf.d/20-amdgpu.conf
 
+# WIP TPM Decryption
+## Do this part in the LiveUSB environment (for Nobara) to convert from a LUKS to LUKS2 encryption system.
+#sudo cryptsetup --debug convert /dev/nvme0n1p3 --type=luks2
+## Now do this in the desktop environment (after installing).
+#sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=7+8 /dev/nvme0n1p3
+
+## Adds the TPM to the crypttab file
+#sudo sed -ie '/^luks-/s/$/,tpm2-device=auto,discard/' /etc/crypttab
+## Worst case, use "sudo nano /etc/dracut.conf.d/tss2.conf" and manually add the line.
+#sudo cat > /etc/dracut.conf.d/tss2.conf
+#sudo echo 'install_optional_items+=" /usr/lib64/libtss2* /usr/lib64/libfido2.so.* /usr/lib64/cryptsetup/libcryptsetup-token-systemd-tpm2.so "' > /etc/dracut.conf.d/tss2.conf
+#sudo dracut --regenerate-all --force
+
 # Update using DNF Distro-Sync
 sudo dnf distro-sync -y
 
