@@ -191,6 +191,9 @@ cd .. && cd .. & sudo rm -rf obs-vkcapture
 
 ## ///// WINE AND WINDOWS SOFTWARE /////
 
+# Install 64-Bit WINE Staging alongside it's static libraries and headers (for debugging).
+sudo dnf install wine-staging64 wine-staging64-devel -y
+
 # Set up some prerequisites for Wine.
 sudo dnf install cabextract samba-winbind*.x86_64 samba-winbind*.i686 -y && sudo dnf install cabextract -y
 wget  https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
