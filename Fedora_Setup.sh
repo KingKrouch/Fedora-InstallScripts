@@ -61,7 +61,7 @@ mkdir ~/.config/fastfetch
 
 # Set up fastfetch with my preferred configuration.
 wget -O ~/.config/fastfetch/config.conf https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/fastfetch/config.conf
-wget -O ~/.config/fastfetch/rog.ascii https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/fastfetch/rog.ascii
+wget -O ~/.config/fastfetch/uoh.ascii https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/fastfetch/uoh.ascii
 
 # Install exa and lsd, which should replace lsd and dir. Also install thefuck for terminal command corrections, and fzf.
 sudo dnf install exa lsd thefuck fzf htop cmatrix -y
