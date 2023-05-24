@@ -6,7 +6,7 @@
 sudo bash -c 'echo 'max_parallel_downloads=10' >> /etc/dnf/dnf.conf && echo 'defaultyes=True' >> /etc/dnf/dnf.conf'
 sudo dnf update -y
 
-# Disable NetworkManager Wait Service (due to long boot times).
+# Disable NetworkManager Wait Service (due to long boot times). You might want to ignore this if you are a laptop user.
 sudo systemctl disable NetworkManager-wait-online.service
 
 # Install third-party repositories (Via RPMFusion).
