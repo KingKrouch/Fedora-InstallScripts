@@ -117,8 +117,11 @@ flatpak install flathub org.ryujinx.Ryujinx -y
 flatpak install flathub org.DolphinEmu.dolphin-emu -y
 flatpak install flathub net.pcsx2.PCSX2 -y
 flatpak install flathub org.prismlauncher.PrismLauncher -y
-flatpak remote-add --if-not-exists launcher.moe https://gol.launcher.moe/gol.launcher.moe.flatpakrepo
-flatpak install launcher.moe com.gitlab.KRypt0n_.an-anime-game-launcher -y
+flatpak remote-add --if-not-exists launcher.moe https://gol.launcher.moe/gol.launcher.moeflatpak install flathub org.gnome.Platform//43.flatpakrepo
+flatpak install flathub org.gnome.Platform//43 # Install a specific GTK dependency for AGL and HRWL
+flatpak install launcher.moe moe.launcher.an-anime-game-launcher -y
+flatpak install launcher.moe moe.launcher.the-honkers-railway-launcher -y
+
 flatpak install flathub com.steamgriddb.steam-rom-manager -y
 
 # Install some Proton related stuff (for game compatibility)
