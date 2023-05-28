@@ -121,6 +121,7 @@ flatpak remote-add --if-not-exists --user launcher.moe https://gol.launcher.moe/
 flatpak install flathub org.gnome.Platform//43 # Install a specific GTK dependency for AAGL and HRWL.
 flatpak install flathub com.valvesoftware.Steam.Utility.gamescope -y # Install Gamescope dependency for AAGL and HRWL.
 flatpak install org.freedesktop.Platform.VulkanLayer.MangoHud -y # Install MangoHud dependency for Heroic, AAGL, Lutris, and HRWL.
+sudo flatpak override --filesystem=xdg-config/MangoHud:ro # Set up all Flatpaks to use our own MangoHUD config from GOverlay.
 flatpak install launcher.moe moe.launcher.an-anime-game-launcher -y
 flatpak install launcher.moe moe.launcher.the-honkers-railway-launcher -y
 flatpak install launcher.moe moe.launcher.honkers-launcher -y
