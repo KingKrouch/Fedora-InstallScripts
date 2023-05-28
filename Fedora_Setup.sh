@@ -121,6 +121,7 @@ flatpak remote-add --if-not-exists launcher.moe https://gol.launcher.moe/gol.lau
 flatpak install flathub org.gnome.Platform//43 # Install a specific GTK dependency for AGL and HRWL
 flatpak install launcher.moe moe.launcher.an-anime-game-launcher -y
 flatpak install launcher.moe moe.launcher.the-honkers-railway-launcher -y
+flatpak install launcher.moe moe.launcher.honkers-launcher -y
 
 flatpak install flathub com.steamgriddb.steam-rom-manager -y
 
