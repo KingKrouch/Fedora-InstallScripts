@@ -119,7 +119,8 @@ flatpak install flathub net.pcsx2.PCSX2 -y
 flatpak install flathub org.prismlauncher.PrismLauncher -y
 flatpak remote-add --if-not-exists --user launcher.moe https://gol.launcher.moe/gol.launcher.moe.flatpakrepo
 flatpak install flathub org.gnome.Platform//43 # Install a specific GTK dependency for AAGL and HRWL.
-flatpak install flathub com.valvesoftware.Steam.Utility.gamescope # Install Gamescope dependency for AAGL and HRWL.
+flatpak install flathub com.valvesoftware.Steam.Utility.gamescope -y # Install Gamescope dependency for AAGL and HRWL.
+flatpak install org.freedesktop.Platform.VulkanLayer.MangoHud -y # Install MangoHud dependency for Heroic, AAGL, Lutris, and HRWL.
 flatpak install launcher.moe moe.launcher.an-anime-game-launcher -y
 flatpak install launcher.moe moe.launcher.the-honkers-railway-launcher -y
 flatpak install launcher.moe moe.launcher.honkers-launcher -y
