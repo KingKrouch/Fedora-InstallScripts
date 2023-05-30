@@ -124,6 +124,7 @@ flatpak install org.freedesktop.Platform.VulkanLayer.MangoHud -y # Install Mango
 flatpak install flathub org.freedesktop.Platform.VulkanLayer.OBSVkCapture -y # Install OBS VkCapture layer for OBS capturing of Flatpak games.
 flatpak install flathub com.valvesoftware.Steam.Utility.vkBasalt -y # Install VkBasalt for Flatpak games.
 sudo flatpak override --filesystem=xdg-config/MangoHud:ro # Set up all Flatpaks to use our own MangoHUD config from GOverlay.
+flatpak override --user --talk-name=com.feralinteractive.GameMode # Set up Gamemode override for MangoHUD Flatpak.
 flatpak install launcher.moe moe.launcher.an-anime-game-launcher -y
 flatpak install launcher.moe moe.launcher.the-honkers-railway-launcher -y
 flatpak install launcher.moe moe.launcher.honkers-launcher -y
