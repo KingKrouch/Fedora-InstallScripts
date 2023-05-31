@@ -238,6 +238,9 @@ flatpak override com.usebottles.bottles --user --filesystem=xdg-data/application
 
 ## //// NETWORKING STUFF /////
 
+# Install Barrier for cross-device input management
+sudo dnf install barrier -y
+
 # Set up Samba
 sudo dnf install samba -y
 sudo systemctl enable smb nmb && sudo systemctl start smb nmb
