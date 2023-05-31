@@ -232,6 +232,10 @@ git clone https://github.com/z0z0z/mf-install && cd mf-install
 WINEPREFIX="/home/$USER/.wine" ./mf-install.sh
 cd .. && rm -rf mf-install
 
+# Set up Bottles.
+flatpak install flathub com.usebottles.bottles -y
+flatpak override com.usebottles.bottles --user --filesystem=xdg-data/applications
+
 ## //// NETWORKING STUFF /////
 
 # Set up Samba
