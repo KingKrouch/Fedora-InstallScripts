@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Autodesk Mudbox 2024
+Type=Application
+Comment=Run Autodesk Mudbox 2024
+Categories=Application;Graphics
+Icon=/usr/autodesk/mudbox2024/desktop/Mudbox.png
+Exec=/usr/autodesk/mudbox2024/mudbox.sh
+Encoding=UTF-8
