@@ -414,7 +414,7 @@ cd .. && rm -rf ~/Ableton
 
 # Install Compatibility Related Stuff for Autodesk Maya and Mudbox.
 sudo dnf copr enable dioni21/compat-openssl10 -y && sudo dnf install pcre-utf16 -y && sudo dnf install compat-openssl10 -y
-sudo dnf install libpng15 csh audiofile libXp -y
+sudo dnf install libpng15 csh audiofile libXp rocm-opencl5.4.3 -y
 mkdir $HOME/maya
 mkdir $HOME/maya/2024
 echo -e "MAYA_OPENCL_IGNORE_DRIVER_VERSION=1\nMAYA_CM_DISABLE_ERROR_POPUPS=1\nMAYA_COLOR_MGT_NO_LOGGING=1\nTMPDIR=/tmp\nMAYA_NO_HOME=1" >> $HOME/maya/2023/Maya.env
