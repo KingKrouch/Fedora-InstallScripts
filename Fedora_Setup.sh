@@ -7,7 +7,7 @@ sudo bash -c 'echo 'max_parallel_downloads=10' >> /etc/dnf/dnf.conf && echo 'def
 sudo dnf update -y
 
 # Disable NetworkManager Wait Service (due to long boot times). You might want to ignore this if you are a laptop user.
-sudo systemctl disable NetworkManager-wait-online.service
+#sudo systemctl disable NetworkManager-wait-online.service
 
 # Install third-party repositories (Via RPMFusion).
 sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
@@ -38,18 +38,6 @@ echo "vm.swappiness=1" | sudo tee -a /etc/sysctl.conf
      #Option "VariableRefresh" "true"
 #EndSection" | sudo tee -a /etc/X11/xorg.conf.d/20-amdgpu.conf
 
-# WIP TPM Decryption
-## Do this part in the LiveUSB environment (for Nobara) to convert from a LUKS to LUKS2 encryption system.
-#sudo cryptsetup --debug convert /dev/nvme0n1p3 --type=luks2
-## Now do this in the desktop environment (after installing).
-#sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=7+8 /dev/nvme0n1p3
-## Adds the TPM to the crypttab file
-#sudo sed -ie '/^luks-/s/$/,tpm2-device=auto,discard/' /etc/crypttab
-## Worst case, use "sudo nano /etc/dracut.conf.d/tss2.conf" and manually add the line.
-#sudo cat > /etc/dracut.conf.d/tss2.conf
-#sudo echo 'install_optional_items+=" /usr/lib64/libtss2* /usr/lib64/libfido2.so.* /usr/lib64/cryptsetup/libcryptsetup-token-systemd-tpm2.so "' > /etc/dracut.conf.d/tss2.conf
-#sudo dracut --regenerate-all --force
-
 # Update using DNF Distro-Sync
 sudo dnf distro-sync -y
 
@@ -60,8 +48,8 @@ sudo dnf install fastfetch -y
 mkdir ~/.config/fastfetch
 
 # Set up fastfetch with my preferred configuration.
-wget -O ~/.config/fastfetch/config.conf https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/fastfetch/config.conf
-wget -O ~/.config/fastfetch/uoh.ascii https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/fastfetch/uoh.ascii
+cp ./.config/fastfetch/config.conf  ~/.config/fastfetch/config.conf
+cp ./.config/fastfetch/uoh.ascii  ~/.config/fastfetch/uoh.ascii
 
 # Install exa and lsd, which should replace lsd and dir. Also install thefuck for terminal command corrections, and fzf.
 sudo dnf install exa lsd thefuck fzf htop cmatrix -y
@@ -87,16 +75,21 @@ sed -i 's/plugins=(git)/plugins=(git emoji zsh-syntax-highlighting zsh-autosugge
 git clone https://github.com/ryanoasis/nerd-fonts.git && cd nerd-fonts && ./install.sh && cd .. && sudo rm -rf nerd-fonts
 
 # Append exa and lsd aliases, and neofetch alias to both the bashrc and zshrc.
-echo "if [ -x /usr/bin/lsd ]; then
+echo '# Custom Commands
+if [ -x /usr/bin/lsd ]; then
   alias ls='lsd'
   alias dir='lsd -l'
   alias lah='lsd -lah'
   alias lt='lsd --tree'
-fi" >> tee -a ~/.bashrc ~/.zshrc
-echo "eval $(thefuck --alias)
-eval $(thefuck --alias fix) # Allows triggering thefuck using the keyword 'fix'." >> tee -a ~/.bashrc ~/.zshrc
-echo "alias neofetch='fastfetch'
-neofetch" >> tee -a ~/.bashrc ~/.zshrc
+fi
+if [ -x /usr/bin/thefuck ]; then
+  eval $(thefuck --alias)
+  eval $(thefuck --alias fix) # Allows triggering thefuck using the keyword 'fix'."
+fi
+if [ -x /usr/bin/fastfetch ]; then
+  alias neofetch='fastfetch'
+fi
+neofetch' >> tee -a ~/.bashrc ~/.zshrc
 
 ## ///// GAMING AND GAMING TWEAKS /////
 
@@ -117,10 +110,11 @@ flatpak install flathub org.ryujinx.Ryujinx -y
 flatpak install flathub org.DolphinEmu.dolphin-emu -y
 flatpak install flathub net.pcsx2.PCSX2 -y
 flatpak install flathub org.prismlauncher.PrismLauncher -y
+flatpak install flathub dev.goats.xivlauncher -y
 flatpak remote-add --if-not-exists --user launcher.moe https://gol.launcher.moe/gol.launcher.moe.flatpakrepo
 flatpak install flathub org.gnome.Platform//43 # Install a specific GTK dependency for AAGL and HRWL.
 flatpak install flathub com.valvesoftware.Steam.Utility.gamescope -y # Install Gamescope dependency for AAGL and HRWL.
-flatpak install org.freedesktop.Platform.VulkanLayer.MangoHud -y # Install MangoHud dependency for Heroic, AAGL, Lutris, and HRWL.
+flatpak install flathub org.freedesktop.Platform.VulkanLayer.MangoHud -y # Install MangoHud dependency for Heroic, AAGL, Lutris, and HRWL.
 flatpak install flathub org.freedesktop.Platform.VulkanLayer.OBSVkCapture -y # Install OBS VkCapture layer for OBS capturing of Flatpak games.
 flatpak install flathub com.valvesoftware.Steam.Utility.vkBasalt -y # Install VkBasalt for Flatpak games.
 sudo flatpak override --filesystem=xdg-config/MangoHud:ro # Set up all Flatpaks to use our own MangoHUD config from GOverlay.
@@ -198,14 +192,43 @@ cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib ..
 make && sudo make install
 cd .. && cd .. & sudo rm -rf obs-vkcapture
 
+# Set up SuperGFXCTL and the SuperGFXCTL Plasmoid for Laptop GPU switching.
+#sudo dnf upgrade && sudo dnf install curl git cargo libudev-devel && sudo dnf groupinstall "Development Tools" -y
+#git clone https://gitlab.com/asus-linux/supergfxctl.git
+#cd supergfxctl
+#make && sudo make install && cd ..
+#sudo dnf install cmake gcc-c++ extra-cmake-modules kf5-ki18n-devel kf5-plasma-devel qt5-qtdeclarative-devel -y
+#git clone https://gitlab.com/Jhyub/supergfxctl-plasmoid
+#cd supergfxctl-plasmoid
+#mkdir build
+#cd build
+#cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+#make
+#sudo make install # or any other elevation tool
+#plasmashell --replace &
+sudo dnf copr enable gloriouseggroll/nobara
+sudo dnf install supergfxctl supergfxctl-plasmoid -y
+sudo dnf copr disable gloriouseggroll/nobara
+sudo systemctl enable supergfxd && sudo systemctl start supergfxd
+plasmashell --replace &
+
+# Set up Sunshine and Moonlight Streaming.
+sudo dnf install https://github.com/LizardByte/Sunshine/releases/download/v0.20.0/sunshine-fedora-38-amd64.rpm -y
+echo 'KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="uaccess"' | \
+sudo tee /etc/udev/rules.d/85-sunshine.rules
+systemctl --user enable sunshine
+sudo setcap cap_sys_admin+p $(readlink -f $(which sunshine))
+flatpak install flathub com.moonlight_stream.Moonlight -y
+
 ## ///// WINE AND WINDOWS SOFTWARE /////
 
 # Install 64-Bit WINE Staging alongside it's static libraries and headers (for debugging).
-sudo dnf install wine-staging64 wine-staging64-devel -y
+sudo dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/$(rpm -E %fedora)/winehq.repo
+dnf install winehq-staging -y
 
 # Set up some prerequisites for Wine.
-sudo dnf install cabextract samba-winbind*.x86_64 samba-winbind*.i686 -y && sudo dnf install cabextract -y
-wget  https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
+sudo dnf install cabextract samba-winbind -y
+get  https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
 chmod +x winetricks
 sh winetricks corefonts # look into avoid using winetricks for vcrun6 and dotnet462 because of the painfully long install process from the GUI installer. Fuck that.
 rm winetricks
@@ -219,15 +242,16 @@ rm vc_redist.x86.exe vc_redist.x64.exe NDP462-KB3151800-x86-x64-AllOS-ENU.exe
 winetricks dotnet48
 
 # Set up DXVK, VKD3D, and Media Foundation codecs to Wine.
-wget https://github.com/doitsujin/dxvk/releases/download/v2.0/dxvk-2.0.tar.gz
-tar -xzvf dxvk-2.0.tar.gz
-cd dxvk-2.0
+# TODO: Fix the DXVK setup process, as there's no more setup script.
+wget https://github.com/doitsujin/dxvk/releases/download/v2.2/dxvk-2.2.tar.gz
+tar -xzvf dxvk-2.2.tar.gz
+cd dxvk-2.2
 WINEPREFIX="/home/$USER/.wine" ./setup_dxvk.sh install
-cd .. && rm -rf dxvk-2.0 && rm dxvk-2.0.tar.gz
-wget https://github.com/HansKristian-Work/vkd3d-proton/releases/download/v2.7/vkd3d-proton-2.7.tar.zst
-tar --use-compress-program=unzstd -xvf vkd3d-proton-2.7.tar.zst && cd vkd3d-proton-2.7
+cd .. && rm -rf dxvk-2.2 && rm dxvk-2.2.tar.gz
+wget https://github.com/HansKristian-Work/vkd3d-proton/releases/download/v2.9/vkd3d-proton-2.9.tar.zst
+tar --use-compress-program=unzstd -xvf vkd3d-proton-2.9.tar.zst && cd vkd3d-proton-2.9
 WINEPREFIX="/home/$USER/.wine" ./setup_vkd3d_proton.sh install
-cd .. && rm -rf vkd3d-proton-2.7 && rm vkd3d-proton-2.7.tar.zst
+cd .. && rm -rf vkd3d-proton-2.9 && rm vkd3d-proton-2.9.tar.zst
 git clone https://github.com/z0z0z/mf-install && cd mf-install
 WINEPREFIX="/home/$USER/.wine" ./mf-install.sh
 cd .. && rm -rf mf-install
@@ -282,10 +306,15 @@ sudo dnf install python3-vdf yad xdotool -y
 sudo dnf install okteta -y
 
 # Install GitHub Desktop
-flatpak install flathub io.github.shiftey.Desktop -y
+sudo rpm --import https://rpm.packages.shiftkey.dev/gpg.key
+sudo sh -c 'echo -e "[shiftkey-packages]\nname=GitHub Desktop\nbaseurl=https://rpm.packages.shiftkey.dev/rpm/\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://rpm.packages.shiftkey.dev/gpg.key" > /etc/yum.repos.d/shiftkey-packages.repo'
+sudo dnf install github-desktop -y
 
 # Install .NET Runtime/SDK and Mono (for Rider and C# applications)
 sudo dnf install dotnet mono-devel -y
+
+# Install Java
+sudo dnf install java -y
 
 ## ///// VIRTUALIZATION /////
 
@@ -421,21 +450,34 @@ echo -e "MAYA_OPENCL_IGNORE_DRIVER_VERSION=1\nMAYA_CM_DISABLE_ERROR_POPUPS=1\nMA
 echo "Please download and install Autodesk Maya on your own accord. The dependencies and compatibility tweaks for Fedora should be taken care of now."
 echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2024/lib"" >> $HOME/.profile
 
+flatpak install flathub org.blender.Blender -y
+flatpak install flathub org.kde.krita -y
+flatpak install flathub org.gimp.GIMP -y
+flatpak install flathub org.kde.kdenlive -y
 
 ## ///// GENERAL DESKTOP USAGE /////
 
-## Install the tiled window management KWin plugin, Bismuth.
+# Install the tiled window management KWin plugin, Bismuth.
 sudo dnf install bismuth qt -y
 
-## Use Firefox Flatpak (As it's more recent).
+# Use Librewolf instead of Firefox.
+sudo dnf config-manager --add-repo https://rpm.librewolf.net/librewolf-repo.repo
+sudo dnf install librewolf -y
 sudo dnf remove firefox -y
-flatpak install flathub org.mozilla.firefox -y
+
+# Install Microsoft Edge as a secondary web browser.
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sudo dnf config-manager --add-repo https://packages.microsoft.com/yumrepos/edge
+sudo dnf install microsoft-edge-stable -y
 
 # Install Warpinator for file transfers.
 flatpak install flathub org.x.Warpinator -y
 
+# Install the BETTER partition manager.
+sudo dnf install gnome-disk-utility -y
+
 # Remove some KDE Plasma bloatware that comes installed for some reason.
-sudo dnf remove akregator ksysguard dnfdragora kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer kamoso kolourpaint krdc krfb -y
+sudo dnf remove libreoffice-\* akregator ksysguard dnfdragora kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer kamoso kolourpaint krdc krfb -y
 
 # Install Input-Remapper (For Razer Tartarus Pro)
 sudo dnf install python3-evdev python3-devel gtksourceview4 python3-pydantic python-pydbus xmodmap -y
@@ -445,7 +487,6 @@ sudo systemctl enable input-remapper && sudo systemctl restart input-remapper
 # Install OpenRGB.
 sudo modprobe i2c-dev && sudo modprobe i2c-piix4 && sudo dnf install openrgb -y
 
-
 # Install CoreCtrl for CPU power management purposes.
 sudo dnf install corectrl -y
 cp /usr/share/applications/org.corectrl.corectrl.desktop ~/.config/autostart/org.corectrl.corectrl.desktop
@@ -453,8 +494,7 @@ sudo grubby --update-kernel=ALL --args="amdgpu.ppfeaturemask=0xffffffff"
 sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
 
 # Install some Flatpaks that I personally use.
-flatpak install flathub io.github.spacingbat3.webcord -y # Using Webcord instead of Discord because it barely fucking works in Wayland.
-flatpak install flathub org.gimp.GIMP -y
+flatpak install flathub com.discordapp.Discord
 flatpak install flathub org.mozilla.Thunderbird -y
 flatpak install flathub org.qbittorrent.qBittorrent -y
 
@@ -468,10 +508,10 @@ sudo dnf install onedrive -y && sudo systemctl stop onedrive@$USER.service && su
 echo "Make sure to run onedrive --synchronize when you can."
 
 # Install Mullvad VPN.
-sudo dnf install https://mullvad.net/media/app/MullvadVPN-2022.1_x86_64.rpm -y
+sudo dnf install https://mullvad.net/media/app/MullvadVPN-2023.3_x86_64.rpm -y
 
-# Install Java
-sudo dnf install java -y
+# Set up OnlyOffice.
+flatpak install flathub org.onlyoffice.desktopeditors -y
 
 ## ///// MEDIA CODECS AND SUCH /////
 
@@ -494,8 +534,10 @@ sudo dnf install vlc -y
 sudo dnf copr enable dawid/better_fonts -y && sudo dnf install fontconfig-font-replacements -y --skip-broken && sudo dnf install fontconfig-enhanced-defaults -y --skip-broken
 
 # ///// TPM AUTOMATIC DECRYPTION (This is gonna need work before I can automate LUKS encryption on the boot drive to decrypt via TPM) /////
+## Do this part in the LiveUSB environment (for Nobara) to convert from a LUKS to LUKS2 encryption system. This might not be necessary with bogstandard Fedora, but it is with Nobara.
+#sudo cryptsetup --debug convert /dev/nvme0n1p3 --type=luks2
 sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=7+8 /dev/nvme0n1p3
-sudo sed -ie '/^luks-/s/$/,tpm2-device=auto/' /etc/crypttab
+sudo sed -ie '/^luks-/s/$/,tpm2-device=auto/' /etc/crypttab # This might have to be "sudo sed -ie '/^luks-/s/$/,tpm2-device=auto,discard/' /etc/crypttab" instead, I'm unsure because I have two of them in this same script. lol.
 # The following command will no longer be needed, from dracut 056 on
 sudo echo 'install_optional_items+=" /usr/lib64/libtss2* /usr/lib64/libfido2.so.* /usr/lib64/cryptsetup/libcryptsetup-token-systemd-tpm2.so "' > /etc/dracut.conf.d/tss2.conf
 sudo dracut --regenerate-all -force
