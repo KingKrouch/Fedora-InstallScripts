@@ -285,7 +285,11 @@ mkdir $HOME/Applications && cd $HOME/Applications && wget -O jetbrains-toolbox.t
 flatpak install flathub io.github.achetagames.epic_asset_manager -y
 
 # Install Docker
-sudo dnf install docker -y
+sudo dnf install dnf-plugins-core -y
+sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+sudo dnf install https://desktop.docker.com/linux/main/amd64/docker-desktop-4.20.1-x86_64.rpm -y
+sudo systemctl enable docker && sudo systemctl start docker
 
 # Install MinGW64, CMake, Ninja Build
 sudo dnf install mingw64-\* cmake ninja-build -y --skip-broken
@@ -424,6 +428,20 @@ sudo chmod -R 660 ~/GPU.rom && sudo chown $(whoami):$(whoami) ~/GPU.rom
 
 # Finally restart the Libvirt service.
 sudo systemctl restart libvirtd.service
+
+## ///// ANDROID APP COMPATIBILITY /////
+sudo dnf install waydroid -y
+sudo systemctl enable --now waydroid-container
+sudo waydroid init -s GAPPS -r lineage -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor
+cd ~/ && sudo dnf install lzip -y
+git clone https://github.com/casualsnek/waydroid_script
+cd waydroid_script
+sudo python3 -m pip install -r requirements.txt
+sudo python3 ./main.py install magisk
+sudo python3 ./main.py install libhoudini
+sudo python3 ./main.py install widevine
+sudo python3 ./main.py install smartdock
+echo "Make sure to run 'sudo waydroid shell' followed by the command listed here: https://docs.waydro.id/faq/google-play-certification"
 
 ## ///// DIGITAL CONTENT CREATION TOOLS /////
 
