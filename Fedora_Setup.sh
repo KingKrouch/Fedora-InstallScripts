@@ -441,6 +441,7 @@ sudo python3 ./main.py install magisk
 sudo python3 ./main.py install libhoudini
 sudo python3 ./main.py install widevine
 sudo python3 ./main.py install smartdock
+sudo python3 main.py hack hidestatusbar
 echo "Make sure to run 'sudo waydroid shell' followed by the command listed here: https://docs.waydro.id/faq/google-play-certification"
 
 ## ///// DIGITAL CONTENT CREATION TOOLS /////
