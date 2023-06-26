@@ -31,9 +31,6 @@ case $NAME in
     ("Nobara Linux")
     echo "Nobara is being used."
 
-    # Enable Flathub Beta
-    sudo flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
-
     # Safely remove something that causes "kde-settings conflicts with f[version]-backgrounds-kde"
     sudo rpm -e --nodeps f$(rpm -E %fedora)-backgrounds-kde
     ;;
@@ -45,7 +42,7 @@ case $NAME in
     sudo dnf group update core -y
 
     # Enable Flatpaks.
-    sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo && sudo flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
+    sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     ;;
 esac
 
@@ -174,7 +171,7 @@ git clone https://github.com/DavidRisch/steamvr_utils.git -b iss15_fix_v2_interf
 python3 ./steamvr_utils/scripts/install.py
 
 # Install some game launcher and emulator Flatpaks.
-flatpak install flathub-beta com.heroicgameslauncher.hgl -y
+flatpak install flathub com.heroicgameslauncher.hgl -y
 flatpak install flathub net.rpcs3.RPCS3 -y
 flatpak install flathub org.yuzu_emu.yuzu -y
 flatpak install flathub org.ryujinx.Ryujinx -y
