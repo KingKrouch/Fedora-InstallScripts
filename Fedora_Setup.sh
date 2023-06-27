@@ -302,7 +302,7 @@ flatpak install flathub io.github.achetagames.epic_asset_manager -y
 # Install Docker.
 sudo dnf install dnf-plugins-core -y
 sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
-sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gnome-terminal -y
 sudo dnf install https://desktop.docker.com/linux/main/amd64/docker-desktop-4.20.1-x86_64.rpm -y
 sudo systemctl enable docker && sudo systemctl start docker
 
