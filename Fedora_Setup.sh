@@ -138,7 +138,7 @@ case $NAME in
     flatpak install flathub net.lutris.Lutris -y
 
     # Install gamemode alongside enabling the gamemode service.
-    sudo dnf install gamemode -y
+    sudo dnf install gamemode -y && systemctl --user enable gamemoded.service && systemctl --user start gamemoded.service
 
     # Install OBS Studio.
     flatpak install flathub com.obsproject.Studio -y
@@ -304,6 +304,7 @@ sudo dnf install dnf-plugins-core -y
 sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
 sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gnome-terminal -y
 sudo dnf install https://desktop.docker.com/linux/main/amd64/docker-desktop-4.20.1-x86_64.rpm -y
+sudo groupadd docker && sudo usermod -aG docker $USER
 sudo systemctl enable docker && sudo systemctl start docker
 
 # Install Distrobox and Podman (So Distrobox doesn't use Docker instead).
