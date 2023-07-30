@@ -491,6 +491,13 @@ case $NAME in
     ;;
 esac
 
+case $NAME in
+    ("Nobara Linux")
+    sudo dnf install rocm-meta -y # Need to figure out if this applies to Fedora too.
+    ;;
+esac
+# TODO: Add Dracut regeneration just in case the AMD GPU Switcher drivers have been installed on Nobara.
+
 flatpak install flathub org.kde.krita -y
 flatpak install flathub org.gimp.GIMP -y
 
