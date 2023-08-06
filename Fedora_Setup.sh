@@ -11,9 +11,11 @@ fi
 case $NAME in
     ("Nobara Linux")
     echo "Nobara is being used."
+    FLATPAK_TYPE="--system" # I believe this is needed for Flatpak installation on Nobara now.
     ;;
     ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
     echo "Fedora is being used."
+    FLATPAK_TYPE=""
     ;;
     (*)
     echo "Unsupported Distro is being used. Exiting"
@@ -50,7 +52,7 @@ esac
 sudo flatpak override --filesystem=xdg-config/gtk-3.0
 
 # Set up Flatseal for Flatpak permissions
-flatpak install flathub com.github.tchx84.Flatseal -y
+flatpak install flathub com.github.tchx84.Flatseal $FLATPAK_TYPE -y
 
 # Set up Homebrew Package Manager
 sudo yum groupinstall 'Development Tools' -y
@@ -129,23 +131,23 @@ case $NAME in
     ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
     # Install Steam and Steam-Devices.
     sudo dnf install steam steam-devices -y
-    flatpak install flathub net.davidotek.pupgui2 -y
+    flatpak install flathub net.davidotek.pupgui2 $FLATPAK_TYPE -y
 
     # Install MangoHud with GOverlay, alongside Gamescope and vkBasalt.
     sudo dnf install goverlay -y && sudo dnf install vkBasalt -y && sudo dnf install gamescope -y
 
     # Install Lutris
-    flatpak install flathub net.lutris.Lutris -y
+    flatpak install flathub net.lutris.Lutris $FLATPAK_TYPE -y
 
     # Install gamemode alongside enabling the gamemode service.
     sudo dnf install gamemode -y && systemctl --user enable gamemoded.service && systemctl --user start gamemoded.service
 
     # Install OBS Studio.
-    flatpak install flathub com.obsproject.Studio -y
+    flatpak install flathub com.obsproject.Studio $FLATPAK_TYPE -y
 
     # Install GStreamer Plugin for OBS Studio, alongside some plugins.
-    flatpak install com.obsproject.Studio.Plugin.Gstreamer org.freedesktop.Platform.GStreamer.gstreamer-vaapi -y
-    flatpak install org.freedesktop.Platform.VulkanLayer.OBSVkCapture com.obsproject.Studio.Plugin.OBSVkCapture -y
+    flatpak install com.obsproject.Studio.Plugin.Gstreamer org.freedesktop.Platform.GStreamer.gstreamer-vaapi $FLATPAK_TYPE -y
+    flatpak install org.freedesktop.Platform.VulkanLayer.OBSVkCapture com.obsproject.Studio.Plugin.OBSVkCapture $FLATPAK_TYPE -y
 
     # Installs the needed hooks to get vkcapture in OBS to work.
     sudo dnf install obs-studio-devel obs-studio-libs -y
@@ -163,7 +165,7 @@ case $NAME in
     ;;
 esac
 
-flatpak install org.freedesktop.Platform.VulkanLayer.OBSVkCapture -y
+flatpak install org.freedesktop.Platform.VulkanLayer.OBSVkCapture $FLATPAK_TYPE -y
 
 # Install some useful scripts for SteamVR.
 sudo dnf install python3-bluepy python3-yaml python3-psutil -y
@@ -171,29 +173,29 @@ git clone https://github.com/DavidRisch/steamvr_utils.git -b iss15_fix_v2_interf
 python3 ./steamvr_utils/scripts/install.py
 
 # Install some game launcher and emulator Flatpaks.
-flatpak install flathub com.heroicgameslauncher.hgl -y
-flatpak install flathub net.rpcs3.RPCS3 -y
-flatpak install flathub org.yuzu_emu.yuzu -y
-flatpak install flathub org.ryujinx.Ryujinx -y
-flatpak install flathub org.DolphinEmu.dolphin-emu -y
-flatpak install flathub net.pcsx2.PCSX2 -y
-flatpak install flathub org.prismlauncher.PrismLauncher -y
-flatpak install flathub dev.goats.xivlauncher -y
+flatpak install flathub com.heroicgameslauncher.hgl $FLATPAK_TYPE -y
+flatpak install flathub net.rpcs3.RPCS3 $FLATPAK_TYPE -y
+flatpak install flathub org.yuzu_emu.yuzu $FLATPAK_TYPE -y
+flatpak install flathub org.ryujinx.Ryujinx $FLATPAK_TYPE -y
+flatpak install flathub org.DolphinEmu.dolphin-emu $FLATPAK_TYPE -y
+flatpak install flathub net.pcsx2.PCSX2 $FLATPAK_TYPE -y
+flatpak install flathub org.prismlauncher.PrismLauncher $FLATPAK_TYPE -y
+flatpak install flathub dev.goats.xivlauncher $FLATPAK_TYPE -y
 flatpak remote-add --if-not-exists --user launcher.moe https://gol.launcher.moe/gol.launcher.moe.flatpakrepo
-flatpak install flathub org.gnome.Platform//43 # Install a specific GTK dependency for AAGL and HRWL.
-flatpak install flathub com.valvesoftware.Steam.Utility.gamescope -y # Install Gamescope dependency for AAGL and HRWL.
-flatpak install flathub org.freedesktop.Platform.VulkanLayer.MangoHud -y # Install MangoHud dependency for Heroic, AAGL, Lutris, and HRWL.
-flatpak install flathub org.freedesktop.Platform.VulkanLayer.OBSVkCapture -y # Install OBS VkCapture layer for OBS capturing of Flatpak games.
-flatpak install flathub com.valvesoftware.Steam.Utility.vkBasalt -y # Install VkBasalt for Flatpak games.
+flatpak install flathub org.gnome.Platform//43 $FLATPAK_TYPE -y # Install a specific GTK dependency for AAGL and HRWL.
+flatpak install flathub com.valvesoftware.Steam.Utility.gamescope $FLATPAK_TYPE -y # Install Gamescope dependency for AAGL and HRWL.
+flatpak install flathub org.freedesktop.Platform.VulkanLayer.MangoHud $FLATPAK_TYPE -y # Install MangoHud dependency for Heroic, AAGL, Lutris, and HRWL.
+flatpak install flathub org.freedesktop.Platform.VulkanLayer.OBSVkCapture $FLATPAK_TYPE -y # Install OBS VkCapture layer for OBS capturing of Flatpak games.
+flatpak install flathub com.valvesoftware.Steam.Utility.vkBasalt $FLATPAK_TYPE -y # Install VkBasalt for Flatpak games.
 sudo flatpak override --filesystem=xdg-config/MangoHud:ro # Set up all Flatpaks to use our own MangoHUD config from GOverlay.
 flatpak override --user --talk-name=com.feralinteractive.GameMode # Set up Gamemode override for MangoHUD Flatpak.
-flatpak install launcher.moe moe.launcher.an-anime-game-launcher -y
-flatpak install launcher.moe moe.launcher.the-honkers-railway-launcher -y
-flatpak install launcher.moe moe.launcher.honkers-launcher -y
-flatpak install flathub com.steamgriddb.steam-rom-manager -y
+flatpak install launcher.moe moe.launcher.an-anime-game-launcher --user -y
+flatpak install launcher.moe moe.launcher.the-honkers-railway-launcher --user -y
+flatpak install launcher.moe moe.launcher.honkers-launcher --user -y
+flatpak install flathub com.steamgriddb.steam-rom-manager $FLATPAK_TYPE -y
 
 # Install some Proton related stuff (for game compatibility)
-flatpak install flathub com.github.Matoking.protontricks -y
+flatpak install flathub com.github.Matoking.protontricks $FLATPAK_TYPE -y
 
 # Install a Soundboard Application, for micspamming in Team Fortress 2 servers, of course! ;-)
 sudo dnf copr enable rivenirvana/soundux -y && sudo dnf install soundux pipewire-devel -y
@@ -204,7 +206,7 @@ echo 'KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="
 sudo tee /etc/udev/rules.d/85-sunshine.rules
 systemctl --user enable sunshine
 sudo setcap cap_sys_admin+p $(readlink -f $(which sunshine))
-flatpak install flathub com.moonlight_stream.Moonlight -y
+flatpak install flathub com.moonlight_stream.Moonlight $FLATPAK_TYPE -y
 
 ## ///// WINE AND WINDOWS SOFTWARE /////
 
@@ -259,7 +261,7 @@ echo "If you plan to use Clip Studio, set concrt140 as a WineDLLOverride in wine
 #cd .. && rm -rf mf-install
 
 # Set up Bottles.
-flatpak install flathub com.usebottles.bottles -y
+flatpak install flathub com.usebottles.bottles $FLATPAK_TYPE -y
 flatpak override com.usebottles.bottles --user --filesystem=xdg-data/applications
 
 ## //// NETWORKING STUFF /////
@@ -297,7 +299,7 @@ sudo sh -c 'echo -e "[unityhub]\nname=Unity Hub\nbaseurl=https://hub.unity3d.com
 mkdir $HOME/Applications && cd $HOME/Applications && wget -O jetbrains-toolbox.tar.gz https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.24.11947.tar.gz && tar xvzf jetbrains-toolbox.tar.gz && cd .. && echo "Make sure to remove the 'jetbrains-toolbox' executable from the extracted folder before running! Preferably copy it to '/opt' before running."
 
 # Install Epic Asset Manager (For Unreal Engine)
-flatpak install flathub io.github.achetagames.epic_asset_manager -y
+flatpak install flathub io.github.achetagames.epic_asset_manager $FLATPAK_TYPE -y
 
 # Install Docker.
 sudo dnf install dnf-plugins-core -y
@@ -314,7 +316,7 @@ sudo dnf install podman distrobox -y
 sudo dnf install mingw64-\* cmake ninja-build -y --skip-broken
 
 # Install Ghidra.
-flatpak install flathub org.ghidra_sre.Ghidra -y && sudo flatpak override org.ghidra_sre.Ghidra --filesystem=/mnt
+flatpak install flathub org.ghidra_sre.Ghidra $FLATPAK_TYPE -y && sudo flatpak override org.ghidra_sre.Ghidra --filesystem=/mnt
 
 # Install Visual Studio Code.
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc && sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo' && sudo dnf check-update && sudo dnf install code -y
@@ -486,8 +488,8 @@ echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2024/lib"" >> $HOME/.profile
 
 case $NAME in
     ("Fedora") # Install some flatpaks that are already taken care of in Nobara's setup process.
-    flatpak install flathub org.blender.Blender -y
-    flatpak install flathub org.kde.kdenlive -y
+    flatpak install flathub org.blender.Blender $FLATPAK_TYPE -y
+    flatpak install flathub org.kde.kdenlive $FLATPAK_TYPE -y
     ;;
 esac
 
@@ -498,8 +500,8 @@ case $NAME in
 esac
 # TODO: Add Dracut regeneration just in case the AMD GPU Switcher drivers have been installed on Nobara.
 
-flatpak install flathub org.kde.krita -y
-flatpak install flathub org.gimp.GIMP -y
+flatpak install flathub org.kde.krita $FLATPAK_TYPE -y
+flatpak install flathub org.gimp.GIMP $FLATPAK_TYPE -y
 
 ## ///// GENERAL DESKTOP USAGE /////
 
@@ -517,7 +519,7 @@ sudo dnf config-manager --add-repo https://packages.microsoft.com/yumrepos/edge
 sudo dnf install microsoft-edge-stable -y
 
 # Install Warpinator for file transfers.
-flatpak install flathub org.x.Warpinator -y
+flatpak install flathub org.x.Warpinator $FLATPAK_TYPE -y
 
 # Install the BETTER partition manager.
 sudo dnf install gnome-disk-utility -y
@@ -539,7 +541,7 @@ case $NAME in
     sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
 
     # Install Discord (Nobara has it's own version, so that goes here).
-    flatpak install flathub com.discordapp.Discord
+    flatpak install flathub com.discordapp.Discord $FLATPAK_TYPE -y
 
     # Enable support for flatpak Discord to use Discord Rich Presence for non-sandboxed applications.
     mkdir -p ~/.config/user-tmpfiles.d
@@ -555,8 +557,11 @@ sudo grubby --update-kernel=ALL --args="amdgpu.ppfeaturemask=0xffffffff"
 sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
 
 # Install some Flatpaks that I personally use.
-flatpak install flathub org.mozilla.Thunderbird -y
-flatpak install flathub org.qbittorrent.qBittorrent -y
+flatpak install flathub org.mozilla.Thunderbird $FLATPAK_TYPE -y
+flatpak install flathub com.spotify.Client $FLATPAK_TYPE -y
+
+# Install a Torrent client.
+sudo dnf install qbittorrent -y
 
 # Install and Setup OneDrive.
 sudo dnf install onedrive -y && sudo systemctl stop onedrive@$USER.service && sudo systemctl disable onedrive@$USER.service && systemctl --user enable onedrive && systemctl --user start onedrive
@@ -566,7 +571,7 @@ echo "Make sure to run onedrive --synchronize when you can."
 sudo dnf install https://mullvad.net/media/app/MullvadVPN-2023.3_x86_64.rpm -y
 
 # Set up OnlyOffice.
-flatpak install flathub org.onlyoffice.desktopeditors -y
+flatpak install flathub org.onlyoffice.desktopeditors $FLATPAK_TYPE -y
 
 
 ## ///// MEDIA CODECS AND SUCH /////
@@ -590,7 +595,7 @@ case $NAME in
 esac
 
 # Install FFMPEG for Flatpak
-flatpak install flathub org.freedesktop.Platform.ffmpeg-full
+flatpak install flathub org.freedesktop.Platform.ffmpeg-full $FLATPAK_TYPE -y
 
 # Install Better Fonts
 sudo dnf copr enable dawid/better_fonts -y && sudo dnf install fontconfig-font-replacements -y --skip-broken && sudo dnf install fontconfig-enhanced-defaults -y --skip-broken
