@@ -57,7 +57,7 @@ flatpak install flathub com.github.tchx84.Flatseal $FLATPAK_TYPE -y
 # Set up Homebrew Package Manager
 sudo yum groupinstall 'Development Tools' -y
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/bryce/.bash_profile
+(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> ~/.bash_profile
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # WIP FreeSync toggle for X11 mode for AMD GPUs, may need to be skipped or improved upon.
@@ -338,6 +338,12 @@ sudo dnf install dotnet mono-devel -y
 # Install Java
 sudo dnf install java -y
 
+# Install Ruby alongside some Gems.
+sudo dnf install ruby ruby-devel rubygem-\* --skip-broken -y
+
+# Install Python 2.
+sudo dnf install python2 -y
+
 ## ///// VIRTUALIZATION /////
 
 if grep -Eq 'vmx|svm' /proc/cpuinfo; then
@@ -471,11 +477,19 @@ sudo python3 ./main.py install libhoudini
 sudo python3 ./main.py install widevine
 sudo python3 ./main.py install smartdock
 sudo python3 main.py hack hidestatusbar
+# Some tweaks for stuff like USB controller support or stuff that requires a WiFi connection.
+waydroid prop set persist.waydroid.udev true
+waydroid prop set persist.waydroid.uevent true
+waydroid prop set persist.waydroid.fake_wifi true
 echo "Make sure to run 'sudo waydroid shell' followed by the command listed here: https://docs.waydro.id/faq/google-play-certification"
 cd ..
 
 # Install Yabridge (For VST Plugins, I'm going to assume you will set up a DAW on your own accords).
 sudo dnf copr enable patrickl/yabridge-stable -y && sudo dnf install yabridge -y
+
+# Ableton Stuff (Feel free to use this if you are planning to install Ableton Live. I just have it here for reference).
+# WINEPREFIX=~/.ableton wine64 "INSERT DIRECTORY OF INSTALLER HERE"
+# echo 'Make sure to run "WINEPREFIX=~/.ableton winecfg" to change the version of Windows to Windows 7.'
 
 # Install Compatibility Related Stuff for Autodesk Maya and Mudbox.
 sudo dnf copr enable dioni21/compat-openssl10 -y && sudo dnf install pcre-utf16 -y && sudo dnf install compat-openssl10 -y
@@ -508,10 +522,9 @@ flatpak install flathub org.gimp.GIMP $FLATPAK_TYPE -y
 # Install the tiled window management KWin plugin, Bismuth.
 sudo dnf install bismuth qt -y
 
-# Use Librewolf instead of Firefox.
+# Use Librewolf instead of Firefox. We also need to reinstall the Plasma Browser Integration after Firefox is removed.
 sudo dnf config-manager --add-repo https://rpm.librewolf.net/librewolf-repo.repo
-sudo dnf install librewolf -y
-sudo dnf remove firefox -y
+sudo dnf install librewolf -y && sudo dnf remove firefox -y && sudo dnf install plasma-browser-integration -y
 
 # Install Microsoft Edge as a secondary web browser.
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
@@ -550,11 +563,30 @@ case $NAME in
     ;;
 esac
 
+# Set up BetterDiscord AppImage.
+wget -O ~/Applications/BetterDiscord-Linux.AppImage https://github.com/BetterDiscord/Installer/releases/download/v1.3.0/BetterDiscord-Linux.AppImage
+
+# Set up Discord Overlay of sorts (https://github.com/trigg/Discover)
+sudo dnf copr enable mavit/discover-overlay -y
+sudo dnf install discover-overlay gtk-layer-shell gtk-layer-shell-devel -y
+
+# Some AppImage stuff (An AppImage Integrator and Updater)
+sudo dnf install https://github.com/TheAssassin/AppImageLauncher/releases/download/v2.2.0/appimagelauncher-2.2.0-travis995.0f91801.x86_64.rpm -y
+wget -O ~/Applications/AppImageUpdate.AppImage https://github.com/AppImageCommunity/AppImageUpdate/releases/download/2.0.0-alpha-1-20230526/AppImageUpdate-x86_64.AppImage
+
 # Install CoreCtrl for CPU power management purposes.
 sudo dnf install corectrl -y
 cp /usr/share/applications/org.corectrl.corectrl.desktop ~/.config/autostart/org.corectrl.corectrl.desktop
 sudo grubby --update-kernel=ALL --args="amdgpu.ppfeaturemask=0xffffffff"
 sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
+
+# WIP: Add the AMD P-States driver instead of the built-in power management. Commented out for now while I figure out a good approach for this.
+# Seemingly the grubby command isn't working, so we just need to find a way to add the needed parameters to "/etc/default/grub". Same goes for the VM parameters and parameters for corectrl.
+#cpu_vendor=$(grep -m 1 vendor_id /proc/cpuinfo | cut -d ":" -f 2 | tr -d '[:space:]')
+#if [ "$cpu_vendor" = "AuthenticAMD" ]; then
+    #sudo grubby --update-kernel=ALL --args="blacklist_module=acpi_cpufreq initcall_blacklist=acpi_cpufreq_init amd_pstate.shared_mem=1 amd_pstate.enable=1 amd_pstate=passive"
+    #sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
+#fi
 
 # Install some Flatpaks that I personally use.
 flatpak install flathub org.mozilla.Thunderbird $FLATPAK_TYPE -y
@@ -563,9 +595,10 @@ flatpak install flathub com.spotify.Client $FLATPAK_TYPE -y
 # Install a Torrent client.
 sudo dnf install qbittorrent -y
 
-# Install and Setup OneDrive.
+# Install and Setup OneDrive alongside OneDrive GUI for a GUI interface.
 sudo dnf install onedrive -y && sudo systemctl stop onedrive@$USER.service && sudo systemctl disable onedrive@$USER.service && systemctl --user enable onedrive && systemctl --user start onedrive
-echo "Make sure to run onedrive --synchronize when you can."
+wget -O ~/Applications/OneDriveGUI.AppImage https://github.com/bpozdena/OneDriveGUI/releases/download/v1.0.2/OneDriveGUI-1.0.2-x86_64.AppImage
+echo "Make sure to run AppImageLauncher at least once, to get it to recognize the AppImage for OneDriveGUI. Afterwards, synchronize your account, and add a login application startup for the OneDrive GUI.".
 
 # Install Mullvad VPN.
 sudo dnf install https://mullvad.net/media/app/MullvadVPN-2023.3_x86_64.rpm -y
@@ -600,15 +633,30 @@ flatpak install flathub org.freedesktop.Platform.ffmpeg-full $FLATPAK_TYPE -y
 # Install Better Fonts
 sudo dnf copr enable dawid/better_fonts -y && sudo dnf install fontconfig-font-replacements -y --skip-broken && sudo dnf install fontconfig-enhanced-defaults -y --skip-broken
 
-# ///// TPM AUTOMATIC DECRYPTION (This is gonna need work before I can automate LUKS encryption on the boot drive to decrypt via TPM) /////
-## Do this part in the LiveUSB environment (for Nobara) to convert from a LUKS to LUKS2 encryption system. #This might not be necessary with bogstandard Fedora, but it is with Nobara.
-#case $NAME in
-    #("Nobara Linux")
-    #sudo cryptsetup --debug convert /dev/nvme0n1p3 --type=luks2
-    #;;
-#esac
-#sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=7+8 /dev/nvme0n1p3
-#sudo sed -ie '/^luks-/s/$/,tpm2-device=auto/' /etc/crypttab # This might have to be "sudo sed -ie '/^luks-/s/$/,tpm2-device=auto,discard/' /etc/crypttab" instead, I'm unsure because I have two of them in this same script. lol.
-# The following command will no longer be needed, from dracut 056 on
-#sudo echo 'install_optional_items+=" /usr/lib64/libtss2* /usr/lib64/libfido2.so.* /usr/lib64/cryptsetup/libcryptsetup-token-systemd-tpm2.so "' > /etc/dracut.conf.d/tss2.conf
-#sudo dracut --regenerate-all -force
+# ///// TPM AUTOMATIC SYSTEM PARTITION DECRYPTION (NEW METHOD). Commented out for now because I need to iron something out with how the TPM key isn't being used. /////
+#sudo systemd-cryptenroll --wipe-slot=tpm2 /dev/nvme0n1p3 # First we should probably remove any keys that exist in the TPM. Feel free to remove this if you like.
+#sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+1+2+3+4+5+7+8 /dev/nvme0n1p3
+# Next, we need to grab the Partition UUID for our LUKS partition.
+#partuuid=$(sudo blkid /dev/nvme0n1p3 | grep -o 'PARTUUID="[^"]*' | cut -d'"' -f2 | tr '[:lower:]' '[:upper:]')
+## echo "$partuuid" >> ~/test.txt # Simple test to see if this works
+#echo 'root  UUID=$partuuid  none  tpm2-device=auto' | sudo tee -a /etc/crypttab.initramfs # As shown here (https://wiki.archlinux.org/title/Dm-crypt/System_configuration#Trusted_Platform_Module_and_FIDO2_keys)
+#echo 'add_dracutmodules+=" tpm2-tss "' | sudo tee -a /etc/dracut.conf.d/tpm2-tss.conf # As shown here (https://wiki.archlinux.org/title/User:Krin/Secure_Boot,_full_disk_encryption,_and_TPM2_unlocking_install#Enrollment)
+#sudo dracut --regenerate-all --force # Regenerate the initramfs with TPM decryption.
+# NOTE: Figure out the problem with the dracut regeneration. It's saying "/etc/dracut.conf.d/cmdline.conf: line 1: rd.luks.options=30cad45d-0223-4ff0-a6d0-fe0d8e0f3098=tpm2-device=auto: command not found", despite the dependencies clearly being installed.
+
+# ///// GRUB BOOTLOADER MODIFICATIONS /////
+# Adjust GRUB bootloader settings to only show the menu if I hold shift, and to reduce the countdown timer from 5 to 3 for a quicker boot.
+new_timeout=3
+# Check if GRUB_TIMEOUT exists in the configuration file, and if it does, replace its value with the new_timeout. If not, add it to the end of the file.
+if grep -q '^GRUB_TIMEOUT=' /etc/default/grub; then
+    sudo sed -Ei "s/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=$new_timeout/" /etc/default/grub
+else
+    sudo sed -i "$ a GRUB_TIMEOUT=$new_timeout" /etc/default/grub
+fi
+# Check if GRUB_TIMEOUT_STYLE exists in the configuration file, and if it does, replace its value with "hidden". If not, add it to the end of the file.
+if grep -q '^GRUB_TIMEOUT_STYLE=' /etc/default/grub; then
+    sudo sed -Ei 's/^GRUB_TIMEOUT_STYLE=.*/GRUB_TIMEOUT_STYLE=hidden/' /etc/default/grub
+else
+    sudo sed -i "$ a GRUB_TIMEOUT_STYLE=hidden" /etc/default/grub
+fi
+sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
