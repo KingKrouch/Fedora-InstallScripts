@@ -627,11 +627,30 @@ case $NAME in
     ;;
 esac
 
-# Install FFMPEG for Flatpak
+# Install FFMPEG for Flatpak.
 flatpak install flathub org.freedesktop.Platform.ffmpeg-full $FLATPAK_TYPE -y
 
-# Install Better Fonts
+# Install Better Fonts.
 sudo dnf copr enable dawid/better_fonts -y && sudo dnf install fontconfig-font-replacements -y --skip-broken && sudo dnf install fontconfig-enhanced-defaults -y --skip-broken
+
+# Install FontAwesome Fonts.
+sudo dnf install fontawesome-fonts fontawesome5-brands-fonts -y
+
+# Install Microsoft Fonts.
+sudo dnf install curl cabextract xorg-x11-font-utils fontconfig -y
+sudo rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
+# Some other Microsoft fonts not included with msttcore-fonts. You may need to restart your PC for the fonts to appear.
+wget -q -O - https://gist.githubusercontent.com/Blastoise/72e10b8af5ca359772ee64b6dba33c91/raw/2d7ab3caa27faa61beca9fbf7d3aca6ce9a25916/clearType.sh | bash
+wget -q -O - https://gist.githubusercontent.com/Blastoise/b74e06f739610c4a867cf94b27637a56/raw/96926e732a38d3da860624114990121d71c08ea1/tahoma.sh | bash
+wget -q -O - https://gist.githubusercontent.com/Blastoise/64ba4acc55047a53b680c1b3072dd985/raw/6bdf69384da4783cc6dafcb51d281cb3ddcb7ca0/segoeUI.sh | bash
+wget -q -O - https://gist.githubusercontent.com/Blastoise/d959d3196fb3937b36969013d96740e0/raw/429d8882b7c34e5dbd7b9cbc9d0079de5bd9e3aa/otherFonts.sh | bash
+
+# Set up Google Fonts.
+wget -O ~/.fonts/google-fonts.zip https://github.com/google/fonts/archive/master.zip
+mkdir ~/.fonts/Google && unzip -d ~/.fonts/Google ~/.fonts/google-fonts.zip
+
+# Finally updates our Font Cache.
+sudo fc-cache -fv
 
 # ///// TPM AUTOMATIC SYSTEM PARTITION DECRYPTION (NEW METHOD). Commented out for now because I need to iron something out with how the TPM key isn't being used. /////
 #sudo systemd-cryptenroll --wipe-slot=tpm2 /dev/nvme0n1p3 # First we should probably remove any keys that exist in the TPM. Feel free to remove this if you like.
