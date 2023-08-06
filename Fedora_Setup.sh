@@ -196,7 +196,7 @@ flatpak install flathub com.steamgriddb.steam-rom-manager -y
 flatpak install flathub com.github.Matoking.protontricks -y
 
 # Install a Soundboard Application, for micspamming in Team Fortress 2 servers, of course! ;-)
-sudo dnf copr enable rivenirvana/soundux -y && sudo dnf install soundux -y
+sudo dnf copr enable rivenirvana/soundux -y && sudo dnf install soundux pipewire-devel -y
 
 # Set up Sunshine and Moonlight Streaming.
 sudo dnf install https://github.com/LizardByte/Sunshine/releases/download/v0.20.0/sunshine-fedora-$(rpm -E %fedora)-amd64.rpm -y
