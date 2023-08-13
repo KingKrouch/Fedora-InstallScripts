@@ -26,8 +26,19 @@ BorderActivateAll=9
 [Plugins]
 desktopchangeosdEnabled=true
 
+[TabBox]
+LayoutName=thumbnail_grid
+OrderMinimizedMode=1
+
+[TabBoxAlternative]
+LayoutName=big_icons
+OrderMinimizedMode=1
+
 [Tiling]
 padding=16
+
+[Tiling][1f183f28-8e79-5595-b205-d533e8299df6]
+tiles={"layoutDirection":"floating","tiles":[{"height":0.9999999999999978,"width":0.4979166666666715,"x":1.691355389077387e-17,"y":0},{"height":0.9999999999999942,"width":0.5015624999999921,"x":0.4984375000000078,"y":0},{"height":0.5037037037037012,"width":0.4973958333333478,"x":5.9915180455893946e-15,"y":0},{"height":0.4962962962962867,"width":0.4973958333333371,"x":6.0192736212050235e-15,"y":0.5037037037037058},{"height":0.5037037037036938,"width":0.5015624999999935,"x":0.49843750000000636,"y":1.7620453707234418e-15},{"height":0.49351851851851003,"width":0.501562499999991,"x":0.498437500000009,"y":0.506481481481486},{"height":0.9999999999999805,"width":0.9999999999999929,"x":6.7114282881197695e-15,"y":4.662503022556663e-15}]}
 
 [Tiling][ef9285f1-a5cc-5f5b-89dd-83f09012eec0]
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.5},{"width":0.5}]}
