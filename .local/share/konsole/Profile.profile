@@ -1,5 +1,5 @@
 [Appearance]
-ColorScheme=Breeze (New)
+ColorScheme=Breeze (Transparent)
 Font=SauceCodePro NF Medium,10,-1,5,57,0,0,0,0,0,Regular
 
 [Cursor Options]

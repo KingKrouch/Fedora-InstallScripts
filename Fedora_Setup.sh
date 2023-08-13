@@ -217,10 +217,6 @@ systemctl --user enable sunshine
 sudo setcap cap_sys_admin+p $(readlink -f $(which sunshine))
 flatpak install flathub com.moonlight_stream.Moonlight $FLATPAK_TYPE -y
 
-# A quick and easy way of forcing the DPI scaling of Steam to a specific scale. Uncomment and replace 1.35 with your desired DPI scale
-# cp /usr/share/applications/steam.desktop ~/.local/share/applications
-# awk '/^\[Desktop Entry\]/{flag=1} flag && /^Exec=/{sub(/^Exec=/, "Exec=STEAM_FORCE_DESKTOPUI_SCALING=1.35 ", $0); flag=0} 1' ~/.local/share/applications/steam.desktop > temp_file && mv temp_file ~/.local/share/applications/steam.desktop
-
 ## ///// WINE AND WINDOWS SOFTWARE /////
 
 case $NAME in
@@ -640,6 +636,17 @@ sudo dnf install https://mullvad.net/media/app/MullvadVPN-2023.3_x86_64.rpm -y
 # Set up OnlyOffice.
 flatpak install flathub org.onlyoffice.desktopeditors $FLATPAK_TYPE -y
 
+## ///// DPI SCALING RELATED STUFF /////
+# ~/.local/share/kscreen has a config file that can tell you the refresh rate and DPI scale of the current display. There probably is a better way of doing this in Wayland, but I'd need to find a way to allow updating of the scale for these applications, since Steam's DPI scaling on KDE is still busted for some reason.
+
+# A config tweak for having a 1.3x scale for Spotify. Seemingly it doesn't allow double digits after the whole number, so we have to round down from 1.35 to 1.3.
+# As shown here: https://justincaustin.com/blog/spotify-flatpak-hidpi-scaling/
+#sudo sed -i 's/flatpak run --branch=stable --arch=x86_64 --command=spotify --file-forwarding com.spotify.Client /&--force-device-scale-factor=1.3 /' /var/lib/flatpak/app/com.spotify.Client/current/active/export/share/applications/com.spotify.Client.desktop
+#sudo update-desktop-database
+
+# A quick and easy way of forcing the DPI scaling of Steam to a specific scale. Uncomment and replace 1.35 with your desired DPI scale
+# cp /usr/share/applications/steam.desktop ~/.local/share/applications
+# awk '/^\[Desktop Entry\]/{flag=1} flag && /^Exec=/{sub(/^Exec=/, "Exec=STEAM_FORCE_DESKTOPUI_SCALING=1.35 ", $0); flag=0} 1' ~/.local/share/applications/steam.desktop > temp_file && mv temp_file ~/.local/share/applications/steam.desktop
 
 ## ///// MEDIA CODECS AND SUCH /////
 
