@@ -11,7 +11,7 @@ titlematch=1
 types=1
 wmclass=steam_app_431960
 wmclasscomplete=true
-wmclassmatch=1
+wmclassmatch=2
 
 [2]
 Description=Wallpaper Engine Preview Popout
@@ -45,7 +45,7 @@ titlematch=1
 types=1
 wmclass=steam_app_431960
 wmclasscomplete=true
-wmclassmatch=1
+wmclassmatch=2
 
 [3]
 Description=Center Administrator Access on Screen
