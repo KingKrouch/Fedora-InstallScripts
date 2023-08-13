@@ -60,6 +60,13 @@ sudo yum groupinstall 'Development Tools' -y
 (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> ~/.bash_profile
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
+# Set up Nix package manager, alongside enabling non-free packages (for example, UnityHub or Jetbrains Rider).
+## Make sure to install this as a root for a multi-user install.
+# sh <(curl -L https://nixos.org/nix/install) --daemon
+# mkdir ~/.config/nixpkgs && echo '{ allowUnfree = true; }' > ~/.config/nixpkgs/config.nix
+## Afterwards, run this in a new terminal.
+# nix-shell -p nix-info --run "nix-info -m"
+
 # WIP FreeSync toggle for X11 mode for AMD GPUs, may need to be skipped or improved upon.
 if grep -q "VariableRefresh" "/etc/X11/xorg.conf.d/20-amdgpu.conf"; then
     echo "Variable Refresh Rate tweak for X11 has already been done."
@@ -104,9 +111,6 @@ echo "typeset -g POWERLEVEL9K_INSTANT_PROMPT=off" >> tee -a ~/.zshrc
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 sed -i 's/plugins=(git)/plugins=(git emoji zsh-syntax-highlighting zsh-autosuggestions)/g' ~/.zshrc
-
-## Add nerd-fonts for Noto and SourceCodePro font families. This will just install everything together, but I give no fucks at this point, just want things a little easier to set up.
-git clone https://github.com/ryanoasis/nerd-fonts.git && cd nerd-fonts && ./install.sh && cd .. && sudo rm -rf nerd-fonts
 
 # Append exa and lsd aliases, and neofetch alias to both the bashrc and zshrc.
 echo '# Custom Commands
@@ -165,6 +169,11 @@ case $NAME in
     ;;
 esac
 
+# Set up the OBS Studio shortcut to use the propreitary AMD drivers, so AMF encoding can be used instead.
+cp /usr/share/applications/com.obsproject.Studio.desktop ~/.local/share/applications
+sed -i 's/^Exec=/Exec=vk_pro /' ~/.local/share/applications/com.obsproject.Studio.desktop
+
+# Install the needed OBS-VKCapture layer for Flatpak software (Useful for games on Heroic, or the Anime Game Launchers).
 flatpak install org.freedesktop.Platform.VulkanLayer.OBSVkCapture $FLATPAK_TYPE -y
 
 # Install some useful scripts for SteamVR.
@@ -208,6 +217,10 @@ systemctl --user enable sunshine
 sudo setcap cap_sys_admin+p $(readlink -f $(which sunshine))
 flatpak install flathub com.moonlight_stream.Moonlight $FLATPAK_TYPE -y
 
+# A quick and easy way of forcing the DPI scaling of Steam to a specific scale. Uncomment and replace 1.35 with your desired DPI scale
+# cp /usr/share/applications/steam.desktop ~/.local/share/applications
+# awk '/^\[Desktop Entry\]/{flag=1} flag && /^Exec=/{sub(/^Exec=/, "Exec=STEAM_FORCE_DESKTOPUI_SCALING=1.35 ", $0); flag=0} 1' ~/.local/share/applications/steam.desktop > temp_file && mv temp_file ~/.local/share/applications/steam.desktop
+
 ## ///// WINE AND WINDOWS SOFTWARE /////
 
 case $NAME in
@@ -237,8 +250,8 @@ esac
 
 wget https://aka.ms/vs/17/release/vc_redist.x86.exe
 wget https://aka.ms/vs/17/release/vc_redist.x64.exe
-wget https://download.microsoft.com/download/F/9/4/F942F07D-F26F-4F30-B4E3-EBD54FABA377/NDP462-KB3151800-x86-x64-AllOS-ENU.exe
-wine NDP462-KB3151800-x86-x64-AllOS-ENU.exe
+wget https://download.visualstudio.microsoft.com/download/pr/8e396c75-4d0d-41d3-aea8-848babc2736a/80b431456d8866ebe053eb8b81a168b3/ndp462-kb3151800-x86-x64-allos-enu.exe
+wine ndp462-kb3151800-x86-x64-allos-enu.exe
 wine vc_redist.x86.exe /quiet /norestart
 wine vc_redist.x64.exe /quiet /norestart
 rm vc_redist.x86.exe vc_redist.x64.exe NDP462-KB3151800-x86-x64-AllOS-ENU.exe
@@ -272,6 +285,13 @@ sudo dnf install barrier -y
 # Set up Samba
 sudo dnf install samba -y
 sudo systemctl enable smb nmb && sudo systemctl start smb nmb
+case $XDG_CURRENT_DESKTOP in
+    ("KDE") # Install the KDE Plasma extension for Samba Shares, alongside setting up the needed permissions.
+    sudo dnf install kdenetwork-filesharing -y
+    sudo groupadd sambashares && sudo usermod -a -G sambashares $USER
+    sudo chgrp sambashares /var/lib/samba/usershares && sudo chown $USER:sambashares /var/lib/samba/usershares
+    ;;
+esac
 
 # Set up SSH Server on Host
 sudo systemctl enable sshd && sudo systemctl start sshd
@@ -344,12 +364,16 @@ sudo dnf install ruby ruby-devel rubygem-\* --skip-broken -y
 # Install Python 2.
 sudo dnf install python2 -y
 
+# Install Rust.
+sudo dnf install rust -y
+
 ## ///// VIRTUALIZATION /////
 
 if grep -Eq 'vmx|svm' /proc/cpuinfo; then
     echo "Virtualization is enabled. Setting up virtualization packages."
-    # Installs Virtual Machine related packages
+    # Installs Virtual Machine related packages, alongside downloading the current stable VirtIO Guest Driver ISO.
     sudo dnf -y group install Virtualization -y
+    wget -O ~/Downloads/virtio-win.iso https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
 
     # Set up GRUB Bootloader to use IOMMU based on the CPU type used
     cpu_vendor=$(grep -m 1 vendor_id /proc/cpuinfo | cut -d ":" -f 2 | tr -d '[:space:]')
@@ -455,8 +479,9 @@ if grep -Eq 'vmx|svm' /proc/cpuinfo; then
 	# VIRSH_GPU_AUDIO=pci_0000_0a_00_1" >> '/etc/libvirt/hooks/kvm.conf'
 
 	# Download the RX 6700XT VBIOS that I use specifically (An ASUS ROG STRIX OC Edition)
-	# sudo wget -O ~/GPU.rom https://www.techpowerup.com/vgabios/230897/Asus.RX6700XT.12288.210301.rom
-	# sudo chmod -R 660 ~/GPU.rom && sudo chown $(whoami):$(whoami) ~/GPU.rom
+ 	# mkdir ~/.local/share/libvirt
+	# wget -O ~/.local/share/libvirt/GPU.rom https://www.techpowerup.com/vgabios/230897/Asus.RX6700XT.12288.210301.rom
+	# sudo chmod -R 660 ~/.local/share/libvirt/GPU.rom && sudo chown $(whoami):$(whoami) ~/.local/share/libvirt/GPU.rom
 
     # Finally restart the Libvirt service.
     sudo systemctl restart libvirtd.service
@@ -580,17 +605,26 @@ cp /usr/share/applications/org.corectrl.corectrl.desktop ~/.config/autostart/org
 sudo grubby --update-kernel=ALL --args="amdgpu.ppfeaturemask=0xffffffff"
 sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
 
-# WIP: Add the AMD P-States driver instead of the built-in power management. Commented out for now while I figure out a good approach for this.
+# Add the AMD P-States driver instead of the built-in power management.
+# NOTE: Nothing needs to be done on Intel CPUs, their P-State driver is already enabled by default on recent Linux kernel versions.
 # Seemingly the grubby command isn't working, so we just need to find a way to add the needed parameters to "/etc/default/grub". Same goes for the VM parameters and parameters for corectrl.
-#cpu_vendor=$(grep -m 1 vendor_id /proc/cpuinfo | cut -d ":" -f 2 | tr -d '[:space:]')
-#if [ "$cpu_vendor" = "AuthenticAMD" ]; then
-    #sudo grubby --update-kernel=ALL --args="blacklist_module=acpi_cpufreq initcall_blacklist=acpi_cpufreq_init amd_pstate.shared_mem=1 amd_pstate.enable=1 amd_pstate=passive"
-    #sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
-#fi
+cpu_vendor=$(grep -m 1 vendor_id /proc/cpuinfo | cut -d ":" -f 2 | tr -d '[:space:]')
+if [ "$cpu_vendor" = "AuthenticAMD" ]; then
+    sudo grubby --update-kernel=ALL --args="blacklist_module=acpi_cpufreq initcall_blacklist=acpi_cpufreq_init amd_pstate.shared_mem=1 amd_pstate.enable=1 amd_pstate=passive"
+    sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
+fi
 
 # Install some Flatpaks that I personally use.
-flatpak install flathub org.mozilla.Thunderbird $FLATPAK_TYPE -y
 flatpak install flathub com.spotify.Client $FLATPAK_TYPE -y
+
+# Install an email client.
+case $XDG_CURRENT_DESKTOP in
+    ("KDE")
+    sudo dnf install kmail -y
+    ;;
+    ("gnome")
+    sudo dnf install geary -y
+esac
 
 # Install a Torrent client.
 sudo dnf install qbittorrent -y
@@ -651,6 +685,9 @@ mkdir ~/.fonts/Google && unzip -d ~/.fonts/Google ~/.fonts/google-fonts.zip
 
 # Finally updates our Font Cache.
 sudo fc-cache -fv
+
+## Add nerd-fonts for Noto and SourceCodePro font families. This will just install everything together, but I give no fucks at this point, just want things a little easier to set up.
+git clone https://github.com/ryanoasis/nerd-fonts.git && cd nerd-fonts && ./install.sh && cd .. && sudo rm -rf nerd-fonts
 
 # ///// TPM AUTOMATIC SYSTEM PARTITION DECRYPTION (NEW METHOD). Commented out for now because I need to iron something out with how the TPM key isn't being used. /////
 #sudo systemd-cryptenroll --wipe-slot=tpm2 /dev/nvme0n1p3 # First we should probably remove any keys that exist in the TPM. Feel free to remove this if you like.
