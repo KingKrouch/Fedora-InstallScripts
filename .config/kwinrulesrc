@@ -40,6 +40,7 @@ skipswitcher=true
 skipswitcherrule=2
 skiptaskbar=true
 skiptaskbarrule=2
+strictgeometryrule=2
 title=Wallpaper Pop-out
 titlematch=1
 types=1
