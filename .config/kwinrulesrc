@@ -15,6 +15,8 @@ wmclassmatch=2
 
 [2]
 Description=Wallpaper Engine Preview Popout
+aboverule=2
+acceptfocusrule=2
 below=true
 belowrule=2
 clientmachine=localhost
@@ -43,6 +45,8 @@ skiptaskbarrule=2
 strictgeometryrule=2
 title=Wallpaper Pop-out
 titlematch=1
+type=2
+typerule=2
 types=1
 wmclass=steam_app_431960
 wmclasscomplete=true
