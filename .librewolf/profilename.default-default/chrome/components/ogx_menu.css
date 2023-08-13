@@ -71,7 +71,7 @@
 /* Logo */
     
     :root:not([chromehidden~="toolbar"]) #PanelUI-menu-button .toolbarbutton-badge-stack {
-        list-style-image: url("../images/wolfmenu.svg") !important;
+        list-style-image: url("../images/wolflogo_fill.svg") !important;
         display: -moz-box !important;
         max-height: var(--tab-height-personal) !important;
         min-width: var(--padding-left-tab) !important;

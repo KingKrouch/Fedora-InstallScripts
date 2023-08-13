@@ -413,11 +413,31 @@ browser[primary="true"][tabDialogShowing="true"],
     
 /*------------------------fondo (imagen), Logo y Wordmark------------------------*/
     
-body{
+/*body{
     background: var(--lwt-main-image) no-repeat right top fixed !important;
     background-size:  var(--wallpaper-size) !important;
     background-position-y: var(--background-align-y) !important;
     backdrop-filter: var(--brightness-wallpaper) !important;
+    }
+    
+.logo{
+    background: url("../images/wolfmenu.svg") no-repeat !important;
+    background-size: cover !important;
+    height: 80px !important;
+    width: 75px !important;
+    Opacity: var(--logo-wordmark-visibility) !important;
+    display: var(--logo-wordmark-display) !important;
+    }
+    
+.wordmark {
+    background: url("../images/librewolf-wordmark.svg") no-repeat center center !important;
+    background-size: 134px !important;
+    Opacity: var(--logo-wordmark-visibility) !important;
+    display: var(--logo-wordmark-display) !important;
+    }
+    
+.search-wrapper .logo-and-wordmark {
+    margin-bottom: 0px !important;
     }
     
 .promo-cta .button {
@@ -426,12 +446,16 @@ body{
     
 main {
     margin-top: var(--newtab-pinnedsites-position-top, auto) !important;
-}
+} */
     
 /* "Logo-wordmark" y search-box en una sola linea */
     
-@media screen and (min-width: 1000px){
-    .search-inner-wrapper{
+/*@media screen and (min-width: 1000px){
+    
+    .wordmark{ 
+        margin-inline-end: 50px !important;  
+    }
+    .search-wrapper, .search-inner-wrapper{
         display: var(--orientation-display) !important;
         justify-content: center !important;
     }
@@ -440,7 +464,7 @@ main {
         height: 52px !important;
         margin-top: 16px !important;
     }
-  }
+  }/*
     
 }
 
@@ -508,6 +532,22 @@ body{
 .search-inner-wrapper:not(:focus){
     backdrop-filter: var(--personal-blur) !important;
     }
+    
+.logo{
+    background: url("chrome://global/skin/icons/indicator-private-browsing.svg") no-repeat !important;
+    background-size: cover !important;
+    height: 80px !important;
+    width: 80px !important;
+    Opacity: var(--logo-wordmark-visibility) !important;
+    display: var(--logo-wordmark-display) !important;
+    }
+    
+.wordmark {
+    background: url("../images/librewolf-wordmark-private.svg") no-repeat center center !important;
+    Opacity: var(--logo-wordmark-visibility) !important;
+    display: var(--logo-wordmark-display) !important;
+    }
+}
 
 /*..........................................Firefox--------------------------------------------
 ---------------------------------------------view-----------------------------------------------*/
