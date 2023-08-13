@@ -289,7 +289,7 @@ case $XDG_CURRENT_DESKTOP in
     ("KDE") # Install the KDE Plasma extension for Samba Shares, alongside setting up the needed permissions.
     sudo dnf install kdenetwork-filesharing -y
     sudo groupadd sambashares && sudo usermod -a -G sambashares $USER
-    sudo chgrp sambashares /var/lib/samba/usershares && sudo chown $USER:sambashares /var/lib/samba/usershares
+    sudo mkdir /var/lib/samba/usershares && sudo chgrp sambashares /var/lib/samba/usershares && sudo chown $USER:sambashares /var/lib/samba/usershares
     ;;
 esac
 
