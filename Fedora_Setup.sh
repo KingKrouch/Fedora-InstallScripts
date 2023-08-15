@@ -317,12 +317,14 @@ mkdir $HOME/Applications && cd $HOME/Applications && wget -O jetbrains-toolbox.t
 # Install Epic Asset Manager (For Unreal Engine)
 flatpak install flathub io.github.achetagames.epic_asset_manager $FLATPAK_TYPE -y
 
-# Install Docker.
+# Install Docker alongside setting up DockStation.
 sudo dnf install dnf-plugins-core -y
 sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
-sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-compose -y
 sudo groupadd docker && sudo usermod -aG docker $USER
+sudo chmod 666 /var/run/docker.sock
 sudo systemctl enable docker && sudo systemctl start docker
+wget -O ~/Applications/Dockstation.AppImage https://github.com/DockStation/dockstation/releases/download/v1.5.1/dockstation-1.5.1-x86_64.AppImage
 
 # Install Distrobox and Podman (So Distrobox doesn't use Docker instead).
 sudo dnf install podman distrobox -y
