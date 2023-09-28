@@ -38,7 +38,7 @@ profile=balanced
 
 [Battery][SuspendSession]
 idleTime=1200000
-suspendThenHibernate=false
+suspendThenHibernate=true
 suspendType=1
 
 [LowBattery]
@@ -65,5 +65,5 @@ profile=power-saver
 
 [LowBattery][SuspendSession]
 idleTime=300000
-suspendThenHibernate=false
+suspendThenHibernate=true
 suspendType=1
