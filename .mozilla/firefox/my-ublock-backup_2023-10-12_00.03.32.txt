@@ -1,0 +1,38 @@
+{
+  "timeStamp": 1697083412666,
+  "version": "1.52.2",
+  "userSettings": {
+    "importedLists": []
+  },
+  "selectedFilterLists": [
+    "user-filters",
+    "assets.json",
+    "public_suffix_list.dat",
+    "ublock-badlists",
+    "ublock-filters",
+    "ublock-badware",
+    "ublock-privacy",
+    "ublock-unbreak",
+    "ublock-quick-fixes",
+    "easylist",
+    "easyprivacy",
+    "urlhaus-1",
+    "plowe-0"
+  ],
+  "hiddenSettings": {},
+  "whitelist": [
+    "about-scheme",
+    "chrome-extension-scheme",
+    "chrome-scheme",
+    "edge-scheme",
+    "moz-extension-scheme",
+    "opera-scheme",
+    "vivaldi-scheme",
+    "www.stltones.com",
+    "wyciwyg-scheme"
+  ],
+  "dynamicFilteringString": "behind-the-scene * * noop\nbehind-the-scene * inline-script noop\nbehind-the-scene * 1p-script noop\nbehind-the-scene * 3p-script noop\nbehind-the-scene * 3p-frame noop\nbehind-the-scene * image noop\nbehind-the-scene * 3p noop",
+  "urlFilteringString": "",
+  "hostnameSwitchesString": "no-large-media: behind-the-scene false",
+  "userFilters": "youtube.com##+js(set, yt.config_.openPopupConfig.supportedPopups.adBlockMessageViewModel, false)\nyoutube.com##+js(set, Object.prototype.adBlocksFound, 0)\nyoutube.com##+js(set, ytplayer.config.args.raw_player_response.adPlacements, [])\nyoutube.com##+js(set, Object.prototype.hasAllowedInstreamAd, true)\n"
+}
