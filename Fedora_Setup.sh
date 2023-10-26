@@ -673,6 +673,9 @@ case $NAME in
     ;;
 esac
 
+# Install FFMPEG and YT-DLP
+sudo dnf install yt-dlp ffmpeg -y
+
 # Install FFMPEG for Flatpak.
 flatpak install flathub org.freedesktop.Platform.ffmpeg-full $FLATPAK_TYPE -y
 
