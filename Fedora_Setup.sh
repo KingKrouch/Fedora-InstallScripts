@@ -217,6 +217,20 @@ systemctl --user enable sunshine
 sudo setcap cap_sys_admin+p $(readlink -f $(which sunshine))
 flatpak install flathub com.moonlight_stream.Moonlight $FLATPAK_TYPE -y
 
+# Fix DualSense pairing over Bluetooth.
+input_conf="/etc/bluetooth/input.conf"
+userspace_hid="UserspaceHID=true"
+if [ -f "$input_conf" ]; then
+    # If file exists, add or modify the line UserspaceHID=true
+    if ! grep -qF "$userspace_hid" "$input_conf"; then
+        echo "$userspace_hid" | sudo tee -a "$input_conf" > /dev/null
+    fi
+else
+    # If file doesn't exist, create it and add UserspaceHID=true
+    echo "$userspace_hid" | sudo tee "$input_conf" > /dev/null
+fi
+sudo systemctl restart bluetooth.service
+
 ## ///// WINE AND WINDOWS SOFTWARE /////
 
 case $NAME in
