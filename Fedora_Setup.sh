@@ -169,6 +169,9 @@ case $NAME in
     ;;
 esac
 
+# Set up some dependencies for OBS that aren't included with Nobara for some reason.
+sudo dnf install libndi -y
+
 # Set up the OBS Studio shortcut to use the propreitary AMD drivers, so AMF encoding can be used instead.
 cp /usr/share/applications/com.obsproject.Studio.desktop ~/.local/share/applications
 sed -i 's/^Exec=/Exec=vk_pro /' ~/.local/share/applications/com.obsproject.Studio.desktop
