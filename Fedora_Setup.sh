@@ -235,6 +235,9 @@ echo "exclude=bluez" | sudo tee -a /etc/dnf/dnf.conf
 #sudo sed -i '/exclude=bluez/d' /etc/dnf/dnf.conf # Uncomment and use this command when it's safe to update bluez.
 sudo systemctl restart bluetooth.service
 
+# Do some user permission stuff, so we don't have to dick with reinstalling the Xbox drivers through Nobara's setup GUI after a restart
+sudo usermod -a -G pkg-build $USER
+
 ## ///// WINE AND WINDOWS SOFTWARE /////
 
 case $NAME in
