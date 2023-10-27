@@ -566,8 +566,8 @@ sudo dnf install vivaldi-stable -y
 # Install Warpinator for file transfers.
 flatpak install flathub org.x.Warpinator $FLATPAK_TYPE -y
 
-# Install the BETTER partition manager.
-sudo dnf install gnome-disk-utility -y
+# Install the BETTER partition manager and a disk space utility.
+sudo dnf install gnome-disk-utility filelight -y
 
 # Remove some KDE Plasma bloatware that comes installed for some reason.
 sudo dnf remove libreoffice-\* akregator ksysguard dnfdragora kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer kamoso kolourpaint krdc krfb -y
