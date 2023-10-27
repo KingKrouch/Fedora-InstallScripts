@@ -217,7 +217,7 @@ systemctl --user enable sunshine
 sudo setcap cap_sys_admin+p $(readlink -f $(which sunshine))
 flatpak install flathub com.moonlight_stream.Moonlight $FLATPAK_TYPE -y
 
-# Fix DualSense pairing over Bluetooth.
+# Fix DualSense pairing over Bluetooth. The Arch Wiki says that this is the only fix, but I could've sworn I paired before w/o this.
 input_conf="/etc/bluetooth/input.conf"
 userspace_hid="UserspaceHID=true"
 if [ -f "$input_conf" ]; then
@@ -229,6 +229,10 @@ else
     # If file doesn't exist, create it and add UserspaceHID=true
     echo "$userspace_hid" | sudo tee "$input_conf" > /dev/null
 fi
+# Downgrade Bluez package so DualSense controllers can actually pair properly.
+sudo dnf install bluez-5.68-1.fc38 -y
+echo "exclude=bluez" | sudo tee -a /etc/dnf/dnf.conf
+#sudo sed -i '/exclude=bluez/d' /etc/dnf/dnf.conf # Uncomment and use this command when it's safe to update bluez.
 sudo systemctl restart bluetooth.service
 
 ## ///// WINE AND WINDOWS SOFTWARE /////
