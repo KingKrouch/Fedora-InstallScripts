@@ -509,6 +509,12 @@ cd ..
 # Install Yabridge (For VST Plugins, I'm going to assume you will set up a DAW on your own accords).
 sudo dnf copr enable patrickl/yabridge -y && sudo dnf install yabridge -y
 
+# Replace the JACK library with Pipewire's variant and install needed libraries for wineasio.
+sudo dnf install --allowerasing pipewire-jack-audio-connection-kit -y
+sudo dnf install pipewire-jack-audio-connection-kit-devel wine-staging64-devel python3-qt5 asio-devel -y
+
+# TODO: Add setup for compiling WINEASIO.
+
 # Ableton Stuff (Feel free to use this if you are planning to install Ableton Live. I just have it here for reference).
 # WINEPREFIX=~/.ableton wine64 "INSERT DIRECTORY OF INSTALLER HERE"
 # echo 'Make sure to run "WINEPREFIX=~/.ableton winecfg" to change the version of Windows to Windows 7.'
