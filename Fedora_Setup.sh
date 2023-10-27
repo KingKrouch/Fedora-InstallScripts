@@ -507,7 +507,7 @@ echo "Make sure to run 'sudo waydroid shell' followed by the command listed here
 cd ..
 
 # Install Yabridge (For VST Plugins, I'm going to assume you will set up a DAW on your own accords).
-sudo dnf copr enable patrickl/yabridge-stable -y && sudo dnf install yabridge -y
+sudo dnf copr enable patrickl/yabridge -y && sudo dnf install yabridge -y
 
 # Ableton Stuff (Feel free to use this if you are planning to install Ableton Live. I just have it here for reference).
 # WINEPREFIX=~/.ableton wine64 "INSERT DIRECTORY OF INSTALLER HERE"
