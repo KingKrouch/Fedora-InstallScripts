@@ -176,6 +176,9 @@ case $NAME in
 	;;
 esac
 
+# Set up Decky Loader for Steam.
+curl -L https://github.com/SteamDeckHomebrew/decky-installer/releases/latest/download/install_release.sh | sh
+
 # Set up some dependencies for OBS that aren't included with Nobara for some reason.
 sudo dnf install libndi -y
 
