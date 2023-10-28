@@ -169,6 +169,13 @@ case $NAME in
     ;;
 esac
 
+# Add Gamescope Session and Steam Deck Gyro DSU for Switch/WiiU emulation.
+case $NAME in
+	("Nobara Linux") # This is for Fedora specific stuff that can safely be ignored with Fedora.
+	sudo dnf install sdgyrodsu gamescope-session -y
+	;;
+esac
+
 # Set up some dependencies for OBS that aren't included with Nobara for some reason.
 sudo dnf install libndi -y
 
