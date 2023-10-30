@@ -1,11 +1,12 @@
 [Appearance]
 ColorScheme=Breeze (Transparent)
-Font=SauceCodePro NF Medium,10,-1,5,57,0,0,0,0,0,Regular
+Font=JetBrainsMonoNL NF Medium,10,-1,5,57,0,0,0,0,0,Regular
 
 [Cursor Options]
 CursorShape=2
 
 [General]
+Command=/bin/zsh
 DimWhenInactive=false
 Name=Profile
 Parent=FALLBACK/
