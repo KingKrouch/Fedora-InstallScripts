@@ -677,9 +677,8 @@ sudo dnf remove libreoffice-\* akregator ksysguard dnfdragora kfind kmag kmail k
 sudo dnf remove kwrite -y && sudo dnf install kate -y
 
 # Install Input-Remapper (For Razer Tartarus Pro)
-sudo dnf install python3-evdev python3-devel gtksourceview4 python3-pydantic python-pydbus xmodmap -y
-sudo pip install evdev -U && sudo pip uninstall key-mapper  && sudo pip install --no-binary :all: git+https://github.com/sezanzeb/input-remapper.git
-sudo systemctl enable input-remapper && sudo systemctl restart input-remapper
+sudo dnf install input-remapper -y
+sudo systemctl enable --now input-remapper && sudo systemctl start input-remapper
 
 case $NAME in
     ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
