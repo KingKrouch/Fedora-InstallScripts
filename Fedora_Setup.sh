@@ -658,6 +658,9 @@ echo "Make sure to change the 'python_cmd=' section of the stable-diffusion-webu
 
 ## ///// GENERAL DESKTOP USAGE /////
 
+# Set Wayland as the default SDDM Greeter, so we can actually see the login splash screen.
+#echo "DisplayServer=wayland" | sudo tee -a /etc/sddm.conf > /dev/null
+
 # Set up Timeshift for system backups.
 case $NAME in
     ("Fedora")
