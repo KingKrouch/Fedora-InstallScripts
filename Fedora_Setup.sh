@@ -121,7 +121,7 @@ brew install exa thefuck # Use Homebrew for exa and thefuck, as they aren't avai
 sudo dnf install zsh -y && chsh -s $(which zsh) && sudo chsh -s $(which zsh)
 sudo dnf install git git-lfs -y && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-wget -O ~/.p10k.zsh https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/p10k.zsh
+wget -O ~/.p10k.zsh https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.p10k.zsh
 
 # Set up Powerlevel10k as the default zsh theme, alongside enabling some tweaks.
 sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k/powerlevel10k"/g' ~/.zshrc
