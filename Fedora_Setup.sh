@@ -125,6 +125,11 @@ sed -i 's/OSH_THEME="font"/OSH_THEME="agnoster"/g' ~/.bashrc
 sudo dnf install https://packages.microsoft.com/config/fedora/$(rpm -E %fedora)/packages-microsoft-prod.rpm -y
 sudo dnf install https://github.com/PowerShell/PowerShell/releases/download/v7.3.9/powershell-7.3.9-1.rh.x86_64.rpm -y
 
+# Install oh-my-posh for Powershell.
+curl -s https://ohmyposh.dev/install.sh | sudo bash -s
+# Downloads our custom powershell profile.
+wget -O ~/.config/powershell/Microsoft.Powershell_profile.ps1 https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/powershell/Microsoft.PowerShell_profile.ps1
+
 # Install zsh, alongside setting up oh-my-zsh, and powerlevel10k.
 sudo dnf install zsh -y && chsh -s $(which zsh) && sudo chsh -s $(which zsh)
 sudo dnf install git git-lfs -y && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
