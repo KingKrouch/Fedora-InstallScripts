@@ -164,6 +164,9 @@ case $NAME in
     # Install MangoHud with GOverlay, alongside Gamescope and vkBasalt.
     sudo dnf install goverlay -y && sudo dnf install vkBasalt -y && sudo dnf install gamescope -y
 
+    # Temporary workaround for Fedora (So, you can have MangoApp working). When the fuck is MangoApp gonna work through compiling from source?
+    sudo dnf install --allowerasing https://download.copr.fedorainfracloud.org/results/gloriouseggroll/nobara/fedora-38-x86_64/06517212-mangohud/mangohud-0.7.0-6.fc38.x86_64.rpm https://download.copr.fedorainfracloud.org/results/gloriouseggroll/nobara/fedora-38-i386/06517212-mangohud/mangohud-0.7.0-6.fc38.i686.rpm -y
+
     # Install Lutris
     flatpak install flathub net.lutris.Lutris $FLATPAK_TYPE -y
 
@@ -204,6 +207,7 @@ case $NAME in
     cd gamescope-session-steam && sudo cp -r usr/* /usr
     cd ..
     sudo rm -rf gamescope-session gamescope-session-steam
+    sudo rm -rf /usr/share/wayland-sessions/gamescope-session.desktop
     # Set up SteamDeckGyroDSU.
     bash <(curl -sL https://raw.githubusercontent.com/kmicki/SteamDeckGyroDSU/master/pkg/update.sh)
     ;;
