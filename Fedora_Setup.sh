@@ -652,6 +652,10 @@ sudo usermod -a -G video $LOGNAME
 # Add a fix for PyTorch crashing on Navi 2 (AMD Radeon RX 6000) GPUs.
 echo -e "\n# Fix Segmentation Fault Error for PyTorch\nexport HSA_OVERRIDE_GFX_VERSION=10.3.0" >> ~/.profile
 
+# Set up PyTorch
+python3.10 -m pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm5.6
+echo "Make sure to change the 'python_cmd=' section of the stable-diffusion-webui's 'webui.sh' file to 'python3.10' instead of 'python3'."
+
 ## ///// GENERAL DESKTOP USAGE /////
 
 # Set up Timeshift for system backups.
