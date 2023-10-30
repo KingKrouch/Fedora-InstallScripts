@@ -23,6 +23,34 @@ case $NAME in
     ;;
 esac
 
+## ///// NIX PACKAGE MANAGER /////
+
+# Set up Nix Package Manager (As shown here: https://github.com/dnkmmr69420/nix-installer-scripts)
+case $NAME in
+    ("Nobara Linux")
+    echo "Nobara is being used."
+
+    # Set up Nix without SELinux.
+    curl -s https://raw.githubusercontent.com/dnkmmr69420/nix-installer-scripts/main/installer-scripts/regular-installer.sh | bash
+    ;;
+    ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
+    echo "Fedora is being used."
+
+    # Set up Nix using SELinux.
+    curl -s https://raw.githubusercontent.com/dnkmmr69420/nix-installer-scripts/main/installer-scripts/regular-nix-installer-selinux.sh | bash
+    ;;
+esac
+
+# Add Nix packages to Desktop Environment Start Menu
+sudo rm -f /etc/profile.d/nix-app-icons.sh ; sudo wget -P /etc/profile.d https://raw.githubusercontent.com/dnkmmr69420/nix-installer-scripts/main/other-files/nix-app-icons.sh
+
+# Set up Sudo to detect Nix commands
+bash <(curl -s https://raw.githubusercontent.com/dnkmmr69420/nix-installer-scripts/main/other-scripts/nix-linker.sh)
+
+# Add NixGL support (For OpenGL & Vulkan applications, as shown here: https://github.com/nix-community/nixGL).
+nix-channel --add https://github.com/guibou/nixGL/archive/main.tar.gz nixgl && nix-channel --update
+nix-env -iA nixgl.auto.nixGLDefault   # or replace `nixGLDefault` with your desired wrapper
+
 ## ///// THE ABSOLUTE BASICS /////
 
 # Automatically Configure DNF to be a bit faster, and gives the changes a test drive.
@@ -60,13 +88,6 @@ sudo yum groupinstall 'Development Tools' -y
 (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> ~/.bash_profile
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-# Set up Nix package manager, alongside enabling non-free packages (for example, UnityHub or Jetbrains Rider).
-## Make sure to install this as a root for a multi-user install.
-# sh <(curl -L https://nixos.org/nix/install) --daemon
-# mkdir ~/.config/nixpkgs && echo '{ allowUnfree = true; }' > ~/.config/nixpkgs/config.nix
-## Afterwards, run this in a new terminal.
-# nix-shell -p nix-info --run "nix-info -m"
-
 # WIP FreeSync toggle for X11 mode for AMD GPUs, may need to be skipped or improved upon.
 if grep -q "VariableRefresh" "/etc/X11/xorg.conf.d/20-amdgpu.conf"; then
     echo "Variable Refresh Rate tweak for X11 has already been done."
@@ -93,7 +114,8 @@ mkdir ~/.config/fastfetch
 cp ./.config/fastfetch/config.conf  ~/.config/fastfetch/config.conf
 
 # Install exa and lsd, which should replace lsd and dir. Also install thefuck for terminal command corrections, and fzf.
-sudo dnf install exa lsd thefuck fzf htop cmatrix -y
+sudo dnf install lsd fzf htop cmatrix -y
+brew install exa thefuck # Use Homebrew for exa and thefuck, as they aren't available on Fedora's repositories or are currently broken on Fedora 39 (Thanks to Python 3.12)
 
 # Install zsh, alongside setting up oh-my-zsh, and powerlevel10k.
 sudo dnf install zsh -y && chsh -s $(which zsh) && sudo chsh -s $(which zsh)
@@ -107,12 +129,14 @@ echo "# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> tee -a ~/.zshrc
 echo "typeset -g POWERLEVEL9K_INSTANT_PROMPT=off" >> tee -a ~/.zshrc
 
-# Set up some ZSH plugins
+# Set up some ZSH plugins.
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+# TODO: Fix sed command.
 sed -i 's/plugins=(git)/plugins=(git emoji zsh-syntax-highlighting zsh-autosuggestions)/g' ~/.zshrc
 
 # Append exa and lsd aliases, and neofetch alias to both the bashrc and zshrc.
+# TODO: Fix fastfetch echos.
 echo '# Custom Commands
 if [ -x /usr/bin/lsd ]; then
   alias ls='lsd'
@@ -204,7 +228,7 @@ flatpak install flathub net.pcsx2.PCSX2 $FLATPAK_TYPE -y
 flatpak install flathub org.prismlauncher.PrismLauncher $FLATPAK_TYPE -y
 flatpak install flathub dev.goats.xivlauncher $FLATPAK_TYPE -y
 flatpak remote-add --if-not-exists --user launcher.moe https://gol.launcher.moe/gol.launcher.moe.flatpakrepo
-flatpak install flathub org.gnome.Platform//43 $FLATPAK_TYPE -y # Install a specific GTK dependency for AAGL and HRWL.
+flatpak install flathub org.gnome.Platform//45 $FLATPAK_TYPE -y # Install a specific GTK dependency for AAGL and HRWL.
 flatpak install flathub com.valvesoftware.Steam.Utility.gamescope $FLATPAK_TYPE -y # Install Gamescope dependency for AAGL and HRWL.
 flatpak install flathub org.freedesktop.Platform.VulkanLayer.MangoHud $FLATPAK_TYPE -y # Install MangoHud dependency for Heroic, AAGL, Lutris, and HRWL.
 flatpak install flathub org.freedesktop.Platform.VulkanLayer.OBSVkCapture $FLATPAK_TYPE -y # Install OBS VkCapture layer for OBS capturing of Flatpak games.
@@ -242,6 +266,15 @@ else
     # If file doesn't exist, create it and add UserspaceHID=true
     echo "$userspace_hid" | sudo tee "$input_conf" > /dev/null
 fi
+
+# Disable the DualSense trackpad in desktop mode (This apparently works under X11, I don't know about Wayland).
+echo 'Section "InputClass"
+    Identifier "Sony Interactive Entertainment Wireless Controller Touchpad"
+    Driver "libinput"
+    MatchIsTouchpad "on"
+    Option "Ignore" "true"
+EndSection' | sudo tee -a /etc/X11/xorg.conf.d/30--dualsense-touchpad.conf
+
 # Downgrade Bluez package so DualSense controllers can actually pair properly.
 sudo dnf install bluez-5.68-1.fc38 -y
 echo "exclude=bluez" | sudo tee -a /etc/dnf/dnf.conf
@@ -255,53 +288,70 @@ sudo usermod -a -G pkg-build $USER
 
 case $NAME in
     ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
-    # Install 64-Bit WINE Staging, alongside some needed dependencies for later.
-    sudo dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/$(rpm -E %fedora)/winehq.repo
-    dnf install winehq-staging cabextract samba-winbind -y
+    # Install Wine-TKG alongside WineASIO.
+    sudo dnf copr enable patrickl/wine-tkg -y
+    sudo dnf copr enable patrickl/wine-mono -y
+    sudo dnf copr enable patrickl/mingw-wine-gecko -y
+    sudo dnf copr enable patrickl/vkd3d -y
+    sudo dnf copr enable patrickl/wine-dxvk -y
+    sudo dnf copr enable patrickl/winetricks -y
+    sudo dnf copr enable patrickl/pipewire-wineasio -y
+
+    # Install Yabridge (For VST Plugins, I'm going to assume you will set up a DAW on your own accords).
+    sudo dnf copr enable patrickl/yabridge -y && sudo dnf install yabridge --refresh -y
+
+    # Replace the JACK library with Pipewire's variant and install needed libraries for wineasio.
+    sudo dnf install gcc make glibc-devel.i686 wine wine-devel.i686 wine-devel.x86_64 pipewire-jack-audio-connection-kit-devel.i686 python3-qt5 asio-devel pipewire-jack-audio-connection-kit-devel.x86_64 pipewire-alsa pipewire-pulseaudio realtime-setup pavucontrol qpwgraph pipewire-wineasio winetricks Cadence qjackctl -y
+    # Install Winetricks and some other dependencies.
+    sudo dnf install winetricks cabextract samba-winbind -y
+    # Set up realtime, jackuser, and audiogroups alongside necessary permissions.
+    echo -e '@audio\trtprio 99\n@audio\tmemlock unlimited' | sudo tee -a /etc/security/limits.conf
+    sudo groupadd realtime && sudo usermod -a -G realtime $(whoami)
+    sudo groupadd jackuser && sudo usermod -a -G jackuser $(whoami)
+    sudo usermod -a -G audio $(whoami)
+    sudo sh -c 'echo "JACK_START_SERVER=1" >> /etc/environment'
+    sudo sh -c 'echo "WINEASIO_AUTOSTART_SERVER=on" >> /etc/environment'
 
     # Open Explorer to initialize our Wine prefix.
     echo "Initializing Wine prefix. Please exit out of Explorer when it opens and follow any setup prompts."
     wine64 explorer
 
     # Set up some prerequisites for Wine.
-    wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
-    chmod +x winetricks
-    sh winetricks corefonts # look into avoid using winetricks for vcrun6 and dotnet462 because of the painfully long install process from the GUI installer. Fuck that.
-    sh winetricks dotnet48
+    winetricks corefonts # look into avoid using winetricks for vcrun6 and dotnet462 because of the painfully long install process from the GUI installer. Fuck that.
+    winetricks dotnet48
+
+    # Ableton Stuff (Feel free to use this if you are planning to install Ableton Live. I just have it here for reference).
+    # WINEPREFIX=~/.ableton wine64 explorer
+    
+    # Register our Wine prefixes with WineASIO.
+    env WINEPREFIX=$HOME/.wine /usr/bin/wineasio-register
+    #env WINEPREFIX=$HOME/.ableton /usr/bin/wineasio-register
+    #WINEPREFIX=$HOME/.ableton winetricks win7 quicktime72 gdiplus vb2run vcrun2008 vcrun6 vcrun2010 vcrun2013 vcrun2015 tahoma msxml3 msxml6 setupapi python27
+    
+    # Set our Wine Prefix to use ALSA audio, so it won't crash with WineASIO.
+    WINEPREFIX=$HOME/.wine winetricks sound=alsa
+    #WINEPREFIX=$HOME/.ableton winetricks sound=alsa
     ;;
     ("Nobara Linux") # Use the built-in version of Winetricks instead.
     # Open Explorer to initialize our Wine prefix.
     echo "Initializing Wine prefix. Please exit out of Explorer when it opens and follow any setup prompts."
     wine64 explorer
+    # Set up some dependencies.
     winetricks corefonts
     winetricks dotnet48
+    winetricks mf
+    echo "If you plan to use Clip Studio, set concrt140 as a WineDLLOverride in winecfg to prevent crashing."
     ;;
 esac
 
+# TODO: Figure out why "winetricks vcrun2015 vcrun2017 vcrun2019 vcrun2022" is slow as shit.
 wget https://aka.ms/vs/17/release/vc_redist.x86.exe
 wget https://aka.ms/vs/17/release/vc_redist.x64.exe
 wget https://download.visualstudio.microsoft.com/download/pr/8e396c75-4d0d-41d3-aea8-848babc2736a/80b431456d8866ebe053eb8b81a168b3/ndp462-kb3151800-x86-x64-allos-enu.exe
-wine ndp462-kb3151800-x86-x64-allos-enu.exe
-wine vc_redist.x86.exe /quiet /norestart
-wine vc_redist.x64.exe /quiet /norestart
+wine64 ndp462-kb3151800-x86-x64-allos-enu.exe
+wine64 vc_redist.x86.exe /quiet /norestart
+wine64 vc_redist.x64.exe /quiet /norestart
 rm vc_redist.x86.exe vc_redist.x64.exe NDP462-KB3151800-x86-x64-AllOS-ENU.exe
-
-echo "If you plan to use Clip Studio, set concrt140 as a WineDLLOverride in winecfg to prevent crashing."
-
-# Set up DXVK, VKD3D, and Media Foundation codecs to Wine.
-# TODO: Fix the DXVK setup process, as there's no more setup script. Commented out for the time being.
-#wget https://github.com/doitsujin/dxvk/releases/download/v2.2/dxvk-2.2.tar.gz
-#tar -xzvf dxvk-2.2.tar.gz
-#cd dxvk-2.2
-#WINEPREFIX="/home/$USER/.wine" ./setup_dxvk.sh install
-#cd .. && rm -rf dxvk-2.2 && rm dxvk-2.2.tar.gz
-#wget https://github.com/HansKristian-Work/vkd3d-proton/releases/download/v2.9/vkd3d-proton-2.9.tar.zst
-#tar --use-compress-program=unzstd -xvf vkd3d-proton-2.9.tar.zst && cd vkd3d-proton-2.9
-#WINEPREFIX="/home/$USER/.wine" ./setup_vkd3d_proton.sh install
-#cd .. && rm -rf vkd3d-proton-2.9 && rm vkd3d-proton-2.9.tar.zst
-#git clone https://github.com/z0z0z/mf-install && cd mf-install
-#WINEPREFIX="/home/$USER/.wine" ./mf-install.sh
-#cd .. && rm -rf mf-install
 
 # Set up Bottles.
 flatpak install flathub com.usebottles.bottles $FLATPAK_TYPE -y
@@ -334,15 +384,12 @@ fi
 
 ## ///// DEVELOPMENT/PROGRAMMING TOOLS AND GAME ENGINE STUFF /////
 
-case $NAME in
-    ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
-    # Set up Kernel-Devel
-    sudo dnf install kernel-devel -y
+# Set up Kernel-Devel
+sudo dnf install kernel-devel -y
 
-    # Install RenderDoc and Vulkan Tools. I still need to find a workaround for installing RenderDoc on Nobara.
-    sudo dnf install renderdoc -y && sudo dnf install vulkan-tools -y
-    ;;
-esac
+# Install RenderDoc and Vulkan Tools.
+dnf copr enable kb1000/renderdoc -y
+sudo dnf install renderdoc -y && sudo dnf install vulkan-tools -y
 
 # Set up Unity Hub and Jetbrains
 sudo sh -c 'echo -e "[unityhub]\nname=Unity Hub\nbaseurl=https://hub.unity3d.com/linux/repos/rpm/stable\nenabled=1\ngpgcheck=1\ngpgkey=https://hub.unity3d.com/linux/repos/rpm/stable/repodata/repomd.xml.key\nrepo_gpgcheck=1" > /etc/yum.repos.d/unityhub.repo' && sudo dnf update && sudo dnf install unityhub -y && sudo dnf install GConf2 -y
@@ -540,19 +587,6 @@ waydroid prop set persist.waydroid.fake_wifi true
 echo "Make sure to run 'sudo waydroid shell' followed by the command listed here: https://docs.waydro.id/faq/google-play-certification"
 cd ..
 
-# Install Yabridge (For VST Plugins, I'm going to assume you will set up a DAW on your own accords).
-sudo dnf copr enable patrickl/yabridge -y && sudo dnf install yabridge -y
-
-# Replace the JACK library with Pipewire's variant and install needed libraries for wineasio.
-sudo dnf install --allowerasing pipewire-jack-audio-connection-kit -y
-sudo dnf install pipewire-jack-audio-connection-kit-devel wine-staging64-devel python3-qt5 asio-devel -y
-
-# TODO: Add setup for compiling WINEASIO.
-
-# Ableton Stuff (Feel free to use this if you are planning to install Ableton Live. I just have it here for reference).
-# WINEPREFIX=~/.ableton wine64 "INSERT DIRECTORY OF INSTALLER HERE"
-# echo 'Make sure to run "WINEPREFIX=~/.ableton winecfg" to change the version of Windows to Windows 7.'
-
 # Install Compatibility Related Stuff for Autodesk Maya and Mudbox.
 sudo dnf copr enable dioni21/compat-openssl10 -y && sudo dnf install pcre-utf16 -y && sudo dnf install compat-openssl10 -y
 sudo dnf install libpng15 csh audiofile libXp rocm-opencl5.4.3 -y
@@ -569,20 +603,53 @@ case $NAME in
     ;;
 esac
 
-case $NAME in
-    ("Nobara Linux")
-    sudo dnf install rocm-meta -y # Need to figure out if this applies to Fedora too.
-    ;;
-esac
 # TODO: Add Dracut regeneration just in case the AMD GPU Switcher drivers have been installed on Nobara.
 
 flatpak install flathub org.kde.krita $FLATPAK_TYPE -y
 flatpak install flathub org.gimp.GIMP $FLATPAK_TYPE -y
 
+## ///// AI STUFF /////
+
+# Install the needed ROCM runtimes on AMD (As shown here: https://medium.com/@anvesh.jhuboo/rocm-pytorch-on-fedora-51224563e5be).
+# TODO: Add the rest of the setup instructions, PyTorch was just giving me issues.
+case $NAME in
+    ("Fedora")
+    sudo dnf install rocm-opencl rocm-hip rocm-runtime  -y
+    ;;
+    ("Nobara Linux")
+    sudo dnf install rocm-meta -y
+    ;;
+esac
+sudo dnf install rocm-smi rocm-clinfo -y
+
+# Set up a Fedora specific section for ROCM setup. (As shown here: https://medium.com/@anvesh.jhuboo/rocm-pytorch-on-fedora-51224563e5be).
+sudo usermod -a -G video $LOGNAME
+
+# Add a fix for PyTorch crashing on Navi 2 (AMD Radeon RX 6000) GPUs.
+echo -e "\n# Fix Segmentation Fault Error for PyTorch\nexport HSA_OVERRIDE_GFX_VERSION=10.3.0" >> ~/.profile
+
 ## ///// GENERAL DESKTOP USAGE /////
+
+# Set up Timeshift for system backups.
+case $NAME in
+    ("Fedora")
+    sudo dnf install timeshift -y
+    ;;
+esac
 
 # Install the tiled window management KWin plugin, Bismuth.
 sudo dnf install bismuth qt -y
+
+# Add KDE Rounded Corners plugin, and then add updated desktop effects config.
+sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static qt5-qtx11extras-devel kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel libepoxy-devel -y
+git clone https://github.com/matinlotfali/KDE-Rounded-Corners
+cd KDE-Rounded-Corners
+mkdir build
+cd build
+cmake .. --install-prefix /usr
+make
+sudo make install
+cd .. && cd .. && sudo rm -rf KDE-Rounded-Corners
 
 # Use Librewolf instead of Firefox. We also need to reinstall the Plasma Browser Integration after Firefox is removed.
 sudo dnf config-manager --add-repo https://rpm.librewolf.net/librewolf-repo.repo
@@ -605,6 +672,9 @@ sudo dnf install gnome-disk-utility filelight -y
 
 # Remove some KDE Plasma bloatware that comes installed for some reason.
 sudo dnf remove libreoffice-\* akregator ksysguard dnfdragora kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer kamoso kolourpaint krdc krfb -y
+
+# Remove KWrite in favor of Kate.
+sudo dnf remove kwrite -y && sudo dnf install kate -y
 
 # Install Input-Remapper (For Razer Tartarus Pro)
 sudo dnf install python3-evdev python3-devel gtksourceview4 python3-pydantic python-pydbus xmodmap -y
@@ -646,6 +716,17 @@ cp /usr/share/applications/org.corectrl.corectrl.desktop ~/.config/autostart/org
 sudo grubby --update-kernel=ALL --args="amdgpu.ppfeaturemask=0xffffffff"
 sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
 
+# Run CoreCtrl without root password.
+echo 'polkit.addRule(function(action, subject) {
+    if ((action.id == "org.corectrl.helper.init" ||
+         action.id == "org.corectrl.helperkiller.init") &&
+        subject.local == true &&
+        subject.active == true &&
+        subject.isInGroup("wheel")) {
+            return polkit.Result.YES;
+    }
+});' | sudo tee /etc/polkit-1/rules.d/90-corectrl.rules
+
 # Add the AMD P-States driver instead of the built-in power management.
 # NOTE: Nothing needs to be done on Intel CPUs, their P-State driver is already enabled by default on recent Linux kernel versions.
 # Seemingly the grubby command isn't working, so we just need to find a way to add the needed parameters to "/etc/default/grub". Same goes for the VM parameters and parameters for corectrl.
@@ -677,6 +758,11 @@ echo "Make sure to run AppImageLauncher at least once, to get it to recognize th
 
 # Install Mullvad VPN.
 sudo dnf install https://mullvad.net/media/app/MullvadVPN-2023.3_x86_64.rpm -y
+
+# Install ProtonVPN. NOTE: This does not currently work with Fedora 39's Beta for some reason.
+sudo dnf install https://repo.protonvpn.com/fedora-38-stable/protonvpn-stable-release/protonvpn-stable-release-1.0.1-2.noarch.rpm -y
+sudo dnf check-update && sudo dnf upgrade -y
+sudo dnf install --refresh proton-vpn-gnome-desktop -y
 
 # Set up OnlyOffice.
 flatpak install flathub org.onlyoffice.desktopeditors $FLATPAK_TYPE -y
@@ -713,8 +799,15 @@ case $NAME in
     ;;
 esac
 
-# Install FFMPEG and YT-DLP
-sudo dnf install yt-dlp ffmpeg -y
+# Install FFMPEG with Nobara, as that's already handled with Fedora, and doing it conflicts with our freeworld drivers.
+case $NAME in
+    ("Nobara Linux")
+    sudo dnf install ffmpeg -y
+    ;;
+esac
+
+# Install YT-DLP
+sudo dnf install yt-dlp -y
 
 # Install FFMPEG for Flatpak.
 flatpak install flathub org.freedesktop.Platform.ffmpeg-full $FLATPAK_TYPE -y
