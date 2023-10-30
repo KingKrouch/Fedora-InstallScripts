@@ -195,9 +195,21 @@ esac
 
 # Add Gamescope Session and Steam Deck Gyro DSU for Switch/WiiU emulation.
 case $NAME in
-	("Nobara Linux") # This is for Fedora specific stuff that can safely be ignored with Fedora.
-	sudo dnf install sdgyrodsu gamescope-session -y
-	;;
+    ("Fedora")
+    # Setup Gamescope Session.
+    git clone https://github.com/ChimeraOS/gamescope-session --recursive
+    git clone https://github.com/ChimeraOS/gamescope-session-steam --recursive
+    cd gamescope-session && sudo cp -r usr/* /usr
+    cd ..
+    cd gamescope-session-steam && sudo cp -r usr/* /usr
+    cd ..
+    sudo rm -rf gamescope-session gamescope-session-steam
+    # Set up SteamDeckGyroDSU.
+    bash <(curl -sL https://raw.githubusercontent.com/kmicki/SteamDeckGyroDSU/master/pkg/update.sh)
+    ;;
+    ("Nobara Linux") # This is for Fedora specific stuff that can safely be ignored with Fedora.
+    sudo dnf install sdgyrodsu gamescope-session -y
+    ;;
 esac
 
 # Set up Decky Loader for Steam.
