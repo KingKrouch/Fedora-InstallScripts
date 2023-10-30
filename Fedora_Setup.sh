@@ -117,6 +117,10 @@ cp ./.config/fastfetch/config.conf  ~/.config/fastfetch/config.conf
 sudo dnf install lsd fzf htop cmatrix -y
 brew install exa thefuck # Use Homebrew for exa and thefuck, as they aren't available on Fedora's repositories or are currently broken on Fedora 39 (Thanks to Python 3.12)
 
+# Install oh-my-bash alongside changing the default theme.
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+sed -i 's/OSH_THEME="font"/OSH_THEME="agnoster"/g' ~/.bashrc
+
 # Install zsh, alongside setting up oh-my-zsh, and powerlevel10k.
 sudo dnf install zsh -y && chsh -s $(which zsh) && sudo chsh -s $(which zsh)
 sudo dnf install git git-lfs -y && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
