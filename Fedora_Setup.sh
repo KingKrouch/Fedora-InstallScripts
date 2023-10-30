@@ -121,6 +121,10 @@ brew install exa thefuck # Use Homebrew for exa and thefuck, as they aren't avai
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 sed -i 's/OSH_THEME="font"/OSH_THEME="agnoster"/g' ~/.bashrc
 
+# Install Powershell and Microsoft's software repositories.
+sudo dnf install https://packages.microsoft.com/config/fedora/$(rpm -E %fedora)/packages-microsoft-prod.rpm -y
+sudo dnf install https://github.com/PowerShell/PowerShell/releases/download/v7.3.9/powershell-7.3.9-1.rh.x86_64.rpm -y
+
 # Install zsh, alongside setting up oh-my-zsh, and powerlevel10k.
 sudo dnf install zsh -y && chsh -s $(which zsh) && sudo chsh -s $(which zsh)
 sudo dnf install git git-lfs -y && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
@@ -151,6 +155,9 @@ fi
 if [ -x /usr/bin/thefuck ]; then
   eval $(thefuck --alias)
   eval $(thefuck --alias fix) # Allows triggering thefuck using the keyword 'fix'."
+fi
+if [ -x /usr/bin/pwsh ]; then
+  alias powershell='pwsh'
 fi
 if [ -x /usr/bin/fastfetch ]; then
   alias neofetch='fastfetch'
