@@ -630,6 +630,9 @@ flatpak install flathub org.gimp.GIMP $FLATPAK_TYPE -y
 
 ## ///// AI STUFF /////
 
+# Install Python 3.10.
+sudo dnf install python3.10 -y
+
 # Install the needed ROCM runtimes on AMD (As shown here: https://medium.com/@anvesh.jhuboo/rocm-pytorch-on-fedora-51224563e5be).
 # TODO: Add the rest of the setup instructions, PyTorch was just giving me issues.
 case $NAME in
