@@ -660,6 +660,7 @@ esac
 
 flatpak install flathub org.kde.krita $FLATPAK_TYPE -y
 flatpak install flathub org.gimp.GIMP $FLATPAK_TYPE -y
+flatpak install flathub org.audacityteam.Audacity $FLATPAK_TYPE -y
 
 ## ///// AI STUFF /////
 
