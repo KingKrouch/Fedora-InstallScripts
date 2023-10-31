@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+# Function for checking for the latest GitHub release for a project.
+get_latest_github_release() {
+  curl --silent "https://api.github.com/repos/$1/releases/latest" |
+    grep '"tag_name":' |
+    sed -E 's/.*"([^"]+)".*/\1/'
+}
+
 # Check the current Linux distribution, for checks that are going to be done later.
 if [ -f /etc/os-release ]; then
     # freedesktop.org and systemd
@@ -426,6 +433,20 @@ sudo dnf install renderdoc -y && sudo dnf install vulkan-tools -y
 # Set up Unity Hub and Jetbrains
 sudo sh -c 'echo -e "[unityhub]\nname=Unity Hub\nbaseurl=https://hub.unity3d.com/linux/repos/rpm/stable\nenabled=1\ngpgcheck=1\ngpgkey=https://hub.unity3d.com/linux/repos/rpm/stable/repodata/repomd.xml.key\nrepo_gpgcheck=1" > /etc/yum.repos.d/unityhub.repo' && sudo dnf update && sudo dnf install unityhub -y && sudo dnf install GConf2 -y
 mkdir $HOME/Applications && cd $HOME/Applications && wget -O jetbrains-toolbox.tar.gz https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.24.11947.tar.gz && tar xvzf jetbrains-toolbox.tar.gz && cd .. && echo "Make sure to remove the 'jetbrains-toolbox' executable from the extracted folder before running! Preferably copy it to '/opt' before running."
+
+# Set up Godot .NET
+GODOT_VER=$(get_latest_github_release "godotengine/godot")
+GODOT_ZIP="Godot_v${GODOT_VER}_mono_linux_x86_64.zip"
+
+echo $GODOT_ZIP
+echo $GODOT_VER
+
+mkdir -p ~/Applications/Godot
+wget -O ~/Applications/Godot/$GODOT_ZIP https://github.com/godotengine/godot/releases/download/$GODOT_VER/$GODOT_ZIP
+unzip ~/Applications/Godot/$GODOT_ZIP -d ~/Applications/Godot
+mv ~/Applications/Godot/Godot_v${GODOT_VER}_mono_linux_x86_64/* ~/Applications/Godot
+sudo rm -rf ~/Applications/Godot/Godot_v${GODOT_VER}_mono_linux_x86_64/ ~/Applications/Godot/$GODOT_ZIP
+mv ~/Applications/Godot/Godot_v${GODOT_VER}_mono_linux.x86_64 ~/Applications/Godot/Godot
 
 # Install Epic Asset Manager (For Unreal Engine)
 flatpak install flathub io.github.achetagames.epic_asset_manager $FLATPAK_TYPE -y
