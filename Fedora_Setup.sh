@@ -747,6 +747,9 @@ sudo dnf remove kwrite -y && sudo dnf install kate -y
 sudo dnf install input-remapper -y
 sudo systemctl enable --now input-remapper && sudo systemctl start input-remapper
 
+# Set up BetterDiscord.
+sudo dnf copr enable observeroftime/betterdiscordctl -y && sudo dnf install betterdiscordctl -y
+
 case $NAME in
     ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
     # Install and set up OpenRGB.
@@ -757,16 +760,17 @@ case $NAME in
 
     # Install Discord (Nobara has it's own version, so that goes here).
     flatpak install flathub com.discordapp.Discord $FLATPAK_TYPE -y
+    betterdiscordctl --d-install flatpak install
 
     # Enable support for flatpak Discord to use Discord Rich Presence for non-sandboxed applications.
     mkdir -p ~/.config/user-tmpfiles.d
     echo 'L %t/discord-ipc-0 - - - - app/com.discordapp.Discord/discord-ipc-0' > ~/.config/user-tmpfiles.d/discord-rpc.conf
     systemctl --user enable --now systemd-tmpfiles-setup.service
     ;;
+    ("Nobara Linux")
+    betterdiscordctl install
+    ;;
 esac
-
-# Set up BetterDiscord AppImage.
-wget -O ~/Applications/BetterDiscord-Linux.AppImage https://github.com/BetterDiscord/Installer/releases/download/v1.3.0/BetterDiscord-Linux.AppImage
 
 # Set up Discord Overlay of sorts (https://github.com/trigg/Discover)
 sudo dnf copr enable mavit/discover-overlay -y
