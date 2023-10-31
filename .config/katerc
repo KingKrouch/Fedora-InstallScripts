@@ -11,6 +11,7 @@ Icon size for left and right sidebar buttons=32
 Modified Notification=false
 Mouse back button action=0
 Mouse forward button action=0
+Open New Tab To The Right Of Current=false
 Output History Limit=100
 Recent File List Entry Count=10
 Restore Window Configuration=true
@@ -35,9 +36,9 @@ Tab Middle Click Close Document=true
 Tabbar Tab Limit=0
 
 [KFileDialog Settings]
-Recent Files[$e]=Notes.txt,file:$HOME/Stuff to do.txt
-Recent URLs[$e]=file:$HOME/,file:$HOME/Documents/
-detailViewIconSize=16
+Recent Files[$e]=
+Recent URLs[$e]=
+iconViewIconSize=64
 
 [KTextEditor Document]
 Allow End of Line Detection=true
@@ -85,8 +86,8 @@ Fallback Encoding=ISO 8859-15
 
 [KTextEditor Renderer]
 Animate Bracket Matching=false
-Auto Color Theme Selection=true
-Color Theme=Breeze Dark
+Auto Color Theme Selection=false
+Color Theme=Breeze Dark (OLED)
 Font=Noto Sans Mono,10,-1,5,50,0,0,0,0,0
 Line Height Multiplier=1
 Show Indentation Lines=false
@@ -164,6 +165,13 @@ KonsoleEscKeyExceptions=vi,vim,nvim,git
 RemoveExtension=false
 RunPrefix=
 SetEditor=false
+
+[MainWindow]
+2752x1152 screen: Height=524
+2752x1152 screen: Width=1328
+
+[UiSettings]
+ColorScheme=
 
 [filetree]
 editShade=70,85,6
