@@ -444,6 +444,7 @@ echo $GODOT_VER
 mkdir -p ~/Applications/Godot
 wget -O ~/Applications/Godot/$GODOT_ZIP https://github.com/godotengine/godot/releases/download/$GODOT_VER/$GODOT_ZIP
 wget -O ~/Applications/Godot/Icon.svg https://godotengine.org/assets/press/icon_color.svg
+wget -O ~/Applications/Godot/Icon.png https://godotengine.org/assets/press/icon_color.png
 unzip ~/Applications/Godot/$GODOT_ZIP -d ~/Applications/Godot
 mv ~/Applications/Godot/Godot_v${GODOT_VER}_mono_linux_x86_64/* ~/Applications/Godot
 sudo rm -rf ~/Applications/Godot/Godot_v${GODOT_VER}_mono_linux_x86_64/ ~/Applications/Godot/$GODOT_ZIP
