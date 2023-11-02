@@ -268,7 +268,8 @@ flatpak install flathub org.prismlauncher.PrismLauncher $FLATPAK_TYPE -y
 flatpak install flathub dev.goats.xivlauncher $FLATPAK_TYPE -y
 flatpak remote-add --if-not-exists --user launcher.moe https://gol.launcher.moe/gol.launcher.moe.flatpakrepo
 flatpak install flathub org.gnome.Platform//45 $FLATPAK_TYPE -y # Install a specific GTK dependency for AAGL and HRWL.
-flatpak install flathub com.valvesoftware.Steam.Utility.gamescope $FLATPAK_TYPE -y # Install Gamescope dependency for AAGL and HRWL.
+flatpak install flathub org.freedesktop.Platform.VulkanLayer.gamescope $FLATPAK_TYPE -y # Install Gamescope dependency for AAGL and HRWL.
+flatpak remove com.valvesoftware.Steam.Utility.gamescope -y # Remove the old Gamescope dependency if it exists.
 flatpak install flathub org.freedesktop.Platform.VulkanLayer.MangoHud $FLATPAK_TYPE -y # Install MangoHud dependency for Heroic, AAGL, Lutris, and HRWL.
 flatpak install flathub org.freedesktop.Platform.VulkanLayer.OBSVkCapture $FLATPAK_TYPE -y # Install OBS VkCapture layer for OBS capturing of Flatpak games.
 flatpak install flathub com.valvesoftware.Steam.Utility.vkBasalt $FLATPAK_TYPE -y # Install VkBasalt for Flatpak games.
