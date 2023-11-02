@@ -486,7 +486,7 @@ sudo sh -c 'echo -e "[shiftkey-packages]\nname=GitHub Desktop\nbaseurl=https://r
 sudo dnf install github-desktop -y
 
 # Install .NET Runtime/SDK and Mono (for Rider and C# applications)
-sudo dnf install dotnet mono-devel -y
+sudo dnf install aspnetcore-runtime-7.0 aspnetcore-runtime-6.0 dotnet-sdk-6.0 dotnet-sdk-7.0 mono-devel -y
 
 # Install Java
 sudo dnf install java -y
