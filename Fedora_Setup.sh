@@ -748,6 +748,9 @@ sudo dnf remove kwrite -y && sudo dnf install kate -y
 sudo dnf install input-remapper -y
 sudo systemctl enable --now input-remapper && sudo systemctl start input-remapper
 
+# Install Wallpaper Engine KDE Plugin
+sudo dnf copr enable kylegospo/wallpaper-engine-kde-plugin -y && sudo dnf install wallpaper-engine-kde-plugin -y
+
 # Set up BetterDiscord.
 sudo dnf copr enable observeroftime/betterdiscordctl -y && sudo dnf install betterdiscordctl -y
 
