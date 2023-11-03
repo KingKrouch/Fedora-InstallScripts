@@ -328,20 +328,12 @@ sudo usermod -a -G pkg-build $USER
 
 case $NAME in
     ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
-    # Install Wine-TKG alongside WineASIO.
-    sudo dnf copr enable patrickl/wine-tkg -y
-    sudo dnf copr enable patrickl/wine-mono -y
-    sudo dnf copr enable patrickl/mingw-wine-gecko -y
-    sudo dnf copr enable patrickl/vkd3d -y
-    sudo dnf copr enable patrickl/wine-dxvk -y
-    sudo dnf copr enable patrickl/winetricks -y
-    sudo dnf copr enable patrickl/pipewire-wineasio -y
+    # Install 64-Bit WINE Staging, alongside some needed dependencies for later.
+    dnf install wine-staging -y
 
     # Install Yabridge (For VST Plugins, I'm going to assume you will set up a DAW on your own accords).
     sudo dnf copr enable patrickl/yabridge -y && sudo dnf install yabridge --refresh -y
 
-    # Replace the JACK library with Pipewire's variant and install needed libraries for wineasio.
-    sudo dnf install gcc make glibc-devel.i686 wine wine-devel.i686 wine-devel.x86_64 pipewire-jack-audio-connection-kit-devel.i686 python3-qt5 asio-devel pipewire-jack-audio-connection-kit-devel.x86_64 pipewire-alsa pipewire-pulseaudio realtime-setup pavucontrol qpwgraph pipewire-wineasio winetricks Cadence qjackctl -y
     # Install Winetricks and some other dependencies.
     sudo dnf install winetricks cabextract samba-winbind -y
     # Set up realtime, jackuser, and audiogroups alongside necessary permissions.
@@ -362,13 +354,9 @@ case $NAME in
 
     # Ableton Stuff (Feel free to use this if you are planning to install Ableton Live. I just have it here for reference).
     # WINEPREFIX=~/.ableton wine64 explorer
-    
-    # Register our Wine prefixes with WineASIO.
-    env WINEPREFIX=$HOME/.wine /usr/bin/wineasio-register
-    #env WINEPREFIX=$HOME/.ableton /usr/bin/wineasio-register
     #WINEPREFIX=$HOME/.ableton winetricks win7 quicktime72 gdiplus vb2run vcrun2008 vcrun6 vcrun2010 vcrun2013 vcrun2015 tahoma msxml3 msxml6 setupapi python27
     
-    # Set our Wine Prefix to use ALSA audio, so it won't crash with WineASIO.
+    # Set our Wine Prefix to use ALSA audio, so it won't crash with WineASIO or other ASIO plugins.
     WINEPREFIX=$HOME/.wine winetricks sound=alsa
     #WINEPREFIX=$HOME/.ableton winetricks sound=alsa
     ;;
