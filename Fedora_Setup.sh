@@ -426,6 +426,7 @@ sudo sh -c 'echo -e "[unityhub]\nname=Unity Hub\nbaseurl=https://hub.unity3d.com
 mkdir $HOME/Applications && cd $HOME/Applications && wget -O jetbrains-toolbox.tar.gz https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.24.11947.tar.gz && tar xvzf jetbrains-toolbox.tar.gz && cd .. && echo "Make sure to remove the 'jetbrains-toolbox' executable from the extracted folder before running! Preferably copy it to '/opt' before running."
 
 # Set up Godot .NET
+# Alternatively, you can run "flatpak install flathub org.godotengine.GodotSharp $FLATPAK_TYPE -y"
 GODOT_VER=$(get_latest_github_release "godotengine/godot")
 GODOT_ZIP="Godot_v${GODOT_VER}_mono_linux_x86_64.zip"
 
