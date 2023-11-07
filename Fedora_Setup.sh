@@ -316,7 +316,9 @@ echo 'Section "InputClass"
 EndSection' | sudo tee -a /etc/X11/xorg.conf.d/30--dualsense-touchpad.conf
 
 # Downgrade Bluez package so DualSense controllers can actually pair properly.
-sudo dnf install bluez-5.68-1.fc38 -y
+#sudo dnf install bluez-5.68-1.fc39 -y
+sudo dnf install https://kojipkgs.fedoraproject.org//packages/bluez/5.68/1.fc39/x86_64/bluez-5.68-1.fc$(rpm -E %fedora).x86_64.rpm https://kojipkgs.fedoraproject.org//packages/bluez/5.68/1.fc39/x86_64/bluez-cups-5.68-1.fc$(rpm -E %fedora).x86_64.rpm -y
+
 echo "exclude=bluez" | sudo tee -a /etc/dnf/dnf.conf
 #sudo sed -i '/exclude=bluez/d' /etc/dnf/dnf.conf # Uncomment and use this command when it's safe to update bluez.
 sudo systemctl restart bluetooth.service
