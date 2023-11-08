@@ -496,7 +496,7 @@ sudo dnf install ruby ruby-devel rubygem-\* --skip-broken -y
 # Install Python 2.
 sudo dnf install python2 -y
 
-# Install Rust.
+# Install Rust. Alternatively, you can run this: "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh".
 sudo dnf install rust -y
 
 ## ///// VIRTUALIZATION /////
