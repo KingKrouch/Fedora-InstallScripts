@@ -622,7 +622,7 @@ else
 fi
 
 ## ///// ANDROID APP COMPATIBILITY /////
-sudo dnf install waydroid -y
+sudo dnf install waydroid android-tools -y
 sudo systemctl enable --now waydroid-container
 sudo waydroid init -s GAPPS -r lineage -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor
 cd ~/ && sudo dnf install lzip -y
