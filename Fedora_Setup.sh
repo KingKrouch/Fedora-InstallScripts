@@ -827,7 +827,11 @@ sudo dnf install qbittorrent -y
 
 # Install and Setup OneDrive alongside OneDrive GUI for a GUI interface.
 sudo dnf install onedrive -y && sudo systemctl stop onedrive@$USER.service && sudo systemctl disable onedrive@$USER.service && systemctl --user enable onedrive && systemctl --user start onedrive
-wget -O ~/Applications/OneDriveGUI.AppImage https://github.com/bpozdena/OneDriveGUI/releases/download/v1.0.2/OneDriveGUI-1.0.2-x86_64.AppImage
+ONEDRIVEGUI_VER=$(get_latest_github_release "bpozdena/OneDriveGUI" | sed 's/v//')
+ONEDRIVEGUI_APPIMAGE="OneDriveGUI-${ONEDRIVEGUI_VER}-x86_64.AppImage"
+echo $ONEDRIVEGUI_APPIMAGE
+echo $ONEDRIVEGUI_VER
+wget -O ~/Applications/$ONEDRIVEGUI_APPIMAGE https://github.com/bpozdena/OneDriveGUI/releases/download/v$ONEDRIVEGUI_VER/$ONEDRIVEGUI_APPIMAGE
 echo "Make sure to run AppImageLauncher at least once, to get it to recognize the AppImage for OneDriveGUI. Afterwards, synchronize your account, and add a login application startup for the OneDrive GUI.".
 
 # Install Mullvad VPN.
