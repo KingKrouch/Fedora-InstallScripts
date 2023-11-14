@@ -721,6 +721,8 @@ cd .. && cd .. && sudo rm -rf KDE-Rounded-Corners
 # Use Librewolf instead of Firefox. We also need to reinstall the Plasma Browser Integration after Firefox is removed.
 sudo dnf config-manager --add-repo https://rpm.librewolf.net/librewolf-repo.repo
 sudo dnf install librewolf -y && sudo dnf remove firefox -y && sudo dnf install plasma-browser-integration -y
+# I don't know why this is required to use Librewolf on Wayland without shitting itself, but here we are.
+mkdir -p ~/.config/environment.d && echo 'MOZ_ENABLE_WAYLAND=1' >> ~/.config/environment.d/envvars.conf
 
 # Install Microsoft Edge as a secondary web browser.
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
