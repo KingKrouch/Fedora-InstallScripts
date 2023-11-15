@@ -501,6 +501,10 @@ sudo dnf install rust -y
 
 ## ///// VIRTUALIZATION /////
 
+# Install tools for .VHD/.VHDX mounting.
+sudo dnf install libguestfs-tools -y
+
+# Set up Virtualization Tools.
 if grep -Eq 'vmx|svm' /proc/cpuinfo; then
     echo "Virtualization is enabled. Setting up virtualization packages."
     # Installs Virtual Machine related packages, alongside downloading the current stable VirtIO Guest Driver ISO.
