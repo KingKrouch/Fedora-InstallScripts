@@ -235,7 +235,7 @@ case $NAME in
     bash <(curl -sL https://raw.githubusercontent.com/kmicki/SteamDeckGyroDSU/master/pkg/update.sh)
     ;;
     ("Nobara Linux") # This is for Fedora specific stuff that can safely be ignored with Fedora.
-    sudo dnf install sdgyrodsu gamescope-session -y
+    sudo dnf install sdgyrodsu gamescope-session jupiter-hw-support jupiter-fan-control -y
     ;;
 esac
 
