@@ -733,9 +733,8 @@ sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo dnf config-manager --add-repo https://packages.microsoft.com/yumrepos/edge
 sudo dnf install microsoft-edge-stable -y
 
-# Install Vivaldi as a tertiary web browser.
-sudo dnf config-manager --add-repo https://repo.vivaldi.com/stable/vivaldi-fedora.repo
-sudo dnf install vivaldi-stable -y
+# Install Vivaldi as a tertiary web browser. Finally, a Flatpak version!
+flatpak install flathub com.vivaldi.Vivaldi $FLATPAK_TYPE -y
 
 # Install Warpinator for file transfers.
 flatpak install flathub org.x.Warpinator $FLATPAK_TYPE -y
