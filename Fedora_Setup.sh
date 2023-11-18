@@ -713,7 +713,7 @@ sudo dnf install bismuth qt -y
 
 # Add KDE Rounded Corners plugin, and then add updated desktop effects config.
 sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static qt5-qtx11extras-devel kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel libepoxy-devel -y
-git clone https://github.com/matinlotfali/KDE-Rounded-Corners
+git clone --branch disable-when-maximized https://github.com/matinlotfali/KDE-Rounded-Corners/
 cd KDE-Rounded-Corners
 mkdir build
 cd build
