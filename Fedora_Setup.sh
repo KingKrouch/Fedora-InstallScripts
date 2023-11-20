@@ -511,6 +511,12 @@ if grep -Eq 'vmx|svm' /proc/cpuinfo; then
     sudo dnf -y group install Virtualization -y
     wget -O ~/Downloads/virtio-win.iso https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
 
+    # Set up Cockpit for Virtual Machines (As Virt-Manager is now discontinued).
+    sudo dnf install cockpit cockpit-machines -y
+    sudo systemctl enable --now cockpit.socket
+    sudo firewall-cmd --add-service=cockpit && sudo firewall-cmd --add-service=cockpit --permanent
+    # Connect to cockpit with https://localhost:9090
+
     # Set up GRUB Bootloader to use IOMMU based on the CPU type used
     cpu_vendor=$(grep -m 1 vendor_id /proc/cpuinfo | cut -d ":" -f 2 | tr -d '[:space:]')
     if [ "$cpu_vendor" = "GenuineIntel" ]; then
