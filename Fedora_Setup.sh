@@ -624,9 +624,9 @@ if grep -Eq 'vmx|svm' /proc/cpuinfo; then
 	# VIRSH_GPU_AUDIO=pci_0000_0a_00_1" >> '/etc/libvirt/hooks/kvm.conf'
 
 	# Download the RX 6700XT VBIOS that I use specifically (An ASUS ROG STRIX OC Edition)
- 	# mkdir ~/.local/share/libvirt
-	# wget -O ~/.local/share/libvirt/GPU.rom https://www.techpowerup.com/vgabios/230897/Asus.RX6700XT.12288.210301.rom
-	# sudo chmod -R 660 ~/.local/share/libvirt/GPU.rom && sudo chown $(whoami):$(whoami) ~/.local/share/libvirt/GPU.rom
+ 	# sudo mkdir /usr/share/vgabios
+	# sudo wget -O /usr/share/vgabios/GPU.rom https://www.techpowerup.com/vgabios/230897/Asus.RX6700XT.12288.210301.rom
+	# sudo chmod -R 775 /usr/share/vgabios/GPU.rom && sudo chown $(whoami):$(whoami) /usr/share/vgabios/GPU.rom
 
     # Finally restart the Libvirt service.
     sudo systemctl restart libvirtd.service
