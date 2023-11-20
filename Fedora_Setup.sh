@@ -546,6 +546,9 @@ if grep -Eq 'vmx|svm' /proc/cpuinfo; then
 	# Load the config file with our environmental variables
 	# source \"/etc/libvirt/hooks/kvm.conf\"
 
+ 	# Stops our Plasma session on Wayland before stopping the display manager.
+ 	# systemctl --user -M $USER@ stop plasma* # This line may need to be changed from $USER to a hardcoded username to work properly.
+
 	# Stop your display manager. If you're on KDE, it'll be sddm.service. Gnome users should use killall gdm-x-session instead
 	# systemctl stop sddm.service
 	# pulse_pid=$(pgrep -u YOURUSERNAME pulseaudio)
