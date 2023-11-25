@@ -425,7 +425,7 @@ fi
 sudo dnf install kernel-devel -y
 
 # Install RenderDoc and Vulkan Tools.
-dnf copr enable kb1000/renderdoc -y
+sudo dnf copr enable kb1000/renderdoc -y
 sudo dnf install renderdoc -y && sudo dnf install vulkan-tools -y
 
 # Set up Unity Hub and Jetbrains
