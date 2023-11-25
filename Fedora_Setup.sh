@@ -645,8 +645,6 @@ sudo python3 -m pip install -r requirements.txt
 sudo python3 ./main.py install magisk
 sudo python3 ./main.py install libhoudini
 sudo python3 ./main.py install widevine
-sudo python3 ./main.py install smartdock
-sudo python3 main.py hack hidestatusbar
 # Some tweaks for stuff like USB controller support or stuff that requires a WiFi connection.
 waydroid prop set persist.waydroid.udev true
 waydroid prop set persist.waydroid.uevent true
