@@ -30,7 +30,7 @@ case $XDG_SESSION_TYPE in
 esac
 
 if [ -x /usr/bin/mangohud ]; then
-        mangohud /usr/bin/steam -vgui %U
+        bash mangohud /usr/bin/steam -vgui %U
     else
-        /usr/bin/steam -vgui %U
+        bash /usr/bin/steam -vgui %U
 fi
