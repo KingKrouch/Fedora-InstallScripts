@@ -1,0 +1,32 @@
+[Added Associations]
+inode/directory=org.kde.dolphin.desktop;
+text/csproj=jetbrains-rider-65d3ff55-1bd0-42ce-bed9-4f182fc82368.desktop;
+text/plain=org.kde.kate.desktop;
+text/sln=jetbrains-rider-65d3ff55-1bd0-42ce-bed9-4f182fc82368.desktop;
+x-scheme-handler/geo=wheelmap-geo-handler.desktop;
+x-scheme-handler/http=com.vivaldi.Vivaldi.desktop;librewolf.desktop;
+x-scheme-handler/https=com.vivaldi.Vivaldi.desktop;librewolf.desktop;
+x-scheme-handler/mailto=com.vivaldi.Vivaldi.desktop;
+x-scheme-handler/tel=org.kde.kdeconnect.handler.desktop;
+
+[Default Applications]
+inode/directory=org.kde.dolphin.desktop;
+text/csproj=jetbrains-rider-65d3ff55-1bd0-42ce-bed9-4f182fc82368.desktop;
+text/plain=org.kde.kate.desktop;
+text/sln=jetbrains-rider-65d3ff55-1bd0-42ce-bed9-4f182fc82368.desktop;
+x-scheme-handler/geo=wheelmap-geo-handler.desktop;
+x-scheme-handler/http=com.vivaldi.Vivaldi.desktop;
+x-scheme-handler/https=com.vivaldi.Vivaldi.desktop;
+x-scheme-handler/jetbrains=jetbrains-toolbox.desktop
+x-scheme-handler/mailto=com.vivaldi.Vivaldi.desktop;
+x-scheme-handler/tel=org.kde.kdeconnect.handler.desktop;
+x-scheme-handler/x-github-client=github-desktop.desktop
+x-scheme-handler/x-github-desktop-auth=github-desktop.desktop
+
+[Removed Associations]
+text/csproj=org.kde.kate.desktop;okularApplication_txt.desktop;org.kde.kdeconnect_open.desktop;
+text/sln=org.kde.kate.desktop;okularApplication_txt.desktop;org.kde.kdeconnect_open.desktop;
+
+[Removed KDE Service Associations]
+text/csproj=katepart;oktetapart;okularpart;
+text/sln=katepart;oktetapart;okularpart;

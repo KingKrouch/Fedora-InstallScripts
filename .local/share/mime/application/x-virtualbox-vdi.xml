@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mime-type xmlns="http://www.freedesktop.org/standards/shared-mime-info" type="application/x-virtualbox-vdi">
+  <!--Created automatically by update-mime-database. DO NOT EDIT!-->
+  <comment>Virtual Disk Image</comment>
+  <icon name="virtualbox-vdi"/>
+  <glob-deleteall/>
+  <glob pattern="*.vdi"/>
+</mime-type>

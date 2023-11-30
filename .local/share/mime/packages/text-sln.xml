@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+    <mime-type type="text/sln">
+        <comment>Visual Studio Solution</comment>
+        <icon name="text-csharp"/>
+        <glob-deleteall/>
+        <glob pattern="*.sln"/>
+    </mime-type>
+</mime-info>

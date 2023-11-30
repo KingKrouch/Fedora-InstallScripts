@@ -868,6 +868,9 @@ flatpak install flathub org.onlyoffice.desktopeditors $FLATPAK_TYPE -y
 # cp /usr/share/applications/steam.desktop ~/.local/share/applications
 # awk '/^\[Desktop Entry\]/{flag=1} flag && /^Exec=/{sub(/^Exec=/, "Exec=STEAM_FORCE_DESKTOPUI_SCALING=1.35 ", $0); flag=0} 1' ~/.local/share/applications/steam.desktop > temp_file && mv temp_file ~/.local/share/applications/steam.desktop
 
+# Update MIME Database (for file associations, such as .csproj and .sln files with Rider)
+update-mime-database ~/.local/share/mime
+
 ## ///// MEDIA CODECS AND SUCH /////
 
 case $NAME in

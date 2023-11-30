@@ -1,0 +1,12 @@
+application/pkcs12
+application/x-pkcs12
+application/x-pkcs7-certificates
+application/x-virtualbox-ova
+application/x-virtualbox-vdi
+application/x-virtualbox-vhd
+application/x-virtualbox-vmdk
+application/x-wine-extension-msp
+application/x-x509-ca-cert
+text/csproj
+text/sln
+video/mpeg

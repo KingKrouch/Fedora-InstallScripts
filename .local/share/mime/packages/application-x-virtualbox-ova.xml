@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+    <mime-type type="application/x-virtualbox-ova">
+        <comment>Open Virtualization Format Archive</comment>
+        <icon name="virtualbox-ova"/>
+        <glob-deleteall/>
+        <glob pattern="*.ova"/>
+    </mime-type>
+</mime-info>

@@ -1,0 +1,6 @@
+application/x-virtualbox-ova:virtualbox-ova
+application/x-virtualbox-vdi:virtualbox-vdi
+application/x-virtualbox-vmdk:virtualbox-vmdk
+application/x-virtualbox-vhd:virtualbox-vhd
+text/csproj:text-csharp
+text/sln:text-csharp

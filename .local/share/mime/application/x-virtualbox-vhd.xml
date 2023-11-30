@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mime-type xmlns="http://www.freedesktop.org/standards/shared-mime-info" type="application/x-virtualbox-vhd">
+  <!--Created automatically by update-mime-database. DO NOT EDIT!-->
+  <comment>Virtual Hard Disk</comment>
+  <icon name="virtualbox-vhd"/>
+  <glob-deleteall/>
+  <glob pattern="*.vhd"/>
+</mime-type>
