@@ -265,7 +265,7 @@ flatpak install flathub org.ryujinx.Ryujinx $FLATPAK_TYPE -y
 flatpak install flathub org.DolphinEmu.dolphin-emu $FLATPAK_TYPE -y
 flatpak install flathub net.pcsx2.PCSX2 $FLATPAK_TYPE -y
 flatpak install flathub org.prismlauncher.PrismLauncher $FLATPAK_TYPE -y
-flatpak install flathub io.github.vinegarhq.Vinegar $FLATPAK_TYPE -y
+flatpak install flathub org.vinegarhq.Vinegar $FLATPAK_TYPE -y
 flatpak install flathub dev.goats.xivlauncher $FLATPAK_TYPE -y
 flatpak remote-add --if-not-exists --user launcher.moe https://gol.launcher.moe/gol.launcher.moe.flatpakrepo
 flatpak install flathub org.gnome.Platform//45 $FLATPAK_TYPE -y # Install a specific GTK dependency for AAGL and HRWL.
