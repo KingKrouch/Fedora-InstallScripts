@@ -113,8 +113,8 @@ sudo dnf distro-sync -y
 
 ## ///// TERMINAL STUFF /////
 
-# Install fastfetch.
-sudo dnf install fastfetch -y
+# Install fastfetch, alongside some font dependencies.
+sudo dnf install google-noto-sans* fastfetch -y
 mkdir ~/.config/fastfetch
 
 # Set up fastfetch with my preferred configuration.
