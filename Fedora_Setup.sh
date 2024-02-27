@@ -86,6 +86,10 @@ esac
 # Enable System Theming with Flatpak (That way, theming is more consistent between native apps and flatpaks).
 sudo flatpak override --filesystem=xdg-config/gtk-3.0
 
+# Enable mouse Cursors and Icons in Flatpak (That way, your mouse cursor is shown properly).
+flatpak --user override --filesystem=/home/$USER/.icons/:ro
+flatpak --user override --filesystem=/usr/share/icons/:ro
+
 # Set up Flatseal for Flatpak permissions
 flatpak install flathub com.github.tchx84.Flatseal $FLATPAK_TYPE -y
 
@@ -409,6 +413,7 @@ case $XDG_CURRENT_DESKTOP in
     sudo mkdir /var/lib/samba/usershares && sudo chgrp sambashares /var/lib/samba/usershares && sudo chown $USER:sambashares /var/lib/samba/usershares
     ;;
 esac
+sudo setsebool -P samba_enable_home_dirs=on
 
 # Set up SSH Server on Host
 sudo systemctl enable sshd && sudo systemctl start sshd
@@ -764,6 +769,10 @@ sudo dnf copr enable kylegospo/wallpaper-engine-kde-plugin -y && sudo dnf instal
 
 # Set up BetterDiscord.
 sudo dnf copr enable observeroftime/betterdiscordctl -y && sudo dnf install betterdiscordctl -y
+
+# Set up Obsidian (For Note-Taking).
+flatpak install md.obsidian.Obsidian
+flatpak override --user --socket=wayland md.obsidian.Obsidian
 
 case $NAME in
     ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
