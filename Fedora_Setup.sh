@@ -469,7 +469,7 @@ wget -O ~/Applications/Dockstation.AppImage https://github.com/DockStation/docks
 sudo dnf install podman distrobox -y
 
 # Install MinGW64, CMake, Ninja Build
-sudo dnf install mingw64-\* cmake ninja-build -y --skip-broken
+sudo dnf install mingw64-\* cmake ninja-build -y --exclude=mingw64-libgsf --skip-broken
 sudo dnf remove mingw64-libgsf -y # This is just in case we want to install the gnome desktop via 'dnf group install -y "GNOME Desktop Environment"'.
 
 # Install Ghidra.
