@@ -654,6 +654,7 @@ sudo python3 ./main.py install widevine
 waydroid prop set persist.waydroid.udev true
 waydroid prop set persist.waydroid.uevent true
 waydroid prop set persist.waydroid.fake_wifi true
+sudo firewall-cmd --zone=trusted --add-interface=waydroid0
 echo "Make sure to run 'sudo waydroid shell' followed by the command listed here: https://docs.waydro.id/faq/google-play-certification"
 cd ..
 
