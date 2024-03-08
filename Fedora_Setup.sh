@@ -320,12 +320,8 @@ echo 'Section "InputClass"
     Option "Ignore" "true"
 EndSection' | sudo tee -a /etc/X11/xorg.conf.d/30--dualsense-touchpad.conf
 
-# Downgrade Bluez package so DualSense controllers can actually pair properly.
-#sudo dnf install bluez-5.68-1.fc39 -y
-sudo dnf install https://kojipkgs.fedoraproject.org//packages/bluez/5.68/1.fc$(rpm -E %fedora)/x86_64/bluez-5.68-1.fc$(rpm -E %fedora).x86_64.rpm https://kojipkgs.fedoraproject.org//packages/bluez/5.68/1.fc$(rpm -E %fedora)/x86_64/bluez-cups-5.68-1.fc$(rpm -E %fedora).x86_64.rpm -y
-echo "exclude=bluez" | sudo tee -a /etc/dnf/dnf.conf
-#sudo sed -i '/exclude=bluez/d' /etc/dnf/dnf.conf # Uncomment and use this command when it's safe to update bluez.
-sudo systemctl restart bluetooth.service
+# Set up HIDDualShock Module on system startup, to prevent touchpad issues.
+printf "# load this module at boot time as otherwise the DS4 and DualSense controllers have issues\nhid_playstation\n" | sudo tee /etc/modules-load.d/hid-playstation.conf > /dev/null
 
 # Install XPadNeo drivers for Xbox controllers.
 case $NAME in
