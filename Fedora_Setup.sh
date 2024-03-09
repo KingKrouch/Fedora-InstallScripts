@@ -243,6 +243,8 @@ case $NAME in
     ;;
 esac
 
+# TODO: Add Nobara's Gamescope Session here. Note: To prevent Steam from starting up without DPI Scaling or anything, run "sudo rm -rf /etc/xdg/autostart/steam.desktop".
+
 # Set up Decky Loader for Steam.
 curl -L https://github.com/SteamDeckHomebrew/decky-installer/releases/latest/download/install_release.sh | sh
 
