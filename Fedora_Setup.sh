@@ -498,7 +498,7 @@ sudo sh -c 'echo -e "[shiftkey-packages]\nname=GitHub Desktop\nbaseurl=https://r
 sudo dnf install github-desktop -y
 
 # Install .NET Runtime/SDK and Mono (for Rider and C# applications)
-sudo dnf install dotnet-sdk-6.0 mono-devel -y
+sudo dnf install dotnet-sdk-6.0 dotnet-sdk-7.0 dotnet-sdk-8.0 mono-devel -y
 
 # Install Java
 sudo dnf install java -y
@@ -774,10 +774,16 @@ sudo dnf install input-remapper -y
 sudo systemctl enable --now input-remapper && sudo systemctl start input-remapper
 
 # Install Wallpaper Engine KDE Plugin
-sudo dnf copr enable kylegospo/wallpaper-engine-kde-plugin -y && sudo dnf install wallpaper-engine-kde-plugin -y
+case $NAME in
+    ("Fedora")
+    sudo dnf copr enable kylegospo/wallpaper-engine-kde-plugin -y && sudo dnf install wallpaper-engine-kde-plugin -y
+    ;;
+    ("Nobara Linux")
+    sudo dnf install wallpaper-engine-kde-plugin -y
+    ;;
+esac
 
-# Set up BetterDiscord.
-sudo dnf copr enable observeroftime/betterdiscordctl -y && sudo dnf install betterdiscordctl -y
+# TODO: Add Vencord instead of BetterDiscord. Also, might not be necessary as I personally use Discord in Vivaldi now.
 
 # Set up Obsidian (For Note-Taking).
 flatpak install md.obsidian.Obsidian
@@ -833,15 +839,29 @@ echo 'polkit.addRule(function(action, subject) {
 # Add the AMD P-States driver instead of the built-in power management.
 # NOTE: Nothing needs to be done on Intel CPUs, their P-State driver is already enabled by default on recent Linux kernel versions.
 # Seemingly the grubby command isn't working, so we just need to find a way to add the needed parameters to "/etc/default/grub". Same goes for the VM parameters and parameters for corectrl.
-cpu_vendor=$(grep -m 1 vendor_id /proc/cpuinfo | cut -d ":" -f 2 | tr -d '[:space:]')
-if [ "$cpu_vendor" = "AuthenticAMD" ]; then
-    sudo grubby --update-kernel=ALL --args="blacklist_module=acpi_cpufreq initcall_blacklist=acpi_cpufreq_init amd_pstate.shared_mem=1 amd_pstate.enable=1 amd_pstate=passive"
-    sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
+## Get the Linux kernel version
+kernel_version=$(uname -r)
+
+## Extract major and minor version numbers
+major_version=$(echo "$kernel_version" | cut -d. -f1)
+minor_version=$(echo "$kernel_version" | cut -d. -f2)
+
+## Check if the kernel version is below 6.5
+if [[ "$major_version" -lt 6 || ( "$major_version" -eq 6 && "$minor_version" -lt 5 ) ]]; then
+    echo "Kernel version is below 6.5. Updating P-States Settings for AMD."
+    cpu_vendor=$(grep -m 1 vendor_id /proc/cpuinfo | cut -d ":" -f 2 | tr -d '[:space:]')
+    if [ "$cpu_vendor" = "AuthenticAMD" ]; then
+        sudo grubby --update-kernel=ALL --args="blacklist_module=acpi_cpufreq initcall_blacklist=acpi_cpufreq_init amd_pstate.shared_mem=1 amd_pstate.enable=1 amd_pstate=passive"
+        sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
+    fi
+else
+    echo "Kernel version is 6.5 or higher. No further work is necessary."
 fi
 
 # Install some Flatpaks that I personally use.
 flatpak install flathub com.spotify.Client $FLATPAK_TYPE -y
 
+# TODO: Replace with Thunderbird.
 # Install an email client.
 case $XDG_CURRENT_DESKTOP in
     ("KDE")
@@ -864,7 +884,10 @@ wget -O ~/Applications/$ONEDRIVEGUI_APPIMAGE https://github.com/bpozdena/OneDriv
 echo "Make sure to run AppImageLauncher at least once, to get it to recognize the AppImage for OneDriveGUI. Afterwards, synchronize your account, and add a login application startup for the OneDrive GUI.".
 
 # Install Mullvad VPN.
-sudo dnf install https://mullvad.net/media/app/MullvadVPN-2023.3_x86_64.rpm -y
+## Add the Mullvad repository server to dnf
+sudo dnf config-manager --add-repo https://repository.mullvad.net/rpm/stable/mullvad.repo
+## Install the package
+sudo dnf install mullvad-vpn -y
 
 # Install ProtonVPN. NOTE: This does not currently work with Fedora 39's Beta for some reason.
 sudo dnf install https://repo.protonvpn.com/fedora-38-stable/protonvpn-stable-release/protonvpn-stable-release-1.0.1-2.noarch.rpm -y
