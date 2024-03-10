@@ -132,9 +132,19 @@ brew install exa thefuck # Use Homebrew for exa and thefuck, as they aren't avai
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 sed -i 's/OSH_THEME="font"/OSH_THEME="agnoster"/g' ~/.bashrc
 
-# Install Powershell and Microsoft's software repositories.
+# Install Microsoft's software repositories.
 sudo dnf install https://packages.microsoft.com/config/fedora/$(rpm -E %fedora)/packages-microsoft-prod.rpm -y
-sudo dnf install https://github.com/PowerShell/PowerShell/releases/download/v7.3.9/powershell-7.3.9-1.rh.x86_64.rpm -y
+# Set up Powershell.
+POWERSHELL_REPONAME="PowerShell/PowerShell"
+POWERSHELL_VER=$(get_latest_github_release ${POWERSHELL_REPONAME})
+POWERSHELL_VER_WOSUFFIX=$(get_latest_github_release ${POWERSHELL_REPONAME} | sed 's/^v//')  # Remove the 'v' prefix from the version number
+POWERSHELL_FILE="powershell-${POWERSHELL_VER_WOSUFFIX}-1.rh.x86_64.rpm"
+
+echo $POWERSHELL_FILE
+echo $POWERSHELL_VER
+
+## Construct the download URL with the rearranged version
+sudo dnf install https://github.com/$POWERSHELL_REPONAME/releases/download/$POWERSHELL_VER/$POWERSHELL_FILE -y
 
 # Install oh-my-posh for Powershell.
 curl -s https://ohmyposh.dev/install.sh | sudo bash -s
