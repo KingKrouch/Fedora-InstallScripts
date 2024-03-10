@@ -938,6 +938,7 @@ sudo fc-cache -fv
 git clone https://github.com/ryanoasis/nerd-fonts.git && cd nerd-fonts && ./install.sh && cd .. && sudo rm -rf nerd-fonts
 
 # ///// TPM AUTOMATIC SYSTEM PARTITION DECRYPTION (NEW METHOD). Commented out for now because I need to iron something out with how the TPM key isn't being used. /////
+// NOTE: Should update it to use this guide: https://fedoramagazine.org/automatically-decrypt-your-disk-using-tpm2/
 #sudo systemd-cryptenroll --wipe-slot=tpm2 /dev/nvme0n1p3 # First we should probably remove any keys that exist in the TPM. Feel free to remove this if you like.
 #sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+1+2+3+4+5+7+8 /dev/nvme0n1p3
 # Next, we need to grab the Partition UUID for our LUKS partition.
