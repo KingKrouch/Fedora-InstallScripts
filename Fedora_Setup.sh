@@ -864,6 +864,10 @@ sudo dnf install --refresh proton-vpn-gnome-desktop -y
 # Set up OnlyOffice.
 flatpak install flathub org.onlyoffice.desktopeditors $FLATPAK_TYPE -y
 
+# Set up Wake On Lan.
+sudo dnf install wol -y
+sudo ethtool -s enp5s0 wol g # NOTE: This may need to be adjusted based on the current devices in "ip addr".
+
 ## ///// DPI SCALING RELATED STUFF /////
 # ~/.local/share/kscreen has a config file that can tell you the refresh rate and DPI scale of the current display. There probably is a better way of doing this in Wayland, but I'd need to find a way to allow updating of the scale for these applications, since Steam's DPI scaling on KDE is still busted for some reason.
 
