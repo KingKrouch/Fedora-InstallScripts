@@ -705,7 +705,7 @@ case $NAME in
     sudo dnf install rocm-meta -y
     ;;
 esac
-sudo dnf install rocm-smi rocm-clinfo -y
+sudo dnf install rocm-smi rocm-smi-lib -y
 
 # Set up a Fedora specific section for ROCM setup. (As shown here: https://medium.com/@anvesh.jhuboo/rocm-pytorch-on-fedora-51224563e5be).
 sudo usermod -a -G video $LOGNAME
