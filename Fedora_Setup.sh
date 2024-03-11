@@ -675,12 +675,7 @@ echo -e "MAYA_OPENCL_IGNORE_DRIVER_VERSION=1\nMAYA_CM_DISABLE_ERROR_POPUPS=1\nMA
 echo "Please download and install Autodesk Maya on your own accord. The dependencies and compatibility tweaks for Fedora should be taken care of now."
 echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2024/lib"" >> $HOME/.profile
 
-case $NAME in
-    ("Fedora") # Install some flatpaks that are already taken care of in Nobara's setup process.
-    flatpak install flathub org.blender.Blender $FLATPAK_TYPE -y
-    flatpak install flathub org.kde.kdenlive $FLATPAK_TYPE -y
-    ;;
-esac
+sudo dnf install blender kdenlive -y
 
 # TODO: Add Dracut regeneration just in case the AMD GPU Switcher drivers have been installed on Nobara.
 
