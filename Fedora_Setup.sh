@@ -522,6 +522,9 @@ if grep -Eq 'vmx|svm' /proc/cpuinfo; then
     echo "Virtualization is enabled. Setting up virtualization packages."
     # Installs Virtual Machine related packages, alongside downloading the current stable VirtIO Guest Driver ISO.
     sudo dnf -y group install Virtualization -y
+    # Install some extra system architectures for QEMU.
+    sudo dnf install qemu-system-\* -y
+    # Downloads the latest VirtIO Drivers for Windows.
     wget -O ~/Downloads/virtio-win.iso https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
 
     # Set up Cockpit for Virtual Machines (As Virt-Manager is now discontinued).
