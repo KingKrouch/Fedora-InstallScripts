@@ -524,6 +524,8 @@ if grep -Eq 'vmx|svm' /proc/cpuinfo; then
     sudo dnf -y group install Virtualization -y
     # Install some extra system architectures for QEMU.
     sudo dnf install qemu-system-\* -y
+    # Set up RDC/VNC Viewer.
+    sudo dnf install krdc -y
     # Downloads the latest VirtIO Drivers for Windows.
     wget -O ~/Downloads/virtio-win.iso https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
 
