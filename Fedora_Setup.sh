@@ -860,6 +860,7 @@ fi
 
 # Install some Flatpaks that I personally use.
 flatpak install flathub com.spotify.Client $FLATPAK_TYPE -y
+flatpak install flathub dev.aunetx.deezer $FLATPAK_TYPE -y
 
 # TODO: Replace with Thunderbird.
 # Install an email client.
