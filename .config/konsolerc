@@ -4,7 +4,11 @@ DefaultProfile=Profile.profile
 [General]
 ConfigVersion=1
 
+[KonsoleWindow]
+RememberWindowSize=false
+
 [MainWindow]
+MenuBar=Enabled
 RestorePositionForNextInstance=false
 ToolBarsMovable=Disabled
 
