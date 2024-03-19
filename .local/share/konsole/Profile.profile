@@ -1,6 +1,6 @@
 [Appearance]
 ColorScheme=Breeze (Transparent) (OLED)
-Font=JetBrainsMonoNL NF Medium,10,-1,5,57,0,0,0,0,0,Regular
+Font=JetBrainsMonoNL NF Light,10,-1,5,300,0,0,0,0,0,0,0,0,0,0,1,Regular
 
 [Cursor Options]
 CursorShape=2
