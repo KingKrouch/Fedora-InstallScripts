@@ -965,15 +965,13 @@ wget -q -O - https://gist.githubusercontent.com/Blastoise/b74e06f739610c4a867cf9
 wget -q -O - https://gist.githubusercontent.com/Blastoise/64ba4acc55047a53b680c1b3072dd985/raw/6bdf69384da4783cc6dafcb51d281cb3ddcb7ca0/segoeUI.sh | bash
 wget -q -O - https://gist.githubusercontent.com/Blastoise/d959d3196fb3937b36969013d96740e0/raw/429d8882b7c34e5dbd7b9cbc9d0079de5bd9e3aa/otherFonts.sh | bash
 
-# Set up Google Fonts.
-wget -O ~/.fonts/google-fonts.zip https://github.com/google/fonts/archive/master.zip
-mkdir ~/.fonts/Google && unzip -d ~/.fonts/Google ~/.fonts/google-fonts.zip
-
 # Finally updates our Font Cache.
 sudo fc-cache -fv
 
-## Add nerd-fonts for Noto and SourceCodePro font families. This will just install everything together, but I give no fucks at this point, just want things a little easier to set up.
-git clone https://github.com/ryanoasis/nerd-fonts.git && cd nerd-fonts && ./install.sh && cd .. && sudo rm -rf nerd-fonts
+## Add nerd-fonts for Noto, JetbrainsMono, and SourceCodePro font families. This will just install everything together, but I give no fucks at this point, just want things a little easier to set up.
+# TODO: Figure out a way to selectively install fonts, I only really need the Noto Nerdfonts, JetbrainsMono Nerdfonts, and the SourceCodePro Nerdfonts.
+# Reason being that too many fonts causes WINE and Proton to boot up extremely slowly.
+git clone https://github.com/ryanoasis/nerd-fonts.git && cd nerd-fonts && ./install.sh && cd .. && https://github.com/ryanoasis/nerd-fontssudo rm -rf nerd-fonts
 
 # ///// TPM AUTOMATIC SYSTEM PARTITION DECRYPTION (NEW METHOD). Commented out for now because I need to iron something out with how the TPM key isn't being used. /////
 // NOTE: Should update it to use this guide: https://fedoramagazine.org/automatically-decrypt-your-disk-using-tpm2/
