@@ -283,6 +283,7 @@ flatpak install flathub net.pcsx2.PCSX2 $FLATPAK_TYPE -y
 flatpak install flathub org.prismlauncher.PrismLauncher $FLATPAK_TYPE -y
 flatpak install flathub org.vinegarhq.Vinegar $FLATPAK_TYPE -y
 flatpak install flathub dev.goats.xivlauncher $FLATPAK_TYPE -y
+flatpak install flathub sh.ppy.osu $FLATPAK_TYPE -y
 flatpak remote-add --if-not-exists --user launcher.moe https://gol.launcher.moe/gol.launcher.moe.flatpakrepo
 flatpak install flathub org.gnome.Platform//45 $FLATPAK_TYPE -y # Install a specific GTK dependency for AAGL and HRWL.
 flatpak install flathub org.freedesktop.Platform.VulkanLayer.gamescope $FLATPAK_TYPE -y # Install Gamescope dependency for AAGL and HRWL.
