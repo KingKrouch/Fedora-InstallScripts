@@ -474,8 +474,9 @@ sudo chmod 666 /var/run/docker.sock
 sudo systemctl enable docker && sudo systemctl start docker
 wget -O ~/Applications/Dockstation.AppImage https://github.com/DockStation/dockstation/releases/download/v1.5.1/dockstation-1.5.1-x86_64.AppImage
 
-# Install Distrobox and Podman (So Distrobox doesn't use Docker instead).
+# Install Distrobox and Podman (So Distrobox doesn't use Docker instead). Also set up Boxbuddy, a GUI for Distrobox.
 sudo dnf install podman distrobox -y
+flatpak install flathub io.github.dvlv.boxbuddyrs $FLATPAK_TYPE -y
 
 # Install MinGW64, CMake, Ninja Build
 sudo dnf install mingw64-\* cmake ninja-build -y --exclude=mingw64-libgsf --skip-broken
