@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # Function for checking for the latest GitHub release for a project.
 get_latest_github_release() {
   curl --silent "https://api.github.com/repos/$1/releases/latest" |
@@ -30,38 +30,12 @@ case $NAME in
     ;;
 esac
 
-## ///// NIX PACKAGE MANAGER /////
-
-# Set up Nix Package Manager (As shown here: https://github.com/dnkmmr69420/nix-installer-scripts)
-case $NAME in
-    ("Nobara Linux")
-    echo "Nobara is being used."
-
-    # Set up Nix without SELinux.
-    curl -s https://raw.githubusercontent.com/dnkmmr69420/nix-installer-scripts/main/installer-scripts/regular-installer.sh | bash
-    ;;
-    ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
-    echo "Fedora is being used."
-
-    # Set up Nix using SELinux.
-    curl -s https://raw.githubusercontent.com/dnkmmr69420/nix-installer-scripts/main/installer-scripts/regular-nix-installer-selinux.sh | bash
-    ;;
-esac
-
-# Add Nix packages to Desktop Environment Start Menu
-sudo rm -f /etc/profile.d/nix-app-icons.sh ; sudo wget -P /etc/profile.d https://raw.githubusercontent.com/dnkmmr69420/nix-installer-scripts/main/other-files/nix-app-icons.sh
-
-# Set up Sudo to detect Nix commands
-bash <(curl -s https://raw.githubusercontent.com/dnkmmr69420/nix-installer-scripts/main/other-scripts/nix-linker.sh)
-
-# Add NixGL support (For OpenGL & Vulkan applications, as shown here: https://github.com/nix-community/nixGL).
-nix-channel --add https://github.com/guibou/nixGL/archive/main.tar.gz nixgl && nix-channel --update
-nix-env -iA nixgl.auto.nixGLDefault   # or replace `nixGLDefault` with your desired wrapper
+current_dir=$(pwd)
 
 ## ///// THE ABSOLUTE BASICS /////
 
 # Automatically Configure DNF to be a bit faster, and gives the changes a test drive.
-sudo bash -c 'echo 'max_parallel_downloads=10' >> /etc/dnf/dnf.conf && echo 'defaultyes=True' >> /etc/dnf/dnf.conf
+sudo bash -c 'echo -e "max_parallel_downloads=10\ndefaultyes=True\nfastestmirror=True" >> /etc/dnf/dnf.conf'
 sudo dnf update -y
 
 case $NAME in
@@ -80,24 +54,58 @@ case $NAME in
 
     # Enable Flatpaks.
     sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    
+    # Remove any Fedora remote flatpak, and swap it out for the flathub equivalent. Then delete the Fedora flatpak remote, since we really dont need it.
+    installed_flatpaks=$(flatpak list --app --columns=application,origin)
+    fedora_flatpaks=$(echo "$installed_flatpaks" | grep fedora | awk '{print $1}')
+    for app in $fedora_flatpaks; do
+        # Uninstall the Fedora Flatpak
+        flatpak uninstall -y $app
+        
+        # Install the Flatpak from Flathub
+        flatpak install -y flathub $app
+    done
+    flatpak remote-delete fedora
     ;;
 esac
+
+
+## ///// CARGO AND REBOS SETUP ////
+# Install Rust.
+sudo dnf install rustup -y
+rustup-init && source "$HOME/.cargo/env"
+# NOTE: You should run "source "$HOME/.cargo/env"" with every new terminal you use.
+
+#Install Rebos (For System repeatability, similar to NixOS).
+cargo install rebos
+# Install our packages through rebos instead, before doing any other configuration.
+rebos setup
+rebos config init
+cp ./.config/rebos ~/.config/rebos
+rebos gen commit initial_commit && rebos gen current to-latest && rebos gen current build
 
 # Enable System Theming with Flatpak (That way, theming is more consistent between native apps and flatpaks).
 sudo flatpak override --filesystem=xdg-config/gtk-3.0
 
 # Enable mouse Cursors and Icons in Flatpak (That way, your mouse cursor is shown properly).
-flatpak --user override --filesystem=/home/$USER/.icons/:ro
-flatpak --user override --filesystem=/usr/share/icons/:ro
+sudo flatpak override --filesystem=/usr/share/icons/:ro
+sudo flatpak override --filesystem=/usr/share/themes/:ro
+sudo flatpak override --filesystem=$HOME/.themes:ro
+sudo flatpak override --filesystem=$HOME/.icons:ro
+sudo flatpak override --filesystem=$HOME/.local/share/themes:ro
+sudo flatpak override --filesystem=$HOME/.local/share/.icons:ro
+sudo flatpak override --filesystem=xdg-config/gtk-4.0
 
-# Set up Flatseal for Flatpak permissions
-flatpak install flathub com.github.tchx84.Flatseal $FLATPAK_TYPE -y
+# Set up all Flatpaks to use our own MangoHUD config from GOverlay.
+sudo flatpak override --filesystem=xdg-config/MangoHud:ro
+# Set up Gamemode override for MangoHUD Flatpak.
+flatpak override --user --talk-name=com.feralinteractive.GameMode
 
 # Set up Homebrew Package Manager
 sudo yum groupinstall 'Development Tools' -y
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> ~/.bash_profile
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # WIP FreeSync toggle for X11 mode for AMD GPUs, may need to be skipped or improved upon.
 if grep -q "VariableRefresh" "/etc/X11/xorg.conf.d/20-amdgpu.conf"; then
@@ -117,50 +125,33 @@ sudo dnf distro-sync -y
 
 ## ///// TERMINAL STUFF /////
 
-# Install fastfetch, alongside some font dependencies.
-sudo dnf install google-noto-sans* fastfetch -y
-mkdir ~/.config/fastfetch
-
 # Set up fastfetch with my preferred configuration.
+mkdir ~/.config/fastfetch
 cp ./.config/fastfetch/config.conf  ~/.config/fastfetch/config.conf
-
-# Install exa and lsd, which should replace lsd and dir. Also install thefuck for terminal command corrections, and fzf.
-sudo dnf install lsd fzf htop cmatrix -y
-brew install exa thefuck # Use Homebrew for exa and thefuck, as they aren't available on Fedora's repositories or are currently broken on Fedora 39 (Thanks to Python 3.12)
 
 # Install oh-my-bash alongside changing the default theme.
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 sed -i 's/OSH_THEME="font"/OSH_THEME="agnoster"/g' ~/.bashrc
 
-# Install Microsoft's software repositories.
-sudo dnf install https://packages.microsoft.com/config/fedora/$(rpm -E %fedora)/packages-microsoft-prod.rpm -y
 # Set up Powershell.
-POWERSHELL_REPONAME="PowerShell/PowerShell"
-POWERSHELL_VER=$(get_latest_github_release ${POWERSHELL_REPONAME})
-POWERSHELL_VER_WOSUFFIX=$(get_latest_github_release ${POWERSHELL_REPONAME} | sed 's/^v//')  # Remove the 'v' prefix from the version number
-POWERSHELL_FILE="powershell-${POWERSHELL_VER_WOSUFFIX}-1.rh.x86_64.rpm"
-
-echo $POWERSHELL_FILE
-echo $POWERSHELL_VER
-
-## Construct the download URL with the rearranged version
-sudo dnf install https://github.com/$POWERSHELL_REPONAME/releases/download/$POWERSHELL_VER/$POWERSHELL_FILE -y
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+curl https://packages.microsoft.com/config/rhel/7/prod.repo | sudo tee /etc/yum.repos.d/microsoft.repo
+sudo dnf update && sudo dnf install powershell -y
 
 # Install oh-my-posh for Powershell.
 curl -s https://ohmyposh.dev/install.sh | sudo bash -s
 # Downloads our custom powershell profile.
 wget -O ~/.config/powershell/Microsoft.Powershell_profile.ps1 https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/powershell/Microsoft.PowerShell_profile.ps1
 
-# Install zsh, alongside setting up oh-my-zsh, and powerlevel10k.
-sudo dnf install zsh -y && chsh -s $(which zsh) && sudo chsh -s $(which zsh)
-sudo dnf install git git-lfs -y && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
+# Set up zsh as the default, alongside setting up oh-my-zsh, and powerlevel10k.
+chsh -s $(which zsh) && sudo chsh -s $(which zsh)
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"c
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-wget -O ~/.p10k.zsh https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.p10k.zsh
 
 # Set up Powerlevel10k as the default zsh theme, alongside enabling some tweaks.
-sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k/powerlevel10k"/g' ~/.zshrc
-echo "# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >> tee -a ~/.zshrc
+sed -i 's|ZSH_THEME="robbyrussell"|ZSH_THEME="powerlevel10k/powerlevel10k"|g' ~/.zshrc
+echo '# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >> ~/.zshrc
 echo "typeset -g POWERLEVEL9K_INSTANT_PROMPT=off" >> tee -a ~/.zshrc
 
 # Set up some ZSH plugins.
@@ -194,42 +185,15 @@ neofetch' >> tee -a ~/.bashrc ~/.zshrc
 
 case $NAME in
     ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
-    # Install Steam and Steam-Devices.
-    sudo dnf install steam steam-devices -y
-    flatpak install flathub net.davidotek.pupgui2 $FLATPAK_TYPE -y
-
-    # Install MangoHud with GOverlay, alongside Gamescope and vkBasalt.
-    sudo dnf install goverlay -y && sudo dnf install vkBasalt -y && sudo dnf install gamescope -y
 
     # Temporary workaround for Fedora (So, you can have MangoApp working). When the fuck is MangoApp gonna work through compiling from source?
     sudo dnf install --allowerasing https://download.copr.fedorainfracloud.org/results/gloriouseggroll/nobara/fedora-38-x86_64/06517212-mangohud/mangohud-0.7.0-6.fc38.x86_64.rpm https://download.copr.fedorainfracloud.org/results/gloriouseggroll/nobara/fedora-38-i386/06517212-mangohud/mangohud-0.7.0-6.fc38.i686.rpm -y
 
-    # Install Lutris
-    flatpak install flathub net.lutris.Lutris $FLATPAK_TYPE -y
-
-    # Install gamemode alongside enabling the gamemode service.
-    sudo dnf install gamemode -y && systemctl --user enable gamemoded.service && systemctl --user start gamemoded.service
-
-    # Install OBS Studio.
-    flatpak install flathub com.obsproject.Studio $FLATPAK_TYPE -y
-
-    # Install GStreamer Plugin for OBS Studio, alongside some plugins.
-    flatpak install com.obsproject.Studio.Plugin.Gstreamer org.freedesktop.Platform.GStreamer.gstreamer-vaapi $FLATPAK_TYPE -y
-    flatpak install org.freedesktop.Platform.VulkanLayer.OBSVkCapture com.obsproject.Studio.Plugin.OBSVkCapture $FLATPAK_TYPE -y
-
-    # Installs the needed hooks to get vkcapture in OBS to work.
-    sudo dnf install obs-studio-devel obs-studio-libs -y
-    git clone https://github.com/nowrep/obs-vkcapture && cd obs-vkcapture
-    mkdir build && cd build
-    cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib ..
-    make && sudo make install
-    cd .. && cd .. & sudo rm -rf obs-vkcapture
-
-    # Set up SuperGFXCTL and the SuperGFXCTL Plasmoid for Laptop GPU switching.
-    sudo dnf copr enable gloriouseggroll/nobara
-    sudo dnf install supergfxctl supergfxctl-plasmoid -y
-    sudo dnf copr disable gloriouseggroll/nobara
-    sudo systemctl enable supergfxd && sudo systemctl start supergfxd
+    # Enable the gamemode service.
+    systemctl --user enable gamemoded.service && systemctl --user start gamemoded.service
+    
+    # check if gnome is being used before installing this.
+    sudo dnf install gnome-shell-extension-gamemode -y
     ;;
 esac
 
@@ -258,51 +222,22 @@ esac
 # Set up Decky Loader for Steam.
 curl -L https://github.com/SteamDeckHomebrew/decky-installer/releases/latest/download/install_release.sh | sh
 
-# Set up some dependencies for OBS that aren't included with Nobara for some reason.
-sudo dnf install libndi -y
-
-# Set up the OBS Studio shortcut to use the propreitary AMD drivers, so AMF encoding can be used instead.
-cp /usr/share/applications/com.obsproject.Studio.desktop ~/.local/share/applications
-sed -i 's/^Exec=/Exec=vk_pro /' ~/.local/share/applications/com.obsproject.Studio.desktop
-
-# Install the needed OBS-VKCapture layer for Flatpak software (Useful for games on Heroic, or the Anime Game Launchers).
-flatpak install org.freedesktop.Platform.VulkanLayer.OBSVkCapture $FLATPAK_TYPE -y
-
 # Install some useful scripts for SteamVR.
-sudo dnf install python3-bluepy python3-yaml python3-psutil -y
+sudo dnf install python3-yaml python3-psutil python-pip glib2-devel -y
+sudo pip3 install bluepy
+cd $HOME
 git clone https://github.com/DavidRisch/steamvr_utils.git -b iss15_fix_v2_interface
-python3 ./steamvr_utils/scripts/install.py
+python3 ~/.steamvr_utils/scripts/install.py
+cd $current_dir
 
 # Install some game launcher and emulator Flatpaks.
-flatpak install flathub com.heroicgameslauncher.hgl $FLATPAK_TYPE -y
-flatpak install flathub net.rpcs3.RPCS3 $FLATPAK_TYPE -y
-flatpak install flathub org.yuzu_emu.yuzu $FLATPAK_TYPE -y
-flatpak install flathub org.ryujinx.Ryujinx $FLATPAK_TYPE -y
-flatpak install flathub org.DolphinEmu.dolphin-emu $FLATPAK_TYPE -y
-flatpak install flathub net.pcsx2.PCSX2 $FLATPAK_TYPE -y
-flatpak install flathub org.prismlauncher.PrismLauncher $FLATPAK_TYPE -y
-flatpak install flathub org.vinegarhq.Vinegar $FLATPAK_TYPE -y
-flatpak install flathub dev.goats.xivlauncher $FLATPAK_TYPE -y
-flatpak install flathub sh.ppy.osu $FLATPAK_TYPE -y
 flatpak remote-add --if-not-exists --user launcher.moe https://gol.launcher.moe/gol.launcher.moe.flatpakrepo
-flatpak install flathub org.gnome.Platform//45 $FLATPAK_TYPE -y # Install a specific GTK dependency for AAGL and HRWL.
-flatpak install flathub org.freedesktop.Platform.VulkanLayer.gamescope $FLATPAK_TYPE -y # Install Gamescope dependency for AAGL and HRWL.
-flatpak remove com.valvesoftware.Steam.Utility.gamescope -y # Remove the old Gamescope dependency if it exists.
-flatpak install flathub org.freedesktop.Platform.VulkanLayer.MangoHud $FLATPAK_TYPE -y # Install MangoHud dependency for Heroic, AAGL, Lutris, and HRWL.
-flatpak install flathub org.freedesktop.Platform.VulkanLayer.OBSVkCapture $FLATPAK_TYPE -y # Install OBS VkCapture layer for OBS capturing of Flatpak games.
-flatpak install flathub com.valvesoftware.Steam.Utility.vkBasalt $FLATPAK_TYPE -y # Install VkBasalt for Flatpak games.
-sudo flatpak override --filesystem=xdg-config/MangoHud:ro # Set up all Flatpaks to use our own MangoHUD config from GOverlay.
-flatpak override --user --talk-name=com.feralinteractive.GameMode # Set up Gamemode override for MangoHUD Flatpak.
 flatpak install launcher.moe moe.launcher.an-anime-game-launcher --user -y
 flatpak install launcher.moe moe.launcher.the-honkers-railway-launcher --user -y
 flatpak install launcher.moe moe.launcher.honkers-launcher --user -y
-flatpak install flathub com.steamgriddb.steam-rom-manager $FLATPAK_TYPE -y
-
-# Install some Proton related stuff (for game compatibility)
-flatpak install flathub com.github.Matoking.protontricks $FLATPAK_TYPE -y
 
 # Install a Soundboard Application, for micspamming in Team Fortress 2 servers, of course! ;-)
-sudo dnf copr enable rivenirvana/soundux -y && sudo dnf install soundux pipewire-devel -y
+sudo dnf copr enable rivenirvana/soundux -y && sudo dnf install soundux pipewire-devel -y --allow-erasing
 
 # Set up Sunshine and Moonlight Streaming.
 sudo dnf install https://github.com/LizardByte/Sunshine/releases/download/v0.20.0/sunshine-fedora-$(rpm -E %fedora)-amd64.rpm -y
@@ -310,7 +245,6 @@ echo 'KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="
 sudo tee /etc/udev/rules.d/85-sunshine.rules
 systemctl --user enable sunshine
 sudo setcap cap_sys_admin+p $(readlink -f $(which sunshine))
-flatpak install flathub com.moonlight_stream.Moonlight $FLATPAK_TYPE -y
 
 # Fix DualSense pairing over Bluetooth. The Arch Wiki says that this is the only fix, but I could've sworn I paired before w/o this.
 input_conf="/etc/bluetooth/input.conf"
@@ -350,14 +284,10 @@ sudo usermod -a -G pkg-build $USER
 
 case $NAME in
     ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
-    # Install 64-Bit WINE Staging, alongside some needed dependencies for later.
-    dnf install wine-staging -y
 
     # Install Yabridge (For VST Plugins, I'm going to assume you will set up a DAW on your own accords).
     sudo dnf copr enable patrickl/yabridge -y && sudo dnf install yabridge --refresh -y
 
-    # Install Winetricks and some other dependencies.
-    sudo dnf install winetricks cabextract samba-winbind -y
     # Set up realtime, jackuser, and audiogroups alongside necessary permissions.
     echo -e '@audio\trtprio 99\n@audio\tmemlock unlimited' | sudo tee -a /etc/security/limits.conf
     sudo groupadd realtime && sudo usermod -a -G realtime $(whoami)
@@ -377,6 +307,7 @@ case $NAME in
     # Ableton Stuff (Feel free to use this if you are planning to install Ableton Live. I just have it here for reference).
     # WINEPREFIX=~/.ableton wine64 explorer
     #WINEPREFIX=$HOME/.ableton winetricks win7 quicktime72 gdiplus vb2run vcrun2008 vcrun6 vcrun2010 vcrun2013 vcrun2015 tahoma msxml3 msxml6 setupapi python27
+    echo "If you plan to use Ableton Live (alongside some VST plugins like Serum), add gdiplus to winetricks for Ableton, disable the d2d1 library through winecfg, and then add vcruntime140_1.dll as an native+built-in override through winecfg".
     
     # Set our Wine Prefix to use ALSA audio, so it won't crash with WineASIO or other ASIO plugins.
     WINEPREFIX=$HOME/.wine winetricks sound=alsa
@@ -404,7 +335,6 @@ wine64 vc_redist.x64.exe /quiet /norestart
 rm vc_redist.x86.exe vc_redist.x64.exe NDP462-KB3151800-x86-x64-AllOS-ENU.exe
 
 # Set up Bottles.
-flatpak install flathub com.usebottles.bottles $FLATPAK_TYPE -y
 flatpak override com.usebottles.bottles --user --filesystem=xdg-data/applications
 
 ## //// NETWORKING STUFF /////
@@ -423,9 +353,14 @@ case $XDG_CURRENT_DESKTOP in
     ;;
 esac
 sudo setsebool -P samba_enable_home_dirs=on
+sudo smbpasswd -a $USER
 
 # Set up SSH Server on Host
 sudo systemctl enable sshd && sudo systemctl start sshd
+
+# NOTE: You can actually transfer your SSH keys to a server hosting something like Libvirt, so you can remote connect to it using virt-manager. Here's how you do that:
+#ssh-keygen -t rsa
+#ssh-copy-id -i ~/.ssh/id_rsa.pub USERNAME@LOCALIP
 
 # Disable NetworkManager Wait Service (due to long boot times) if using a desktop. Assuming this based on if a battery is available.
 if [ -f /sys/class/power_supply/BAT1/uevent ]
@@ -445,8 +380,15 @@ sudo dnf install renderdoc -y && sudo dnf install vulkan-tools -y
 # Set up Unity Hub and Jetbrains
 sudo sh -c 'echo -e "[unityhub]\nname=Unity Hub\nbaseurl=https://hub.unity3d.com/linux/repos/rpm/stable\nenabled=1\ngpgcheck=1\ngpgkey=https://hub.unity3d.com/linux/repos/rpm/stable/repodata/repomd.xml.key\nrepo_gpgcheck=1" > /etc/yum.repos.d/unityhub.repo' && sudo dnf update && sudo dnf install unityhub -y && sudo dnf install GConf2 -y
 mkdir $HOME/Applications && cd $HOME/Applications && wget -O jetbrains-toolbox.tar.gz https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.24.11947.tar.gz && tar xvzf jetbrains-toolbox.tar.gz && cd .. && echo "Make sure to remove the 'jetbrains-toolbox' executable from the extracted folder before running! Preferably copy it to '/opt' before running."
+cd $current_dir
 
 # Set up Godot .NET
+get_latest_github_release() {
+  curl --silent "https://api.github.com/repos/$1/releases/latest" |
+    grep '"tag_name":' |
+    sed -E 's/.*"([^"]+)".*/\1/'
+}
+
 # Alternatively, you can run "flatpak install flathub org.godotengine.GodotSharp $FLATPAK_TYPE -y"
 GODOT_VER=$(get_latest_github_release "godotengine/godot")
 GODOT_ZIP="Godot_v${GODOT_VER}_mono_linux_x86_64.zip"
@@ -461,38 +403,37 @@ unzip ~/Applications/Godot/$GODOT_ZIP -d ~/Applications/Godot
 mv ~/Applications/Godot/Godot_v${GODOT_VER}_mono_linux_x86_64/* ~/Applications/Godot
 sudo rm -rf ~/Applications/Godot/Godot_v${GODOT_VER}_mono_linux_x86_64/ ~/Applications/Godot/$GODOT_ZIP
 mv ~/Applications/Godot/Godot_v${GODOT_VER}_mono_linux.x86_64 ~/Applications/Godot/Godot
+wget https://github.com/godotengine/FBX2glTF/releases/latest/download/FBX2glTF-linux-x86_64.zip
+unzip FBX2glTF-linux-x86_64.zip -d ~/Applications/Godot
+mv ~/Applications/Godot/FBX2glTF-linux-x86_64/FBX2glTF-linux-x86_64 ~/Applications/Godot/FBX2glTF
+sudo rm -rf ~/Applications/Godot/FBX2glTF-linux-x86_64/
+cd $current_dir
 
-# Install Epic Asset Manager (For Unreal Engine)
-flatpak install flathub io.github.achetagames.epic_asset_manager $FLATPAK_TYPE -y
-
-# Install Docker alongside setting up DockStation.
+# Install Docker alongside setting up Docker Desktop.
 sudo dnf install dnf-plugins-core -y
 sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
-sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-compose -y
+sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-compose -y --allowerasing
 sudo groupadd docker && sudo usermod -aG docker $USER
 sudo chmod 666 /var/run/docker.sock
 sudo systemctl enable docker && sudo systemctl start docker
-wget -O ~/Applications/Dockstation.AppImage https://github.com/DockStation/dockstation/releases/download/v1.5.1/dockstation-1.5.1-x86_64.AppImage
+sudo dnf install https://desktop.docker.com/linux/main/amd64/149282/docker-desktop-4.30.0-x86_64.rpm -y
+echo "Please visit this page for more information on how to sign into Docker Desktop: https://docs.docker.com/desktop/get-started/#credentials-management-for-linux-users"
 
-# Install Distrobox and Podman (So Distrobox doesn't use Docker instead). Also set up Boxbuddy, a GUI for Distrobox.
-sudo dnf install podman distrobox -y
-flatpak install flathub io.github.dvlv.boxbuddyrs $FLATPAK_TYPE -y
+# Set up some necessary stuff for Distrobox to run GUI applications (X11 apps getting forwarded to XWayland).
+## Check if the file ~/.distroboxrc exists, if not create it
+[ -f ~/.distroboxrc ] || touch ~/.distroboxrc
+## Check if the line is already present in the file, if not append it
+grep -qxF 'xhost +si:localuser:$USER >/dev/null' ~/.distroboxrc || echo 'xhost +si:localuser:$USER >/dev/null' >> ~/.distroboxrc
 
 # Install MinGW64, CMake, Ninja Build
 sudo dnf install mingw64-\* cmake ninja-build -y --exclude=mingw64-libgsf --skip-broken
 sudo dnf remove mingw64-libgsf -y # This is just in case we want to install the gnome desktop via 'dnf group install -y "GNOME Desktop Environment"'.
 
-# Install Ghidra.
-flatpak install flathub org.ghidra_sre.Ghidra $FLATPAK_TYPE -y && sudo flatpak override org.ghidra_sre.Ghidra --filesystem=/mnt
+# Set up Ghidra.
+sudo flatpak override org.ghidra_sre.Ghidra --filesystem=/mnt
 
 # Install Visual Studio Code.
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc && sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo' && sudo dnf check-update && sudo dnf install code -y
-
-# Install several dependencies for CheatEngine-Proton-Helper
-sudo dnf install python3-vdf yad xdotool -y
-
-# Install a hex editor
-sudo dnf install okteta -y
 
 # Install GitHub Desktop
 sudo rpm --import https://rpm.packages.shiftkey.dev/gpg.key
@@ -511,9 +452,6 @@ sudo dnf install ruby ruby-devel rubygem-\* --skip-broken -y
 # Install Python 2.
 sudo dnf install python2 -y
 
-# Install Rust. Alternatively, you can run this: "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh".
-sudo dnf install rust -y
-
 ## ///// VIRTUALIZATION /////
 
 # Install tools for .VHD/.VHDX mounting.
@@ -522,17 +460,10 @@ sudo dnf install libguestfs-tools -y
 # Set up Virtualization Tools.
 if grep -Eq 'vmx|svm' /proc/cpuinfo; then
     echo "Virtualization is enabled. Setting up virtualization packages."
-    # Installs Virtual Machine related packages, alongside downloading the current stable VirtIO Guest Driver ISO.
-    sudo dnf -y group install Virtualization -y
-    # Install some extra system architectures for QEMU.
-    sudo dnf install qemu-system-\* -y
-    # Set up RDC/VNC Viewer.
-    sudo dnf install krdc -y
     # Downloads the latest VirtIO Drivers for Windows.
     wget -O ~/Downloads/virtio-win.iso https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
 
     # Set up Cockpit for Virtual Machines (As Virt-Manager is now discontinued).
-    sudo dnf install cockpit cockpit-machines -y
     sudo systemctl enable --now cockpit.socket
     sudo firewall-cmd --add-service=cockpit && sudo firewall-cmd --add-service=cockpit --permanent
     # Connect to cockpit with https://localhost:9090
@@ -540,14 +471,14 @@ if grep -Eq 'vmx|svm' /proc/cpuinfo; then
     # Set up GRUB Bootloader to use IOMMU based on the CPU type used
     cpu_vendor=$(grep -m 1 vendor_id /proc/cpuinfo | cut -d ":" -f 2 | tr -d '[:space:]')
     if [ "$cpu_vendor" = "GenuineIntel" ]; then
-        echo "CPU vendor is Intel. Setting up Intel IOMMU boot parameters."
+        echo "CPU vendor is Intel. Setting up Intel IOMMU boot parameters..."
         sudo grubby --update-kernel=ALL --args="intel_iommu=on iommu=pt video=vesafb:off,efifb:off"
         # If you want iGPU passthrough for some reason, you can add "i915.modeset=0" to the end of the intel parameters.
     elif [ "$cpu_vendor" = "AuthenticAMD" ]; then
-        echo "CPU vendor is AMD. Setting up AMD IOMMU boot parameters."
+        echo "CPU vendor is AMD. Setting up AMD IOMMU boot parameters..."
         sudo grubby --update-kernel=ALL --args="amd_iommu=on iommu=pt video=vesafb:off,efifb:off"
     else
-        echo "Unknown CPU vendor. Skipping."
+        echo "Unknown CPU vendor. Skipping..."
     fi
     sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
 
@@ -654,8 +585,18 @@ else
     echo "Virtualization is not enabled. Skipping."
 fi
 
-## ///// ANDROID APP COMPATIBILITY /////
-sudo dnf install waydroid android-tools -y
+## ///// ANDROID APP COMPATIBILITY AND ANDROID DEV STUFF /////
+
+# Add the plugdev group, alongside adding the current user to it.
+sudo groupadd plugdev
+sudo udevadm control --reload
+sudo usermod -aG plugdev $USER
+
+# Link the necessary file to get adb working, and then refreshes the rules.
+sudo ln -s /usr/share/doc/android-tools/51-android.rules /etc/udev/rules.d
+sudo udevadm control --reload-rules
+
+# Set up Waydroid
 sudo systemctl enable --now waydroid-container
 sudo waydroid init -s GAPPS -r lineage -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor
 cd ~/ && sudo dnf install lzip -y
@@ -682,8 +623,6 @@ echo -e "MAYA_OPENCL_IGNORE_DRIVER_VERSION=1\nMAYA_CM_DISABLE_ERROR_POPUPS=1\nMA
 echo "Please download and install Autodesk Maya on your own accord. The dependencies and compatibility tweaks for Fedora should be taken care of now."
 echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2024/lib"" >> $HOME/.profile
 
-sudo dnf install blender kdenlive -y
-
 # TODO: Add Dracut regeneration just in case the AMD GPU Switcher drivers have been installed on Nobara.
 
 flatpak install flathub org.kde.krita $FLATPAK_TYPE -y
@@ -699,15 +638,6 @@ curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
 
 # Install the needed ROCM runtimes on AMD (As shown here: https://medium.com/@anvesh.jhuboo/rocm-pytorch-on-fedora-51224563e5be).
 # TODO: Add the rest of the setup instructions, PyTorch was just giving me issues.
-case $NAME in
-    ("Fedora")
-    sudo dnf install rocm-opencl rocm-hip rocm-runtime  -y
-    ;;
-    ("Nobara Linux")
-    sudo dnf install rocm-meta -y
-    ;;
-esac
-sudo dnf install rocm-smi rocm-smi-lib -y
 
 # Set up a Fedora specific section for ROCM setup. (As shown here: https://medium.com/@anvesh.jhuboo/rocm-pytorch-on-fedora-51224563e5be).
 sudo usermod -a -G video $LOGNAME
@@ -724,26 +654,11 @@ echo "Make sure to change the 'python_cmd=' section of the stable-diffusion-webu
 # Set Wayland as the default SDDM Greeter, so we can actually see the login splash screen.
 #echo "DisplayServer=wayland" | sudo tee -a /etc/sddm.conf > /dev/null
 
-# Set up Timeshift for system backups.
-case $NAME in
-    ("Fedora")
-    sudo dnf install timeshift -y
-    ;;
-esac
-
 # Install the tiled window management KWin plugin, Bismuth.
 sudo dnf install bismuth qt -y
 
 # Add KDE Rounded Corners plugin, and then add updated desktop effects config.
-sudo dnf install git cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel qt6-qtbase-private-devel wayland-devel -y
-git clone https://github.com/matinlotfali/KDE-Rounded-Corners
-cd KDE-Rounded-Corners
-mkdir build
-cd build
-cmake .. --install-prefix /usr
-make
-sudo make install
-cd .. && cd .. && sudo rm -rf KDE-Rounded-Corners
+sudo dnf install https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora/kwin4_effect_shapecorners_fedora$(rpm -E %fedora).rpm/download -y
 
 # Use Librewolf instead of Firefox. We also need to reinstall the Plasma Browser Integration after Firefox is removed.
 sudo dnf config-manager --add-repo https://rpm.librewolf.net/librewolf-repo.repo
@@ -756,17 +671,12 @@ sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo dnf config-manager --add-repo https://packages.microsoft.com/yumrepos/edge
 sudo dnf install microsoft-edge-stable -y
 
-# Install Vivaldi as a tertiary web browser. Finally, a Flatpak version!
-flatpak install flathub com.vivaldi.Vivaldi $FLATPAK_TYPE -y
-
-# Install Warpinator for file transfers.
-flatpak install flathub org.x.Warpinator $FLATPAK_TYPE -y
-
-# Install the BETTER partition manager and a disk space utility.
-sudo dnf install gnome-disk-utility filelight -y
+# Add webapp manager (So you can have things like Office 365 as dedicated web apps).
+sudo dnf copr enable refi64/webapp-manager -y
+sudo dnf install webapp-manager -y
 
 # Remove some KDE Plasma bloatware that comes installed for some reason.
-sudo dnf remove libreoffice-\* akregator ksysguard dnfdragora kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer kamoso kolourpaint krdc krfb -y
+sudo dnf remove libreoffice-\* akregator ksysguard dnfdragora kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer kamoso kolourpaint krdc krfb digikam showfoto ktorrent k3b cdrdao -y
 
 # Remove KWrite in favor of Kate.
 sudo dnf remove kwrite -y && sudo dnf install kate -y
@@ -785,37 +695,41 @@ case $NAME in
     ;;
 esac
 
-# TODO: Add Vencord instead of BetterDiscord. Also, might not be necessary as I personally use Discord in Vivaldi now.
-
 # Set up Obsidian (For Note-Taking).
-flatpak install md.obsidian.Obsidian
 flatpak override --user --socket=wayland md.obsidian.Obsidian
 
 case $NAME in
     ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
     # Install and set up OpenRGB.
-    sudo modprobe i2c-dev && sudo modprobe i2c-piix4 && sudo dnf install openrgb -y
+    sudo usermod -a -G video $USER
+    sudo modprobe i2c-dev && sudo modprobe i2c-piix4
     sudo udevadm control --reload-rules && sudo udevadm trigger
     sudo grubby --update-kernel=ALL --args="acpi_enforce_resources=lax"
     sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
-
-    # Install Discord (Nobara has it's own version, so that goes here).
-    flatpak install flathub com.discordapp.Discord $FLATPAK_TYPE -y
-    betterdiscordctl --d-install flatpak install
 
     # Enable support for flatpak Discord to use Discord Rich Presence for non-sandboxed applications.
     mkdir -p ~/.config/user-tmpfiles.d
     echo 'L %t/discord-ipc-0 - - - - app/com.discordapp.Discord/discord-ipc-0' > ~/.config/user-tmpfiles.d/discord-rpc.conf
     systemctl --user enable --now systemd-tmpfiles-setup.service
+    
+    # Set up Wayland support.
+    flatpak override --user --socket=wayland com.discordapp.Discord
     ;;
     ("Nobara Linux")
-    betterdiscordctl install
     ;;
 esac
+
+# Set up Vencord.
+sh -c "$(curl -sS https://raw.githubusercontent.com/Vendicated/VencordInstaller/main/install.sh)"
 
 # Set up Discord Overlay of sorts (https://github.com/trigg/Discover)
 sudo dnf copr enable mavit/discover-overlay -y
 sudo dnf install discover-overlay gtk-layer-shell gtk-layer-shell-devel -y
+
+# Set up Teamspeak5 with Wayland support (So it isn't blurry as shit anymore).
+flatpak override --user --socket=wayland com.teamspeak.TeamSpeak
+cp /var/lib/flatpak/exports/share/applications/com.teamspeak.TeamSpeak.desktop ~/.local/share/applications/com.teamspeak.TeamSpeak.desktop
+sed -i 's|Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=teamspeak5 --file-forwarding com.teamspeak.TeamSpeak @@u %u @@|Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=teamspeak5 --file-forwarding com.teamspeak.TeamSpeak @@u --ozone-platform=wayland %u @@|' ~/.local/share/applications/com.teamspeak.TeamSpeak.desktop
 
 # Some AppImage stuff (An AppImage Integrator and Updater)
 sudo dnf install https://github.com/TheAssassin/AppImageLauncher/releases/download/v2.2.0/appimagelauncher-2.2.0-travis995.0f91801.x86_64.rpm -y
@@ -860,10 +774,6 @@ else
     echo "Kernel version is 6.5 or higher. No further work is necessary."
 fi
 
-# Install some Flatpaks that I personally use.
-flatpak install flathub com.spotify.Client $FLATPAK_TYPE -y
-flatpak install flathub dev.aunetx.deezer $FLATPAK_TYPE -y
-
 # TODO: Replace with Thunderbird.
 # Install an email client.
 case $XDG_CURRENT_DESKTOP in
@@ -873,18 +783,6 @@ case $XDG_CURRENT_DESKTOP in
     ("gnome")
     sudo dnf install geary -y
 esac
-
-# Install a Torrent client.
-sudo dnf install qbittorrent -y
-
-# Install and Setup OneDrive alongside OneDrive GUI for a GUI interface.
-sudo dnf install onedrive -y && sudo systemctl stop onedrive@$USER.service && sudo systemctl disable onedrive@$USER.service && systemctl --user enable onedrive && systemctl --user start onedrive
-ONEDRIVEGUI_VER=$(get_latest_github_release "bpozdena/OneDriveGUI" | sed 's/v//')
-ONEDRIVEGUI_APPIMAGE="OneDriveGUI-${ONEDRIVEGUI_VER}-x86_64.AppImage"
-echo $ONEDRIVEGUI_APPIMAGE
-echo $ONEDRIVEGUI_VER
-wget -O ~/Applications/$ONEDRIVEGUI_APPIMAGE https://github.com/bpozdena/OneDriveGUI/releases/download/v$ONEDRIVEGUI_VER/$ONEDRIVEGUI_APPIMAGE
-echo "Make sure to run AppImageLauncher at least once, to get it to recognize the AppImage for OneDriveGUI. Afterwards, synchronize your account, and add a login application startup for the OneDrive GUI.".
 
 # Install Mullvad VPN.
 ## Add the Mullvad repository server to dnf
@@ -897,15 +795,25 @@ sudo dnf install https://repo.protonvpn.com/fedora-38-stable/protonvpn-stable-re
 sudo dnf check-update && sudo dnf upgrade -y
 sudo dnf install --refresh proton-vpn-gnome-desktop -y
 
-# Set up OnlyOffice.
-flatpak install flathub org.onlyoffice.desktopeditors $FLATPAK_TYPE -y
+# Tailscale (Self Hosted VPN Stuff)
+sudo dnf config-manager --add-repo https://pkgs.tailscale.com/stable/fedora/tailscale.repo -y
+sudo dnf install tailscale -y
+sudo systemctl enable --now tailscaled
+flatpak install flathub dev.deedles.Trayscale
+sudo tailscale set --operator=$USER
 
 # Set up Wake On Lan.
-sudo dnf install wol -y
 sudo ethtool -s enp5s0 wol g # NOTE: This may need to be adjusted based on the current devices in "ip addr".
+
+# Update ClamAV database alongside enabling the service that refreshes the database.
+sudo freshclam
+sudo systemctl enable clamav-freshclam && sudo systemctl start clamav-freshclam
 
 ## ///// DPI SCALING RELATED STUFF /////
 # ~/.local/share/kscreen has a config file that can tell you the refresh rate and DPI scale of the current display. There probably is a better way of doing this in Wayland, but I'd need to find a way to allow updating of the scale for these applications, since Steam's DPI scaling on KDE is still busted for some reason.
+
+# Set up Wayland support in Spotify.
+flatpak override --user --socket=wayland com.spotify.Client
 
 # A config tweak for having a 1.3x scale for Spotify. Seemingly it doesn't allow double digits after the whole number, so we have to round down from 1.35 to 1.3.
 # As shown here: https://justincaustin.com/blog/spotify-flatpak-hidpi-scaling/
@@ -935,7 +843,7 @@ case $NAME in
 
     # Install Media Codecs and Plugins.
     sudo dnf install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel -y && sudo dnf install lame\* --exclude=lame-devel -y && sudo dnf group upgrade --with-optional Multimedia -y
-    sudo dnf install vlc -y
+    sudo dnf install vlc kodi -y
     ;;
 esac
 
@@ -946,17 +854,23 @@ case $NAME in
     ;;
 esac
 
-# Install YT-DLP
-sudo dnf install yt-dlp -y
-
-# Install FFMPEG for Flatpak.
-flatpak install flathub org.freedesktop.Platform.ffmpeg-full $FLATPAK_TYPE -y
+# Set up Jetbrains Mono NF.
+sudo dnf copr enable elxreno/jetbrains-mono-fonts -y && sudo dnf install jetbrains-mono-fonts -y
 
 # Install Better Fonts.
 sudo dnf copr enable dawid/better_fonts -y && sudo dnf install fontconfig-font-replacements -y --skip-broken && sudo dnf install fontconfig-enhanced-defaults -y --skip-broken
 
 # Install FontAwesome Fonts.
 sudo dnf install fontawesome-fonts fontawesome5-brands-fonts -y
+
+# Add a better font manager.
+sudo dnf copr enable jerrycasiano/FontManager -y && sudo dnf install font-manager -y
+
+# Install CJK fonts for KDE only (This is bundled with GNOME already).
+case $XDG_CURRENT_DESKTOP in
+    ("KDE")
+    sudo dnf install google-noto-sans-cjk-fonts -y
+esac
 
 # Install Microsoft Fonts.
 sudo dnf install curl cabextract xorg-x11-font-utils fontconfig -y
@@ -975,31 +889,3 @@ sudo fc-cache -fv
 # Reason being that too many fonts causes WINE and Proton to boot up extremely slowly.
 git clone https://github.com/ryanoasis/nerd-fonts.git && cd nerd-fonts && ./install.sh && cd .. && https://github.com/ryanoasis/nerd-fontssudo rm -rf nerd-fonts
 
-# ///// TPM AUTOMATIC SYSTEM PARTITION DECRYPTION (NEW METHOD). Commented out for now because I need to iron something out with how the TPM key isn't being used. /////
-// NOTE: Should update it to use this guide: https://fedoramagazine.org/automatically-decrypt-your-disk-using-tpm2/
-#sudo systemd-cryptenroll --wipe-slot=tpm2 /dev/nvme0n1p3 # First we should probably remove any keys that exist in the TPM. Feel free to remove this if you like.
-#sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+1+2+3+4+5+7+8 /dev/nvme0n1p3
-# Next, we need to grab the Partition UUID for our LUKS partition.
-#partuuid=$(sudo blkid /dev/nvme0n1p3 | grep -o 'PARTUUID="[^"]*' | cut -d'"' -f2 | tr '[:lower:]' '[:upper:]')
-## echo "$partuuid" >> ~/test.txt # Simple test to see if this works
-#echo 'root  UUID=$partuuid  none  tpm2-device=auto' | sudo tee -a /etc/crypttab.initramfs # As shown here (https://wiki.archlinux.org/title/Dm-crypt/System_configuration#Trusted_Platform_Module_and_FIDO2_keys)
-#echo 'add_dracutmodules+=" tpm2-tss "' | sudo tee -a /etc/dracut.conf.d/tpm2-tss.conf # As shown here (https://wiki.archlinux.org/title/User:Krin/Secure_Boot,_full_disk_encryption,_and_TPM2_unlocking_install#Enrollment)
-#sudo dracut --regenerate-all --force # Regenerate the initramfs with TPM decryption.
-# NOTE: Figure out the problem with the dracut regeneration. It's saying "/etc/dracut.conf.d/cmdline.conf: line 1: rd.luks.options=30cad45d-0223-4ff0-a6d0-fe0d8e0f3098=tpm2-device=auto: command not found", despite the dependencies clearly being installed.
-
-# ///// GRUB BOOTLOADER MODIFICATIONS /////
-# Adjust GRUB bootloader settings to only show the menu if I hold shift, and to reduce the countdown timer from 5 to 3 for a quicker boot.
-new_timeout=3
-# Check if GRUB_TIMEOUT exists in the configuration file, and if it does, replace its value with the new_timeout. If not, add it to the end of the file.
-if grep -q '^GRUB_TIMEOUT=' /etc/default/grub; then
-    sudo sed -Ei "s/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=$new_timeout/" /etc/default/grub
-else
-    sudo sed -i "$ a GRUB_TIMEOUT=$new_timeout" /etc/default/grub
-fi
-# Check if GRUB_TIMEOUT_STYLE exists in the configuration file, and if it does, replace its value with "hidden". If not, add it to the end of the file.
-if grep -q '^GRUB_TIMEOUT_STYLE=' /etc/default/grub; then
-    sudo sed -Ei 's/^GRUB_TIMEOUT_STYLE=.*/GRUB_TIMEOUT_STYLE=hidden/' /etc/default/grub
-else
-    sudo sed -i "$ a GRUB_TIMEOUT_STYLE=hidden" /etc/default/grub
-fi
-sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg

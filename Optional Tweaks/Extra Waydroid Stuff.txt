@@ -1,0 +1,7 @@
+sudo mount --bind ~/Documents ~/.local/share/waydroid/data/media/0/Documents
+sudo mount --bind ~/Downloads ~/.local/share/waydroid/data/media/0/Download
+sudo mount --bind ~/Music ~/.local/share/waydroid/data/media/0/Music
+sudo mount --bind ~/Pictures ~/.local/share/waydroid/data/media/0/Pictures
+sudo mount --bind ~/Videos ~/.local/share/waydroid/data/media/0/Movies
+
+git clone https://github.com/Quackdoc/waydroid-scripts && cd waydroid-scripts && sudo ./waydroid-choose-gpu.sh

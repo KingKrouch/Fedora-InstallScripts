@@ -1,0 +1,199 @@
+# --------------------- #
+#    Generation File    #
+# --------------------- #
+
+# Other generation files to import. (Example: intensive_apps -> ~/.config/rebos/imports/intensive_apps.toml)
+imports = [
+    # "intensive_apps",
+]
+
+# Packages to be installed via the native package manager.
+[managers.system]
+items = [
+    "dnf-plugins-core",
+    "dnf-command\\(copr\\)",
+    # Terminal Stuff
+    "git",
+    "git-lfs",
+    "fastfetch",
+    "lsd",
+    "fzf",
+    "htop",
+    "cmatrix",
+    "eza", # Replaces Exa.
+    "thefuck",
+    ## TODO: Add Microsoft Software repo and Powershell stuff.
+    "zsh",
+    # Gaming Stuff
+    "steam",
+    "steam-devices",
+    "mangohud",
+    "goverlay",
+    "vkBasalt",
+    "gamescope",
+    "gamemode",
+    ## TODO: Add Vulkan VKCapture stuff.
+    "libndi",
+    ## TODO: Add Sunshine, Moonlight, Soundux, and Yabridge.
+    # WINE Stuff
+    "wine",
+    "winetricks",
+    "cabextract",
+    "samba-winbind",
+    # Networking Stuff
+    "barrier",
+    "samba",
+    # OBS Studio Stuff
+    "obs-studio",
+    "obs-studio-plugin-vkcapture",
+    # Development Stuff
+    "kernel-devel",
+    ## TODO: Add RenderDoc, Unity, Jetbrains, VS Code, Godot.NET, 
+    ## TODO: Add Docker as shown here, alongside Docker Desktop: https://developer.fedoraproject.org/tools/docker/docker-installation.html
+    "podman",
+    "distrobox",
+    "docker",
+    "docker-compose",
+    ## TODO: Add MinGW, but I need to exclude mingw64-libgsf and skip broken packages.
+    "vulkan-tools",
+    "glmark2",
+    "python3-vdf",
+    "yad",
+    "xdotool",
+    ## TODO: Add GitHub Desktop
+    "dotnet-sdk-6.0",
+    "dotnet-sdk-8.0",
+    "mono-devel",
+    "java",
+    "ruby",
+    "ruby-devel",
+    ## TODO: Add "rubygem-\\*", but it needs to skip broken packages.
+    "python2",
+    # Virtualization
+    "qemu-system-\\*",
+    "cockpit",
+    "cockpit-machines",
+    "cockpit-navigator",
+    "cockpit-networkmanager",
+    "cockpit-packagekit",
+    "cockpit-podman",
+    "cockpit-sosreport",
+    "cockpit-storaged",
+    "cockpit-system",
+    "libguestfs-tools",
+    "virt-viewer",
+    "virt-manager",
+    "udisks2-btrfs",
+    "udisks2-iscsi",
+    "udisks2-lsm",
+    "udisks2-lvm2",
+    # Android App Compatibility and Android Dev Stuff
+    "waydroid",
+    "android-tools",
+    "v4l-utils",
+    ## TODO: Add Autodesk Fixes.
+    # Creative Tools
+    "blender",
+    "kdenlive",
+    # AI and Compute Stuff
+    "python3.10",
+    "rocm-opencl",
+    "rocm-hip",
+    "rocm-runtime",
+    "rocm-smi",
+    # System Tools
+    "timeshift",
+    "gnome-disk-utility",
+    "input-remapper",
+    "wol",
+    "monitor-edid",
+    # Antivirus Software.
+    "clamav",
+    "clamav-freshclam",
+    "clamav-update",
+    "clamtk",
+    # Web Stuff 
+    ## TODO: Add Librewolf, Microsoft Edge, Discord Overlay (discover-overlay), Mullvad VPN, ProtonVPN,
+    "yt-dlp",
+    # RGB Stuff
+    "openrgb",
+    "libi2c",
+    # Media Stuff
+    "vlc",
+    "kodi",
+    # Font Stuff
+    "xorg-x11-font-utils",
+    "fontconfig",
+    ## TODO: Figure out the media codec situation, I have to swap some.
+    "mesa-vdpau-drivers",
+    # Web Stuff
+    "nextcloud-client",
+    "nextcloud-client-nautilus", # Use nextcloud-client-dolphin if using KDE.
+    # GNOME Stuff.
+    "gtk-murrine-engine",
+    "gnome-themes-extra",
+    "gnome-shell-extension-pop-shell",
+    "gnome-shell-extension-pop-shell-shortcut-overrides",
+    "gnome-shell-extension-gamemode",
+    "sassc",
+    "gvfs-nfs", # Extension for mounting NFS partitions in Nautilus.
+]
+
+# Packages to be installed via Flatpak.
+[managers.flatpak]
+items = [
+    "com.github.tchx84.Flatseal",
+    # Proton and Wine Manager Stuff.
+    "net.davidotek.pupgui2",
+    "net.lutris.Lutris",
+    "com.github.Matoking.protontricks",
+    "com.usebottles.bottles",
+    # OBS Studio dependencies for game captures.
+    "org.freedesktop.Platform.GStreamer.gstreamer-vaapi",
+    "org.freedesktop.Platform.VulkanLayer.OBSVkCapture",
+    # Necessary plugins for interfacing with MangoHUD and Gamescope.
+    "org.freedesktop.Platform.VulkanLayer.gamescope",
+    "org.freedesktop.Platform.VulkanLayer.MangoHud",
+    "org.freedesktop.Platform.VulkanLayer.vkBasalt",
+    # Other Plugins
+    "org.freedesktop.Platform.ffmpeg-full",
+    # Game Launchers and Emulators
+    "com.heroicgameslauncher.hgl",
+    "net.rpcs3.RPCS3",
+    "org.ryujinx.Ryujinx",
+    "org.DolphinEmu.dolphin-emu",
+    "net.pcsx2.PCSX2",
+    "org.prismlauncher.PrismLauncher",
+    "org.vinegarhq.Vinegar",
+    "dev.goats.xivlauncher",
+    "sh.ppy.osu",
+    "com.steamgriddb.steam-rom-manager",
+    "com.moonlight_stream.Moonlight",
+    ## TODO: Figure out how to add AAGL and HRWL.
+    # Tools
+    "io.github.achetagames.epic_asset_manager",
+    "io.github.dvlv.boxbuddyrs",
+    "dev.deedles.Trayscale",
+    "org.ghidra_sre.Ghidra",
+    "net.werwolv.ImHex",
+    "md.obsidian.Obsidian",
+    "org.onlyoffice.desktopeditors",
+    # Creative Tools
+    "org.kde.krita",
+    "org.gimp.GIMP",
+    "org.inkscape.Inkscape",
+    "org.audacityteam.Audacity",
+    # Web Stuff
+    "com.vivaldi.Vivaldi",
+    "org.x.Warpinator",
+    "com.spotify.Client",
+    "org.qbittorrent.qBittorrent",
+    "com.teamspeak.TeamSpeak",
+    "com.discordapp.Discord",
+]
+
+# Packages to be installed via Cargo.
+[managers.cargo]
+items = [
+    # "bacon",
+]

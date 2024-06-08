@@ -1,0 +1,10 @@
+# Laptop GPU passthrough stuff. Probably safe to ignore this for now, requires a lot of testing.
+
+Add to /etc/default/grub under GRUB_CMDLINE_LINUX_DEFAULT:
+rd.driver.pre=vfio-pci vfio-pci.ids=1002:73df,1002:ab28
+
+NOTE: For a laptop, you might have to change the GPU ids, and such, but you need the IDs for both the GPU and the HDMI device that is alongside it, as per this manual: https://blandmanstudios.medium.com/tutorial-the-ultimate-linux-laptop-for-pc-gamers-feat-kvm-and-vfio-dee521850385
+
+Add this to /etc/dracut.conf.d/local.conf:
+add_drivers+=" vfio vfio_iommu_type1 vfio_pci "
+Then run "sudo dracut -f --regenerate-all".

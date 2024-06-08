@@ -1,0 +1,5 @@
+git clone https://github.com/Fausto-Korpsvart/Tokyo-Night-GTK-Theme && cd Tokyo-Night-GTK-Theme && ./theme/install.sh -d ~/.local/share/themes -t purple -l && export GTK_THEME=Tokyonight-Purple-Dark
+
+ln -s ~/.local/share/themes/Tokyonight-Purple-Dark/gtk-4.0/assets ~/.config/gtk-4.0/assets
+ln -s ~/.local/share/themes/Tokyonight-Purple-Dark/gtk-4.0/gtk.css ~/.config/gtk-4.0/gtk.css
+ln -s ~/.local/share/themes/Tokyonight-Purple-Dark/gtk-4.0/gtk-dark.css ~/.config/gtk-4.0/gtk-dark.css

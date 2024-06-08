@@ -1,0 +1,22 @@
+VM Notes:
+# Reattach GPU to Linux
+sudo virsh nodedev-reattach pci_0000_03_00_0
+sudo rmmod vfio_pci vfio_pci_core vfio_iommu_type1
+sudo modprobe -i amdgpu snd_hda_intel
+
+# Detach GPU from Linux.
+# I don't think this is needed? It complains about the kmodule being loaded anyways: "sudo rmmod amdgpu snd_hda_intel"
+sudo modprobe -i vfio_pci vfio_pci_core vfio_iommu_type1
+sudo virsh nodedev-detach pci_0000_03_00_0
+
+
+<shmem name='looking-glass'>
+  <model type='ivshmem-plain'/>
+  <size unit='M'>32</size>
+</shmem>
+<input type="evdev">
+    <source dev="/dev/input/by-id/usb-DELL_Alienware_AW620m_Wireless_Gaming_mouse_Dongle-event-mouse"/>
+</input>
+<input type="evdev">
+    <source dev="/dev/input/by-path/usb-Keychron_K4_Keychron_K4-event-kbd" grab="all" grabToggle="ctrl-ctrl" repeat="on"/>
+</input>

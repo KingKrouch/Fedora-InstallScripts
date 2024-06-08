@@ -1,0 +1,58 @@
+# First, install necessary Wayland extensions for HDR gaming through Gamescope.
+sudo dnf copr enable kylegospo/vk_hdr_layer -y && sudo dnf install vk_hdr_layer -y
+
+# Afterwards, add this to your launch parameters, making sure to set any desired resolution parameters.
+DXVK_HDR=1 ENABLE_HDR_WSI=1 gamescope -f --hdr-enabled --hdr-debug-force-output -- %command%
+
+# For example, here's what you'd do on a 3440x1440 display.
+DXVK_HDR=1 ENABLE_HDR_WSI=1 gamescope -W 3440 -w 3440 -H 1440 -h 1440 -f --hdr-enabled --hdr-debug-force-output -- %command%
+
+Reshade Linux with HDR:
+
+# Now here's how to set up Reshade with HDR shaders, if you want something similar to AutoHDR, but on Linux:
+# First install the Reshade-Linux solution.
+curl -LO https://github.com/kevinlekiller/reshade-steam-proton/raw/main/reshade-linux.sh
+env RESHADE_ADDON_SUPPORT=1 ./reshade-linux.sh
+# Now you want to clone a few different repositories for HDR shaders
+git clone https://github.com/EndlesslyFlowering/ReShade_HDR_shaders ~/.local/share/reshade/ReShade_shaders/ReShade_HDR_shaders
+git clone https://github.com/Filoppi/PumboAutoHDR ~/.local/share/reshade/ReShade_shaders/PumboAutoHDR
+
+# Set up AutoHDR Reshade.
+get_latest_github_release() {
+  curl --silent "https://api.github.com/repos/$1/releases/latest" |
+    grep '"tag_name":' |
+    sed -E 's/.*"([^"]+)".*/\1/'
+}
+
+AUTOHDRPLUGIN_REPONAME="EndlesslyFlowering/AutoHDR-ReShade"
+AUTOHDRPLUGIN_VER=$(get_latest_github_release ${AUTOHDRPLUGIN_REPONAME})
+
+## Parse the version string and rearrange it
+YEAR=$(echo $AUTOHDRPLUGIN_VER | cut -d '.' -f1)
+MONTH=$(echo $AUTOHDRPLUGIN_VER | cut -d '.' -f2)
+DAY=$(echo $AUTOHDRPLUGIN_VER | cut -d '.' -f3)
+NEW_VERSION="${YEAR}.${DAY}.${MONTH}"
+
+AUTOHDRPLUGIN_FILE="${NEW_VERSION}.7z"
+
+echo $AUTOHDRPLUGIN_FILE
+echo $AUTOHDRPLUGIN_VER
+
+## Construct the download URL with the rearranged version
+wget -O ~/.local/share/reshade/reshade/latest/$AUTOHDRPLUGIN_FILE https://github.com/$AUTOHDRPLUGIN_REPONAME/releases/download/$AUTOHDRPLUGIN_VER/$AUTOHDRPLUGIN_FILE
+
+## Extract contents of AutoHDR Plugin into Reshade binaries directory.
+7z x /home/$USER/.local/share/reshade/reshade/latest/${AUTOHDRPLUGIN_FILE} -o/home/$USER/.local/share/reshade/reshade/latest/
+
+## Finally, remove the spare .7z file.
+rm ~/.local/share/reshade/reshade/latest/${AUTOHDRPLUGIN_FILE}
+
+# TODO: Link our two shader repositories to "~/.local/share/reshade/ReShade_shaders/Merged/", and then find a way to link the addon.
+
+Example for Project DIVA MegaMix:
+
+What it would normally look like if you want Reshade:
+WINEDLLOVERRIDES="d3dcompiler_47=n;dxgi=n,b;dinput8=n,b" %command%
+
+What it would look like if you want reshade, and HDR support.
+WINEDLLOVERRIDES="d3dcompiler_47=n;dxgi=n,b;dinput8=n,b" DXVK_HDR=1 ENABLE_HDR_WSI=1 gamescope -f --hdr-enabled --hdr-debug-force-output -- %command%

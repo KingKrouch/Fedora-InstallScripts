@@ -1,0 +1,21 @@
+For starters, this is some documentation regarding how I can force custom refresh rates on my CRT monitor while still retaining Wayland support. This is usually easy to do on X11, but not as straight-forward on Wayland. I would like to overclock my CRT to it's full 160Hz at 640x480, because that resolution is just fine, and I absolutely hate visible strobing (Yes, I can even tell it's doing that at 90Hz).
+
+On KDE Plasma, you can view some resolution related info on Wayland using: kscreen-doctor --outputs
+
+Install the monitor-edid tools by running "sudo dnf install monitor-edid -y"
+
+Run "xrandr" to grab the name of the port that's being used. Then you can run "cat /sys/class/drm/card1-OUTPUTNAMEHERE/edid | monitor-edid" to check if the display outputs match what's in the KDE Plasma settings. For example, with HDMI on my laptop, I'd use "cat /sys/class/drm/card1-HDMI-A-1/edid | monitor-edid" for that.
+
+Then add "video=OUTPUTNAMEHERE:ResHorizontalxResVertical@RefreshRate" to /etc/default/grub under the GRUB_CMDLINE_LINUX_DEFAULT section. For example, if I wanted a 640x480 at 160Hz output, I'd use "video=HDMI-A-1:640x480@160".
+
+Then just run "sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg" to update your grub config files, and then reboot.
+
+The upside with this method is that you don't have to mess with cvt to get the right timings for the refresh rate prior to adding it in xrandr like you would do normally under X11. The downside is that this might affect other outputs that you plug into that port.
+
+For my laptop's 360Hz display, I might want to add a few things (Although personally, I tried this, and it's not that much better). I originally noted this because I would've liked to switch my display refresh rate when it's unplugged from AC power:
+
+eDP-2
+card2-eDP-2
+
+cat /sys/class/drm/card2-eDP-2/edid | monitor-edid
+Add "video=eDP-2:1920x1080@240 video=eDP-2:1920x1080@144 video=eDP-2:1920x1080@120"

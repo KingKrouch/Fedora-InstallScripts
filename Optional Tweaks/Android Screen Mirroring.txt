@@ -1,0 +1,8 @@
+# Set up Screen mirroring for Android devices. You can make a V4L2 loopback for OBS Studio.
+``sudo dnf copr enable zeno/scrcpy && sudo dnf install scrcpy -y``
+``sudo modprobe v4l2loopback``
+First, make sure the Android device is plugged in over USB and set to File Transfer Mode.
+Use ``v4l2-ctl --listdevices`` to check for the V4L2 device and what ``/dev/videoX`` device it uses.
+Use ``scrcpy --v4l2-sink=/dev/videoX --no-video-playback`` for when you don't want the playback window opened.
+For example, it would be ``scrcpy --v4l2-sink=/dev/video7 --no-video-playback --serial SERIALNO`` for me.
+You can find your device serial number by using the ``adb devices`` command.
