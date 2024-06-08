@@ -81,7 +81,7 @@ cargo install rebos
 # Install our packages through rebos instead, before doing any other configuration.
 rebos setup
 rebos config init
-cp ./.config/rebos ~/.config/rebos
+cp ./Configs/.config/rebos ~/.config/rebos
 rebos gen commit initial_commit && rebos gen current to-latest && rebos gen current build
 
 # Enable System Theming with Flatpak (That way, theming is more consistent between native apps and flatpaks).
@@ -127,7 +127,7 @@ sudo dnf distro-sync -y
 
 # Set up fastfetch with my preferred configuration.
 mkdir ~/.config/fastfetch
-cp ./.config/fastfetch/config.conf  ~/.config/fastfetch/config.conf
+cp ./Configs/.config/fastfetch/config.conf  ~/.config/fastfetch/config.conf
 
 # Install oh-my-bash alongside changing the default theme.
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
@@ -141,7 +141,7 @@ sudo dnf update && sudo dnf install powershell -y
 # Install oh-my-posh for Powershell.
 curl -s https://ohmyposh.dev/install.sh | sudo bash -s
 # Downloads our custom powershell profile.
-wget -O ~/.config/powershell/Microsoft.Powershell_profile.ps1 https://github.com/KingKrouch/Fedora-InstallScripts/raw/main/.config/powershell/Microsoft.PowerShell_profile.ps1
+cp ./Configs/.config/powershell/Microsoft.PowerShell_profile.ps1 ~/.config/powershell/Microsoft.Powershell_profile.ps1
 
 # Set up zsh as the default, alongside setting up oh-my-zsh, and powerlevel10k.
 chsh -s $(which zsh) && sudo chsh -s $(which zsh)
