@@ -12,6 +12,7 @@ Reshade Linux with HDR:
 # Now here's how to set up Reshade with HDR shaders, if you want something similar to AutoHDR, but on Linux:
 # First install the Reshade-Linux solution.
 curl -LO https://github.com/kevinlekiller/reshade-steam-proton/raw/main/reshade-linux.sh
+sudo chmod +x ./reshade-linux.sh
 env RESHADE_ADDON_SUPPORT=1 ./reshade-linux.sh
 # Now you want to clone a few different repositories for HDR shaders
 git clone https://github.com/EndlesslyFlowering/ReShade_HDR_shaders ~/.local/share/reshade/ReShade_shaders/ReShade_HDR_shaders

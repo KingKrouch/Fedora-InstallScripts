@@ -20,7 +20,7 @@ case $NAME in
     echo "Nobara is being used."
     FLATPAK_TYPE="--system" # I believe this is needed for Flatpak installation on Nobara now.
     ;;
-    ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
+    ("Fedora Linux") # This is for Fedora specific stuff that can safely be ignored with Nobara.
     echo "Fedora is being used."
     FLATPAK_TYPE=""
     ;;
@@ -45,7 +45,7 @@ case $NAME in
     # Safely remove something that causes "kde-settings conflicts with f[version]-backgrounds-kde"
     sudo rpm -e --nodeps f$(rpm -E %fedora)-backgrounds-kde
     ;;
-    ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
+    ("Fedora Linux") # This is for Fedora specific stuff that can safely be ignored with Nobara.
     echo "Fedora is being used."
 
     # Install third-party repositories (Via RPMFusion).
@@ -81,7 +81,7 @@ cargo install rebos
 # Install our packages through rebos instead, before doing any other configuration.
 rebos setup
 rebos config init
-cp ./Configs/.config/rebos ~/.config/rebos
+cp -rf ./Configs/.config/rebos/ ~/.config/rebos/ # TODO: Fix this fucking command.
 rebos gen commit initial_commit && rebos gen current to-latest && rebos gen current build
 
 # Enable System Theming with Flatpak (That way, theming is more consistent between native apps and flatpaks).
@@ -157,7 +157,6 @@ echo "typeset -g POWERLEVEL9K_INSTANT_PROMPT=off" >> tee -a ~/.zshrc
 # Set up some ZSH plugins.
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-# TODO: Fix sed command.
 sed -i 's/plugins=(git)/plugins=(git emoji zsh-syntax-highlighting zsh-autosuggestions)/g' ~/.zshrc
 
 # Append exa and lsd aliases, and neofetch alias to both the bashrc and zshrc.
@@ -184,33 +183,37 @@ neofetch' >> tee -a ~/.bashrc ~/.zshrc
 ## ///// GAMING AND GAMING TWEAKS /////
 
 case $NAME in
-    ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
+    ("Fedora Linux") # This is for Fedora specific stuff that can safely be ignored with Nobara.
 
     # Temporary workaround for Fedora (So, you can have MangoApp working). When the fuck is MangoApp gonna work through compiling from source?
-    sudo dnf install --allowerasing https://download.copr.fedorainfracloud.org/results/gloriouseggroll/nobara/fedora-38-x86_64/06517212-mangohud/mangohud-0.7.0-6.fc38.x86_64.rpm https://download.copr.fedorainfracloud.org/results/gloriouseggroll/nobara/fedora-38-i386/06517212-mangohud/mangohud-0.7.0-6.fc38.i686.rpm -y
+    #sudo dnf install --allowerasing https://download.copr.fedorainfracloud.org/results/gloriouseggroll/nobara/fedora-38-x86_64/06517212-mangohud/mangohud-0.7.0-6.fc38.x86_64.rpm https://download.copr.fedorainfracloud.org/results/gloriouseggroll/nobara/fedora-38-i386/06517212-mangohud/mangohud-0.7.0-6.fc38.i686.rpm -y
 
     # Enable the gamemode service.
     systemctl --user enable gamemoded.service && systemctl --user start gamemoded.service
     
-    # check if gnome is being used before installing this.
+    case $XDG_CURRENT_DESKTOP in
+    ("gnome")
     sudo dnf install gnome-shell-extension-gamemode -y
+    ;;
+    esac
+
     ;;
 esac
 
 # Add Gamescope Session and Steam Deck Gyro DSU for Switch/WiiU emulation.
 case $NAME in
-    ("Fedora")
+    ("Fedora Linux")
     # Setup Gamescope Session.
-    git clone https://github.com/ChimeraOS/gamescope-session --recursive
-    git clone https://github.com/ChimeraOS/gamescope-session-steam --recursive
-    cd gamescope-session && sudo cp -r usr/* /usr
-    cd ..
-    cd gamescope-session-steam && sudo cp -r usr/* /usr
-    cd ..
-    sudo rm -rf gamescope-session gamescope-session-steam
-    sudo rm -rf /usr/share/wayland-sessions/gamescope-session.desktop
-    # Set up SteamDeckGyroDSU.
-    bash <(curl -sL https://raw.githubusercontent.com/kmicki/SteamDeckGyroDSU/master/pkg/update.sh)
+    #git clone https://github.com/ChimeraOS/gamescope-session --recursive
+    #git clone https://github.com/ChimeraOS/gamescope-session-steam --recursive
+    #cd gamescope-session && sudo cp -r usr/* /usr
+    #cd ..
+    #cd gamescope-session-steam && sudo cp -r usr/* /usr
+    #cd ..
+    #sudo rm -rf gamescope-session gamescope-session-steam
+    #sudo rm -rf /usr/share/wayland-sessions/gamescope-session.desktop
+    ## Set up SteamDeckGyroDSU.
+    #bash <(curl -sL https://raw.githubusercontent.com/kmicki/SteamDeckGyroDSU/master/pkg/update.sh)
     ;;
     ("Nobara Linux") # This is for Fedora specific stuff that can safely be ignored with Fedora.
     sudo dnf install sdgyrodsu gamescope-session jupiter-hw-support jupiter-fan-control -y
@@ -222,13 +225,9 @@ esac
 # Set up Decky Loader for Steam.
 curl -L https://github.com/SteamDeckHomebrew/decky-installer/releases/latest/download/install_release.sh | sh
 
-# Install some useful scripts for SteamVR.
-sudo dnf install python3-yaml python3-psutil python-pip glib2-devel -y
-sudo pip3 install bluepy
-cd $HOME
-git clone https://github.com/DavidRisch/steamvr_utils.git -b iss15_fix_v2_interface
-python3 ~/.steamvr_utils/scripts/install.py
-cd $current_dir
+# Fix the launching bug with Steam on Wayland when dealing with a dGPU+iGPU setup.
+cp /usr/share/applications/steam.desktop ~/.local/share/applications/steam.desktop
+sed -i '/PrefersNonDefaultGPU=true/d' ~/.local/share/applications/steam.desktop && sed -i '/X-KDE-RunOnDiscreteGpu=true/d' ~/.local/share/applications/steam.desktop
 
 # Install some game launcher and emulator Flatpaks.
 flatpak remote-add --if-not-exists --user launcher.moe https://gol.launcher.moe/gol.launcher.moe.flatpakrepo
@@ -237,43 +236,43 @@ flatpak install launcher.moe moe.launcher.the-honkers-railway-launcher --user -y
 flatpak install launcher.moe moe.launcher.honkers-launcher --user -y
 
 # Install a Soundboard Application, for micspamming in Team Fortress 2 servers, of course! ;-)
-sudo dnf copr enable rivenirvana/soundux -y && sudo dnf install soundux pipewire-devel -y --allow-erasing
+sudo dnf copr enable rivenirvana/soundux -y && sudo dnf install soundux pipewire-devel -y --allowerasing
 
 # Set up Sunshine and Moonlight Streaming.
-sudo dnf install https://github.com/LizardByte/Sunshine/releases/download/v0.20.0/sunshine-fedora-$(rpm -E %fedora)-amd64.rpm -y
-echo 'KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="uaccess"' | \
-sudo tee /etc/udev/rules.d/85-sunshine.rules
-systemctl --user enable sunshine
-sudo setcap cap_sys_admin+p $(readlink -f $(which sunshine))
+#sudo dnf install https://github.com/LizardByte/Sunshine/releases/download/v0.20.0/sunshine-fedora-$(rpm -E %fedora)-amd64.rpm -y
+#echo 'KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="uaccess"' | \
+#sudo tee /etc/udev/rules.d/85-sunshine.rules
+#systemctl --user enable sunshine
+#sudo setcap cap_sys_admin+p $(readlink -f $(which sunshine))
 
 # Fix DualSense pairing over Bluetooth. The Arch Wiki says that this is the only fix, but I could've sworn I paired before w/o this.
-input_conf="/etc/bluetooth/input.conf"
-userspace_hid="UserspaceHID=true"
-if [ -f "$input_conf" ]; then
-    # If file exists, add or modify the line UserspaceHID=true
-    if ! grep -qF "$userspace_hid" "$input_conf"; then
-        echo "$userspace_hid" | sudo tee -a "$input_conf" > /dev/null
-    fi
-else
-    # If file doesn't exist, create it and add UserspaceHID=true
-    echo "$userspace_hid" | sudo tee "$input_conf" > /dev/null
-fi
+#input_conf="/etc/bluetooth/input.conf"
+#userspace_hid="UserspaceHID=true"
+#if [ -f "$input_conf" ]; then
+    ## If file exists, add or modify the line UserspaceHID=true
+    #if ! grep -qF "$userspace_hid" "$input_conf"; then
+        #echo "$userspace_hid" | sudo tee -a "$input_conf" > /dev/null
+    #fi
+#else
+    ## If file doesn't exist, create it and add UserspaceHID=true
+    #echo "$userspace_hid" | sudo tee "$input_conf" > /dev/null
+#fi
 
 # Disable the DualSense trackpad in desktop mode (This apparently works under X11, I don't know about Wayland).
-echo 'Section "InputClass"
-    Identifier "Sony Interactive Entertainment Wireless Controller Touchpad"
-    Driver "libinput"
-    MatchIsTouchpad "on"
-    Option "Ignore" "true"
-EndSection' | sudo tee -a /etc/X11/xorg.conf.d/30--dualsense-touchpad.conf
+#echo 'Section "InputClass"
+    #Identifier "Sony Interactive Entertainment Wireless Controller Touchpad"
+    #Driver "libinput"
+    #MatchIsTouchpad "on"
+    #Option "Ignore" "true"
+#EndSection' | sudo tee -a /etc/X11/xorg.conf.d/30--dualsense-touchpad.conf
 
 # Set up HIDDualShock Module on system startup, to prevent touchpad issues.
 printf "# load this module at boot time as otherwise the DS4 and DualSense controllers have issues\nhid_playstation\n" | sudo tee /etc/modules-load.d/hid-playstation.conf > /dev/null
 
 # Install XPadNeo drivers for Xbox controllers.
 case $NAME in
-    ("Fedora")
-    sudo dnf copr enable sentry/xpadneo -y && sudo dnf install xpadneo -y
+    ("Fedora Linux")
+    #sudo dnf copr enable sentry/xpadneo -y && sudo dnf install xpadneo -y
     ;;
 esac
 
@@ -283,10 +282,10 @@ sudo usermod -a -G pkg-build $USER
 ## ///// WINE AND WINDOWS SOFTWARE /////
 
 case $NAME in
-    ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
+    ("Fedora Linux") # This is for Fedora specific stuff that can safely be ignored with Nobara.
 
     # Install Yabridge (For VST Plugins, I'm going to assume you will set up a DAW on your own accords).
-    sudo dnf copr enable patrickl/yabridge -y && sudo dnf install yabridge --refresh -y
+    #sudo dnf copr enable patrickl/yabridge -y && sudo dnf install yabridge yabridgectl --refresh -y
 
     # Set up realtime, jackuser, and audiogroups alongside necessary permissions.
     echo -e '@audio\trtprio 99\n@audio\tmemlock unlimited' | sudo tee -a /etc/security/limits.conf
@@ -307,21 +306,21 @@ case $NAME in
     # Ableton Stuff (Feel free to use this if you are planning to install Ableton Live. I just have it here for reference).
     # WINEPREFIX=~/.ableton wine64 explorer
     #WINEPREFIX=$HOME/.ableton winetricks win7 quicktime72 gdiplus vb2run vcrun2008 vcrun6 vcrun2010 vcrun2013 vcrun2015 tahoma msxml3 msxml6 setupapi python27
-    echo "If you plan to use Ableton Live (alongside some VST plugins like Serum), add gdiplus to winetricks for Ableton, disable the d2d1 library through winecfg, and then add vcruntime140_1.dll as an native+built-in override through winecfg".
+    #echo "If you plan to use Ableton Live (alongside some VST plugins like Serum), add gdiplus to winetricks for Ableton, disable the d2d1 library through winecfg, and then add vcruntime140_1.dll as an native+built-in override through winecfg".
     
     # Set our Wine Prefix to use ALSA audio, so it won't crash with WineASIO or other ASIO plugins.
-    WINEPREFIX=$HOME/.wine winetricks sound=alsa
+    #WINEPREFIX=$HOME/.wine winetricks sound=alsa
     #WINEPREFIX=$HOME/.ableton winetricks sound=alsa
     ;;
     ("Nobara Linux") # Use the built-in version of Winetricks instead.
     # Open Explorer to initialize our Wine prefix.
-    echo "Initializing Wine prefix. Please exit out of Explorer when it opens and follow any setup prompts."
-    wine64 explorer
+    #echo "Initializing Wine prefix. Please exit out of Explorer when it opens and follow any setup prompts."
+    #wine64 explorer
     # Set up some dependencies.
-    winetricks corefonts
-    winetricks dotnet48
-    winetricks mf
-    echo "If you plan to use Clip Studio, set concrt140 as a WineDLLOverride in winecfg to prevent crashing."
+    #winetricks corefonts
+    #winetricks dotnet48
+    #winetricks mf
+    #echo "If you plan to use Clip Studio, set concrt140 as a WineDLLOverride in winecfg to prevent crashing."
     ;;
 esac
 
@@ -339,15 +338,10 @@ flatpak override com.usebottles.bottles --user --filesystem=xdg-data/application
 
 ## //// NETWORKING STUFF /////
 
-# Install Barrier for cross-device input management
-sudo dnf install barrier -y
-
 # Set up Samba
-sudo dnf install samba -y
 sudo systemctl enable smb nmb && sudo systemctl start smb nmb
 case $XDG_CURRENT_DESKTOP in
     ("KDE") # Install the KDE Plasma extension for Samba Shares, alongside setting up the needed permissions.
-    sudo dnf install kdenetwork-filesharing -y
     sudo groupadd sambashares && sudo usermod -a -G sambashares $USER
     sudo mkdir /var/lib/samba/usershares && sudo chgrp sambashares /var/lib/samba/usershares && sudo chown $USER:sambashares /var/lib/samba/usershares
     ;;
@@ -370,9 +364,6 @@ fi
 
 ## ///// DEVELOPMENT/PROGRAMMING TOOLS AND GAME ENGINE STUFF /////
 
-# Set up Kernel-Devel
-sudo dnf install kernel-devel -y
-
 # Install RenderDoc and Vulkan Tools.
 sudo dnf copr enable kb1000/renderdoc -y
 sudo dnf install renderdoc -y && sudo dnf install vulkan-tools -y
@@ -383,12 +374,6 @@ mkdir $HOME/Applications && cd $HOME/Applications && wget -O jetbrains-toolbox.t
 cd $current_dir
 
 # Set up Godot .NET
-get_latest_github_release() {
-  curl --silent "https://api.github.com/repos/$1/releases/latest" |
-    grep '"tag_name":' |
-    sed -E 's/.*"([^"]+)".*/\1/'
-}
-
 # Alternatively, you can run "flatpak install flathub org.godotengine.GodotSharp $FLATPAK_TYPE -y"
 GODOT_VER=$(get_latest_github_release "godotengine/godot")
 GODOT_ZIP="Godot_v${GODOT_VER}_mono_linux_x86_64.zip"
@@ -435,11 +420,6 @@ sudo flatpak override org.ghidra_sre.Ghidra --filesystem=/mnt
 # Install Visual Studio Code.
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc && sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo' && sudo dnf check-update && sudo dnf install code -y
 
-# Install GitHub Desktop
-sudo rpm --import https://rpm.packages.shiftkey.dev/gpg.key
-sudo sh -c 'echo -e "[shiftkey-packages]\nname=GitHub Desktop\nbaseurl=https://rpm.packages.shiftkey.dev/rpm/\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://rpm.packages.shiftkey.dev/gpg.key" > /etc/yum.repos.d/shiftkey-packages.repo'
-sudo dnf install github-desktop -y
-
 # Install .NET Runtime/SDK and Mono (for Rider and C# applications)
 sudo dnf install dotnet-sdk-6.0 dotnet-sdk-7.0 dotnet-sdk-8.0 mono-devel -y
 
@@ -472,11 +452,11 @@ if grep -Eq 'vmx|svm' /proc/cpuinfo; then
     cpu_vendor=$(grep -m 1 vendor_id /proc/cpuinfo | cut -d ":" -f 2 | tr -d '[:space:]')
     if [ "$cpu_vendor" = "GenuineIntel" ]; then
         echo "CPU vendor is Intel. Setting up Intel IOMMU boot parameters..."
-        sudo grubby --update-kernel=ALL --args="intel_iommu=on iommu=pt video=vesafb:off,efifb:off"
+        sudo grubby --update-kernel=ALL --args="intel_iommu=on iommu=pt"
         # If you want iGPU passthrough for some reason, you can add "i915.modeset=0" to the end of the intel parameters.
     elif [ "$cpu_vendor" = "AuthenticAMD" ]; then
         echo "CPU vendor is AMD. Setting up AMD IOMMU boot parameters..."
-        sudo grubby --update-kernel=ALL --args="amd_iommu=on iommu=pt video=vesafb:off,efifb:off"
+        sudo grubby --update-kernel=ALL --args="amd_iommu=on iommu=pt"
     else
         echo "Unknown CPU vendor. Skipping..."
     fi
@@ -599,7 +579,7 @@ sudo udevadm control --reload-rules
 # Set up Waydroid
 sudo systemctl enable --now waydroid-container
 sudo waydroid init -s GAPPS -r lineage -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor
-cd ~/ && sudo dnf install lzip -y
+cd ~/
 git clone https://github.com/casualsnek/waydroid_script
 cd waydroid_script
 sudo python3 -m pip install -r requirements.txt
@@ -611,8 +591,9 @@ waydroid prop set persist.waydroid.udev true
 waydroid prop set persist.waydroid.uevent true
 waydroid prop set persist.waydroid.fake_wifi true
 sudo firewall-cmd --zone=trusted --add-interface=waydroid0
+# Try this if the other command doesn't work: sudo firewall-cmd --zone=FedoraWorkstation --add-interface=waydroid0
 echo "Make sure to run 'sudo waydroid shell' followed by the command listed here: https://docs.waydro.id/faq/google-play-certification"
-cd ..
+cd $current_dir
 
 # Install Compatibility Related Stuff for Autodesk Maya and Mudbox.
 sudo dnf copr enable dioni21/compat-openssl10 -y && sudo dnf install pcre-utf16 -y && sudo dnf install compat-openssl10 -y
@@ -623,31 +604,24 @@ echo -e "MAYA_OPENCL_IGNORE_DRIVER_VERSION=1\nMAYA_CM_DISABLE_ERROR_POPUPS=1\nMA
 echo "Please download and install Autodesk Maya on your own accord. The dependencies and compatibility tweaks for Fedora should be taken care of now."
 echo -e "LD_LIBRARY_PATH="/usr/autodesk/mudbox2024/lib"" >> $HOME/.profile
 
-# TODO: Add Dracut regeneration just in case the AMD GPU Switcher drivers have been installed on Nobara.
-
-flatpak install flathub org.kde.krita $FLATPAK_TYPE -y
-flatpak install flathub org.gimp.GIMP $FLATPAK_TYPE -y
-flatpak install flathub org.inkscape.Inkscape $FLATPAK_TYPE -y
-flatpak install flathub org.audacityteam.Audacity $FLATPAK_TYPE -y
-
 ## ///// AI STUFF /////
 
 # Install Python 3.10 and pip.
-sudo dnf install python3.10 -y
-curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
+#sudo dnf install python3.10 -y
+#curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
 
 # Install the needed ROCM runtimes on AMD (As shown here: https://medium.com/@anvesh.jhuboo/rocm-pytorch-on-fedora-51224563e5be).
 # TODO: Add the rest of the setup instructions, PyTorch was just giving me issues.
 
 # Set up a Fedora specific section for ROCM setup. (As shown here: https://medium.com/@anvesh.jhuboo/rocm-pytorch-on-fedora-51224563e5be).
-sudo usermod -a -G video $LOGNAME
+#sudo usermod -a -G video $LOGNAME
 
 # Add a fix for PyTorch crashing on Navi 2 (AMD Radeon RX 6000) GPUs.
-echo -e "\n# Fix Segmentation Fault Error for PyTorch\nexport HSA_OVERRIDE_GFX_VERSION=10.3.0" >> ~/.profile
+#echo -e "\n# Fix Segmentation Fault Error for PyTorch\nexport HSA_OVERRIDE_GFX_VERSION=10.3.0" >> ~/.profile
 
 # Set up PyTorch
-python3.10 -m pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm5.6
-echo "Make sure to change the 'python_cmd=' section of the stable-diffusion-webui's 'webui.sh' file to 'python3.10' instead of 'python3'."
+#python3.10 -m pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm5.6
+#echo "Make sure to change the 'python_cmd=' section of the stable-diffusion-webui's 'webui.sh' file to 'python3.10' instead of 'python3'."
 
 ## ///// GENERAL DESKTOP USAGE /////
 
@@ -655,10 +629,10 @@ echo "Make sure to change the 'python_cmd=' section of the stable-diffusion-webu
 #echo "DisplayServer=wayland" | sudo tee -a /etc/sddm.conf > /dev/null
 
 # Install the tiled window management KWin plugin, Bismuth.
-sudo dnf install bismuth qt -y
+#sudo dnf install bismuth qt -y
 
 # Add KDE Rounded Corners plugin, and then add updated desktop effects config.
-sudo dnf install https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora/kwin4_effect_shapecorners_fedora$(rpm -E %fedora).rpm/download -y
+sudo dnf install https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora/kwin4_effect_shapecorners_fedora$(rpm -E %fedora).rpm -y
 
 # Use Librewolf instead of Firefox. We also need to reinstall the Plasma Browser Integration after Firefox is removed.
 sudo dnf config-manager --add-repo https://rpm.librewolf.net/librewolf-repo.repo
@@ -678,8 +652,10 @@ sudo dnf install webapp-manager -y
 # Remove some KDE Plasma bloatware that comes installed for some reason.
 sudo dnf remove libreoffice-\* akregator ksysguard dnfdragora kfind kmag kmail kcolorchooser kmouth korganizer kmousetool kruler kaddressbook kcharselect konversation elisa-player kmahjongg kpat kmines dragonplayer kamoso kolourpaint krdc krfb digikam showfoto ktorrent k3b cdrdao -y
 
+sudo dnf group remove "LibreOffice" -y
+
 # Remove KWrite in favor of Kate.
-sudo dnf remove kwrite -y && sudo dnf install kate -y
+sudo dnf swap kwrite kate -y
 
 # Install Input-Remapper (For Razer Tartarus Pro)
 sudo dnf install input-remapper -y
@@ -687,7 +663,7 @@ sudo systemctl enable --now input-remapper && sudo systemctl start input-remappe
 
 # Install Wallpaper Engine KDE Plugin
 case $NAME in
-    ("Fedora")
+    ("Fedora Linux")
     sudo dnf copr enable kylegospo/wallpaper-engine-kde-plugin -y && sudo dnf install wallpaper-engine-kde-plugin -y
     ;;
     ("Nobara Linux")
@@ -699,7 +675,7 @@ esac
 flatpak override --user --socket=wayland md.obsidian.Obsidian
 
 case $NAME in
-    ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
+    ("Fedora Linux") # This is for Fedora specific stuff that can safely be ignored with Nobara.
     # Install and set up OpenRGB.
     sudo usermod -a -G video $USER
     sudo modprobe i2c-dev && sudo modprobe i2c-piix4
@@ -736,10 +712,10 @@ sudo dnf install https://github.com/TheAssassin/AppImageLauncher/releases/downlo
 wget -O ~/Applications/AppImageUpdate.AppImage https://github.com/AppImageCommunity/AppImageUpdate/releases/download/2.0.0-alpha-1-20230526/AppImageUpdate-x86_64.AppImage
 
 # Install CoreCtrl for CPU power management purposes.
-sudo dnf install corectrl -y
-cp /usr/share/applications/org.corectrl.corectrl.desktop ~/.config/autostart/org.corectrl.corectrl.desktop
-sudo grubby --update-kernel=ALL --args="amdgpu.ppfeaturemask=0xffffffff"
-sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
+#sudo dnf install corectrl -y
+#cp /usr/share/applications/org.corectrl.corectrl.desktop ~/.config/autostart/org.corectrl.corectrl.desktop
+#sudo grubby --update-kernel=ALL --args="amdgpu.ppfeaturemask=0xffffffff"
+#sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
 
 # Run CoreCtrl without root password.
 echo 'polkit.addRule(function(action, subject) {
@@ -799,7 +775,6 @@ sudo dnf install --refresh proton-vpn-gnome-desktop -y
 sudo dnf config-manager --add-repo https://pkgs.tailscale.com/stable/fedora/tailscale.repo -y
 sudo dnf install tailscale -y
 sudo systemctl enable --now tailscaled
-flatpak install flathub dev.deedles.Trayscale
 sudo tailscale set --operator=$USER
 
 # Set up Wake On Lan.
@@ -830,7 +805,7 @@ update-mime-database ~/.local/share/mime
 ## ///// MEDIA CODECS AND SUCH /////
 
 case $NAME in
-    ("Fedora") # This is for Fedora specific stuff that can safely be ignored with Nobara.
+    ("Fedora Linux") # This is for Fedora specific stuff that can safely be ignored with Nobara.
     # Install Mesa Freeworld, so we can get FFMPEG back.
     sudo dnf install mesa-vdpau-drivers -y
     sudo dnf swap mesa-va-drivers mesa-va-drivers-freeworld -y

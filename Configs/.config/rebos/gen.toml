@@ -43,6 +43,7 @@ items = [
     # Networking Stuff
     "barrier",
     "samba",
+    "kdenetwork-filesharing",
     # OBS Studio Stuff
     "obs-studio",
     "obs-studio-plugin-vkcapture",
@@ -60,6 +61,8 @@ items = [
     "python3-vdf",
     "yad",
     "xdotool",
+    "okteta",
+    "python-pip",
     ## TODO: Add GitHub Desktop
     "dotnet-sdk-6.0",
     "dotnet-sdk-8.0",
@@ -91,6 +94,7 @@ items = [
     "waydroid",
     "android-tools",
     "v4l-utils",
+    "lzip",
     ## TODO: Add Autodesk Fixes.
     # Creative Tools
     "blender",
@@ -128,15 +132,7 @@ items = [
     "mesa-vdpau-drivers",
     # Web Stuff
     "nextcloud-client",
-    "nextcloud-client-nautilus", # Use nextcloud-client-dolphin if using KDE.
-    # GNOME Stuff.
-    "gtk-murrine-engine",
-    "gnome-themes-extra",
-    "gnome-shell-extension-pop-shell",
-    "gnome-shell-extension-pop-shell-shortcut-overrides",
-    "gnome-shell-extension-gamemode",
-    "sassc",
-    "gvfs-nfs", # Extension for mounting NFS partitions in Nautilus.
+    "nextcloud-client-dolphin", # Use nextcloud-client-nautilus if using GNOME.
 ]
 
 # Packages to be installed via Flatpak.
@@ -175,6 +171,7 @@ items = [
     "io.github.dvlv.boxbuddyrs",
     "dev.deedles.Trayscale",
     "org.ghidra_sre.Ghidra",
+    "io.github.shiftey.Desktop",
     "net.werwolv.ImHex",
     "md.obsidian.Obsidian",
     "org.onlyoffice.desktopeditors",

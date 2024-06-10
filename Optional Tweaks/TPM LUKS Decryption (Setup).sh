@@ -3,8 +3,8 @@
 # This setup uses this guide: https://fedoramagazine.org/automatically-decrypt-your-disk-using-tpm2/
 
 # Check if Secure Boot is enabled, and whether the user has a TPM module.
-if dmesg | grep -q 'TPM'; then
-    if dmesg | grep -q 'Secure'; then
+if sudo dmesg | grep -q 'TPM'; then
+    if sudo dmesg | grep -q 'Secure'; then
 	echo "Secure Boot is enabled."
     else    
         echo "Secure Boot is not enabled. Just as an FYI, this may or may not cause clevis to work."
