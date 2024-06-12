@@ -22,6 +22,7 @@ items = [
     "cmatrix",
     "eza", # Replaces Exa.
     "thefuck",
+    "vim",
     ## TODO: Add Microsoft Software repo and Powershell stuff.
     "zsh",
     # Gaming Stuff

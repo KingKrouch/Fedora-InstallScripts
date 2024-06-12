@@ -595,6 +595,12 @@ sudo firewall-cmd --zone=trusted --add-interface=waydroid0
 echo "Make sure to run 'sudo waydroid shell' followed by the command listed here: https://docs.waydro.id/faq/google-play-certification"
 cd $current_dir
 
+# Set up rclone (For stuff like OneDrive)
+sudo dnf install rclone -y
+# Now run rclone config.
+mkdir ~/OneDrive
+rclone --vfs-cache-mode writes mount "OneDrive":  ~/OneDrive
+
 # Install Compatibility Related Stuff for Autodesk Maya and Mudbox.
 sudo dnf copr enable dioni21/compat-openssl10 -y && sudo dnf install pcre-utf16 -y && sudo dnf install compat-openssl10 -y
 sudo dnf install libpng15 csh audiofile libXp rocm-opencl5.4.3 -y
