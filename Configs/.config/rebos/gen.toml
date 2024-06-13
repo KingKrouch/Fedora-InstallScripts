@@ -64,6 +64,7 @@ items = [
     "xdotool",
     "okteta",
     "python-pip",
+    "boost",
     ## TODO: Add GitHub Desktop
     "dotnet-sdk-6.0",
     "dotnet-sdk-8.0",
