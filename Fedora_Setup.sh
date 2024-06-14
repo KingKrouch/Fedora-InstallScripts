@@ -584,7 +584,24 @@ git clone https://github.com/casualsnek/waydroid_script
 cd waydroid_script
 sudo python3 -m pip install -r requirements.txt
 sudo python3 ./main.py install magisk
-sudo python3 ./main.py install libhoudini
+
+## Set up Libhoudini or Libndk for Waydroid, alongside a patch to get games like Blue Archive running.
+if [ "$cpu_vendor" = "GenuineIntel" ]; then
+    echo "CPU vendor is Intel. Setting up Libhoudini..."
+    sudo python3 ./main.py install libhoudini
+    ## Set up some necessary patches required to run games like Blue Archive on Waydroid.
+    sudo chmod +x "$current_dir/Optional Tweaks/BA_WaydroidPatch_Libhoudini.sh"
+    sudo "$current_dir/Optional Tweaks/BA_WaydroidPatch_Libhoudini.sh"
+elif [ "$cpu_vendor" = "AuthenticAMD" ]; then
+    echo "CPU vendor is AMD. Setting up Libndk..."
+    sudo python3 ./main.py install libndk
+    ## Set up some necessary patches required to run games like Blue Archive on Waydroid.
+    sudo chmod +x "$current_dir/Optional Tweaks/BA_WaydroidPatch_Libhoudini.sh"
+    sudo "$current_dir/Optional Tweaks/BA_WaydroidPatch_Libndk.sh"
+else
+    echo "Unknown CPU vendor. Skipping..."
+fi
+
 sudo python3 ./main.py install widevine
 # Some tweaks for stuff like USB controller support or stuff that requires a WiFi connection.
 waydroid prop set persist.waydroid.udev true
