@@ -23,6 +23,7 @@ items = [
     "eza", # Replaces Exa.
     "thefuck",
     "vim",
+    "neovim",
     ## TODO: Add Microsoft Software repo and Powershell stuff.
     "zsh",
     # Gaming Stuff

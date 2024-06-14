@@ -180,6 +180,10 @@ if [ -x /usr/bin/fastfetch ]; then
 fi
 neofetch' >> tee -a ~/.bashrc ~/.zshrc
 
+# Set up NvChad (For Neovim).
+git clone https://github.com/NvChad/starter ~/.config/nvim
+echo "Run 'nvim' when you are ready."
+
 ## ///// GAMING AND GAMING TWEAKS /////
 
 case $NAME in
