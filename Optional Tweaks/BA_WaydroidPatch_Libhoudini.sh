@@ -1,6 +1,5 @@
 #!/bin/bash 
 
-
 function CheckHex {
 #file path, Ghidra offset, Hex to check
 commandoutput="$(od $1 --skip-bytes=$(($2-0x100000)) --read-bytes=$((${#3} / 2)) --endian=little -t x1 -An file | sed 's/ //g')"
