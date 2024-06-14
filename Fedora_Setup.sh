@@ -222,6 +222,11 @@ esac
 
 # TODO: Add Nobara's Gamescope Session here. Note: To prevent Steam from starting up without DPI Scaling or anything, run "sudo rm -rf /etc/xdg/autostart/steam.desktop".
 
+# Improve Steam Download Speed (This is a tweak from Bazzite).
+mkdir -p $HOME/.local/share/Steam
+rm -f $HOME/.local/share/Steam/steam_dev.cfg
+bash -c 'printf "@nClientDownloadEnableHTTP2PlatformLinux 0\n@fDownloadRateImprovementToAddAnotherConnection 1.0\n" > $HOME/.local/share/Steam/steam_dev.cfg'
+
 # Set up Decky Loader for Steam.
 curl -L https://github.com/SteamDeckHomebrew/decky-installer/releases/latest/download/install_release.sh | sh
 
