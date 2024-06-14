@@ -428,6 +428,8 @@ sudo flatpak override org.ghidra_sre.Ghidra --filesystem=/mnt
 
 # Install Visual Studio Code.
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc && sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo' && sudo dnf check-update && sudo dnf install code -y
+## Set up Visual Studio Code to work with Wayland.
+cp $current_dir/Configs/.config/code-flags.conf ~/.config/code-flags.conf
 
 # Install .NET Runtime/SDK and Mono (for Rider and C# applications)
 sudo dnf install dotnet-sdk-6.0 dotnet-sdk-7.0 dotnet-sdk-8.0 mono-devel -y
