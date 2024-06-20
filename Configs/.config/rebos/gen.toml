@@ -66,6 +66,8 @@ items = [
     "okteta",
     "python-pip",
     "boost",
+    "extra-cmake-modules",
+    "kf5-plasma-devel",
     ## TODO: Add GitHub Desktop
     "dotnet-sdk-6.0",
     "dotnet-sdk-8.0",
@@ -189,7 +191,7 @@ items = [
     "com.spotify.Client",
     "org.qbittorrent.qBittorrent",
     "com.teamspeak.TeamSpeak",
-    "com.discordapp.Discord",
+    "dev.vencord.Vesktop",
 ]
 
 # Packages to be installed via Cargo.

@@ -71,7 +71,8 @@ esac
 
 
 ## ///// CARGO AND REBOS SETUP ////
-# Install Rust.
+# Install Rust alongside some necessary dependencies.
+sudo yum groupinstall 'Development Tools' -y
 sudo dnf install rustup -y
 rustup-init && source "$HOME/.cargo/env"
 # NOTE: You should run "source "$HOME/.cargo/env"" with every new terminal you use.
@@ -102,7 +103,6 @@ sudo flatpak override --filesystem=xdg-config/MangoHud:ro
 flatpak override --user --talk-name=com.feralinteractive.GameMode
 
 # Set up Homebrew Package Manager
-sudo yum groupinstall 'Development Tools' -y
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> ~/.bash_profile
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -357,6 +357,12 @@ case $XDG_CURRENT_DESKTOP in
 esac
 sudo setsebool -P samba_enable_home_dirs=on
 sudo smbpasswd -a $USER
+# Unblock some Samba ports.
+sudo firewall-cmd --zone=FedoraWorkstation --permanent --add-port=137/tcp
+sudo firewall-cmd --zone=FedoraWorkstation --permanent --add-port=138/tcp
+sudo firewall-cmd --zone=FedoraWorkstation --permanent --add-port=139/tcp
+sudo firewall-cmd --zone=FedoraWorkstation --permanent --add-port=445/tcp
+sudo firewall-cmd --reload
 
 # Set up SSH Server on Host
 sudo systemctl enable sshd && sudo systemctl start sshd
@@ -378,7 +384,8 @@ sudo dnf copr enable kb1000/renderdoc -y
 sudo dnf install renderdoc -y && sudo dnf install vulkan-tools -y
 
 # Set up Unity Hub and Jetbrains
-sudo sh -c 'echo -e "[unityhub]\nname=Unity Hub\nbaseurl=https://hub.unity3d.com/linux/repos/rpm/stable\nenabled=1\ngpgcheck=1\ngpgkey=https://hub.unity3d.com/linux/repos/rpm/stable/repodata/repomd.xml.key\nrepo_gpgcheck=1" > /etc/yum.repos.d/unityhub.repo' && sudo dnf update && sudo dnf install unityhub -y && sudo dnf install GConf2 -y
+sudo sh -c 'echo -e "[unityhub]\nname=Unity Hub\nbaseurl=https://hub.unesac
+sudo setsebool -P samba_enable_home_dirs=onity3d.com/linux/repos/rpm/stable\nenabled=1\ngpgcheck=1\ngpgkey=https://hub.unity3d.com/linux/repos/rpm/stable/repodata/repomd.xml.key\nrepo_gpgcheck=1" > /etc/yum.repos.d/unityhub.repo' && sudo dnf update && sudo dnf install unityhub -y && sudo dnf install GConf2 -y
 mkdir $HOME/Applications && cd $HOME/Applications && wget -O jetbrains-toolbox.tar.gz https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.24.11947.tar.gz && tar xvzf jetbrains-toolbox.tar.gz && cd .. && echo "Make sure to remove the 'jetbrains-toolbox' executable from the extracted folder before running! Preferably copy it to '/opt' before running."
 cd $current_dir
 
@@ -696,6 +703,7 @@ sudo dnf install input-remapper -y
 sudo systemctl enable --now input-remapper && sudo systemctl start input-remapper
 
 # Install Wallpaper Engine KDE Plugin
+# TODO: Remove the COPR, as it doesn't work on Plasma 6, and the qt6 one that's available online is missing libraries.
 case $NAME in
     ("Fedora Linux")
     sudo dnf copr enable kylegospo/wallpaper-engine-kde-plugin -y && sudo dnf install wallpaper-engine-kde-plugin -y
@@ -721,6 +729,7 @@ case $NAME in
     mkdir -p ~/.config/user-tmpfiles.d
     echo 'L %t/discord-ipc-0 - - - - app/com.discordapp.Discord/discord-ipc-0' > ~/.config/user-tmpfiles.d/discord-rpc.conf
     systemctl --user enable --now systemd-tmpfiles-setup.service
+    sudo flatpak override --filesystem=/proc com.discordapp.Discord
     
     # Set up Wayland support.
     flatpak override --user --socket=wayland com.discordapp.Discord
@@ -728,9 +737,6 @@ case $NAME in
     ("Nobara Linux")
     ;;
 esac
-
-# Set up Vencord.
-sh -c "$(curl -sS https://raw.githubusercontent.com/Vendicated/VencordInstaller/main/install.sh)"
 
 # Set up Discord Overlay of sorts (https://github.com/trigg/Discover)
 sudo dnf copr enable mavit/discover-overlay -y
@@ -746,10 +752,10 @@ sudo dnf install https://github.com/TheAssassin/AppImageLauncher/releases/downlo
 wget -O ~/Applications/AppImageUpdate.AppImage https://github.com/AppImageCommunity/AppImageUpdate/releases/download/2.0.0-alpha-1-20230526/AppImageUpdate-x86_64.AppImage
 
 # Install CoreCtrl for CPU power management purposes.
-#sudo dnf install corectrl -y
-#cp /usr/share/applications/org.corectrl.corectrl.desktop ~/.config/autostart/org.corectrl.corectrl.desktop
-#sudo grubby --update-kernel=ALL --args="amdgpu.ppfeaturemask=0xffffffff"
-#sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
+sudo dnf install corectrl -y
+cp /usr/share/applications/org.corectrl.corectrl.desktop ~/.config/autostart/org.corectrl.corectrl.desktop
+sudo grubby --update-kernel=ALL --args="amdgpu.ppfeaturemask=0xffffffff"
+sudo grub2-mkconfig -o /etc/grub2.cfg && sudo grub2-mkconfig -o /etc/grub2-efi.cfg
 
 # Run CoreCtrl without root password.
 echo 'polkit.addRule(function(action, subject) {
