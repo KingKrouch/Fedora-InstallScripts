@@ -247,6 +247,9 @@ flatpak install launcher.moe moe.launcher.honkers-launcher --user -y
 # Install a Soundboard Application, for micspamming in Team Fortress 2 servers, of course! ;-)
 sudo dnf copr enable rivenirvana/soundux -y && sudo dnf install soundux pipewire-devel -y --allowerasing
 
+# Set up Heroic with Wayland support.
+flatpak override --user --socket=wayland com.heroicgameslauncher.hgl
+
 # Set up Sunshine and Moonlight Streaming.
 #sudo dnf install https://github.com/LizardByte/Sunshine/releases/download/v0.20.0/sunshine-fedora-$(rpm -E %fedora)-amd64.rpm -y
 #echo 'KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="uaccess"' | \
@@ -376,6 +379,8 @@ if [ -f /sys/class/power_supply/BAT1/uevent ]
     then echo "Battery is available. Skipping disabling the NetworkManager Wait Service."
 else sudo systemctl disable NetworkManager-wait-online.service
 fi
+
+# If you want to use an eGPU over USB 4 on AMD laptops, you can add "pcie_aspm=off" to your GRUB boot parameters.
 
 ## ///// DEVELOPMENT/PROGRAMMING TOOLS AND GAME ENGINE STUFF /////
 
@@ -597,6 +602,12 @@ sudo udevadm control --reload-rules
 # Set up Waydroid
 sudo systemctl enable --now waydroid-container
 sudo waydroid init -s GAPPS -r lineage -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor
+
+# Set up Waydroid-Settings app.
+sudo dnf install gtk3 webkit2gtk4.0 vte291 -y
+wget -O - https://raw.githubusercontent.com/axel358/Waydroid-Settings/main/install.sh | bash
+
+# Set up Waydroid Scripts (For installing stuff like Widevine, Libhoudini, etc)
 cd ~/
 git clone https://github.com/casualsnek/waydroid_script
 cd waydroid_script

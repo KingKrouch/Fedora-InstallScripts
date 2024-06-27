@@ -34,6 +34,13 @@ items = [
     "vkBasalt",
     "gamescope",
     "gamemode",
+    # Desktop Stuff
+    "plasma-mobile",
+    # DaVinci Resolve Dependencies. NOTE: Still run the installer from the terminal with "sudo SKIP_PACKAGE_CHECK=1" in the beginning.
+    "libxcrypt-compat",
+    "libcurl",
+    "libcurl-devel",
+    "mesa-libGLU",
     ## TODO: Add Vulkan VKCapture stuff.
     "libndi",
     ## TODO: Add Sunshine, Moonlight, Soundux, and Yabridge.
@@ -63,6 +70,7 @@ items = [
     "python3-vdf",
     "yad",
     "xdotool",
+    "xwininfo",
     "okteta",
     "python-pip",
     "boost",
@@ -170,6 +178,7 @@ items = [
     "sh.ppy.osu",
     "com.steamgriddb.steam-rom-manager",
     "com.moonlight_stream.Moonlight",
+    "net._86box._86Box",
     ## TODO: Figure out how to add AAGL and HRWL.
     # Tools
     "io.github.achetagames.epic_asset_manager",
