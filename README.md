@@ -1,6 +1,8 @@
 # Fedora-InstallScripts
 This is just my own personal repository for my own personal configs, system tweaks, and other things.
 
+**NOTE:** This repository will be archived, since I've been using NixOS since around summer. I find bash scripts and such that are done manually (In the case of non-declarative Linux distros) to be extremely tedious, but I figured I'd keep this up in case anyone wants to reference anything with their own setup.
+
 ## Some information regarding certain config files:
 ``~/.local/share/color-schemes`` is where you can find KDE Plasma's color schemes.
 
